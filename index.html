@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台灣海洋保護區成效儀表板</title>
+<meta name="description" content="整合水質、海洋廢棄物、魚類環境DNA與執法強度，評估臺灣 71 處海洋保護區（MPA）成效，並與保護區分類、人口與漁業壓力交叉分析。">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root {
+  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-anthropic-serif: Georgia, "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --color-bg: #ffffff; --color-panel: #f7f9fb; --color-fg: #14212b; --color-fg-muted: #5b6b7a; --color-border-line: #dfe5ea;
+  --color-ok: #1a7f5a; --color-warn: #b7791f; --color-bad: #c0392b;
+  --cds-text-secondary: #5b6b7a; --cds-border: #d5dde3; --cds-surface-popover: #ffffff; --cds-shadow-popover: 0 4px 16px rgba(10,30,50,.14);
+  --cds-chart-muted: #9aa9b5; --cds-chart-grid: #e8edf1; --cds-chart-axis: #b4c0ca; --cds-chart-reference: #7a8b99; --cds-chart-status-critical: #d64545;
+  --cds-font-size-caption: 12px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 40px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px; --cds-pad-xl: 32px;
+  --cds-radius: 10px; --cds-dur-slow: .4s;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0f1720; --color-panel: #17222d; --color-fg: #e6edf3; --color-fg-muted: #9fb0bf; --color-border-line: #2a3846;
+    --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
+    --cds-text-secondary: #9fb0bf; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+    --cds-chart-muted: #6d8091; --cds-chart-grid: #24313d; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #f07167;
+  }
+}
+:root[data-theme="dark"] {
+  --color-bg: #0f1720; --color-panel: #17222d; --color-fg: #e6edf3; --color-fg-muted: #9fb0bf; --color-border-line: #2a3846;
+  --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
+  --cds-text-secondary: #9fb0bf; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+  --cds-chart-muted: #6d8091; --cds-chart-grid: #24313d; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #f07167;
+}
+html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+#dash-root { --dash-gutter: 16px; padding: 24px var(--dash-gutter) 48px; box-sizing: border-box; max-width: 100vw; overflow-x: hidden; }
+#dash-root svg text { font-family: var(--font-anthropic-sans); }
+.dash-skeleton { color: transparent !important; position: relative; min-height: 1em; }
+.dash-skeleton::after { content: ""; position: absolute; inset: 20% 0; max-width: 60%; border-radius: 6px; background: var(--cds-chart-grid); animation: sk 1.2s ease-in-out infinite alternate; }
+@keyframes sk { from { opacity: .5 } to { opacity: 1 } }
+.site-foot { max-width: 1280px; margin: 32px auto 0; font-size: 12px; color: var(--color-fg-muted); line-height: 1.6; }
+.site-foot a { color: inherit; }
+</style>
+<script>
+/* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
+(function () {
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv"};
+  const store = {}; const calcs = []; const subs = [];
+  Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
+  const dash = {
+    colors: ["#0e7c86", "#f2b134", "#6cc3b6", "#f26b5b", "#2e86ab", "#7a5ea8", "#8aa29e", "#c9733c"],
+    data(id) { return store[id] || { status: "missing", data: [], columns: [], meta: [] }; },
+    calc(id, spec) { calcs.push([id, spec]); store[id] = { status: "loading", data: [], columns: [], meta: [] }; },
+    loader() {}, refresh() {}, params() { return {}; }, setParams() {}, resetParams() {},
+    setLink(name) { try { history.replaceState(null, "", "#" + name); } catch (e) {} },
+    onData(fn) { subs.push(fn); try { fn(); } catch (e) { console.error(e); } },
+  };
+  const run = () => subs.forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
+  function runCalcs() {
+    calcs.forEach(([id, spec]) => {
+      try {
+        const rows = spec.inputs.map(i => store[i].data);
+        const out = spec.fn(...rows);
+        store[id] = { status: "ok", data: out, columns: Array.isArray(out) && out[0] ? Object.keys(out[0]) : [], meta: [] };
+      } catch (e) { console.error("calc", id, e); store[id] = { status: "error", data: [], columns: [], meta: [], message: String(e) }; }
+    });
+  }
+  dash._start = function () {
+    Promise.all(Object.entries(FILES).map(([id, f]) => d3.csv("data/" + f).then(rows => {
+      store[id] = { status: "ok", data: rows, columns: rows.columns, meta: [] };
+    }).catch(e => { store[id] = { status: "error", data: [], columns: [], meta: [], message: String(e) }; })))
+      .then(() => { runCalcs(); run(); });
+    let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(run, 150); });
+  };
+  window.dash = dash;
+})();
+</script>
+</head>
+<body>
+<div id="dash-root">
+<style>
+#dash-root { --dash-gutter: clamp(12px, 3vw, 32px); }
+.mp { font-family: var(--font-anthropic-sans); max-width: 1280px; margin-inline: auto; display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.mp h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.mp .lead { color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-body); line-height: 1.6; }
+.mp .lead b { color: var(--color-fg); font-weight: 600; }
+.mp h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.mp .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-md); line-height: 1.5; }
+.mp .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.mp .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); }
+.mp .tile .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; align-items: center; gap: 6px; }
+.mp .tile .v { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-weight: 400; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.mp .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.mp .g-good { background: var(--color-ok); } .mp .g-ok { background: var(--cds-chart-muted); } .mp .g-warn { background: var(--color-warn); } .mp .g-bad { background: var(--color-bad); }
+.mp .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .toolbar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; margin-bottom: var(--cds-gap-sm); }
+.mp input[type=search], .mp select { font: inherit; font-size: var(--cds-font-size-caption); padding: 6px 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); }
+.mp input[type=search] { flex: 1 1 12rem; }
+.mp .tbl-wrap { max-height: 560px; overflow: auto; border-top: 1px solid var(--color-border-line); }
+.mp table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.mp th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; white-space: nowrap; }
+.mp th button { all: unset; cursor: pointer; padding: 8px 8px; display: block; }
+.mp th[aria-sort=ascending] button::after { content: " ↑"; } .mp th[aria-sort=descending] button::after { content: " ↓"; }
+.mp td { padding: 7px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+.mp tbody tr { cursor: pointer; }
+.mp tbody tr:hover, .mp tbody tr.sel { background: var(--cds-chart-grid); }
+.mp td.num { white-space: nowrap; }
+.mp .bar { display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px; background: var(--cds-chart-muted); }
+.mp td.comp { font-weight: 600; }
+.mp .pill { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.mp .na { color: var(--color-fg-muted); }
+@media (max-width: 720px) { .mp .hide-sm { display: none; } }
+.mp .detail h3 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); margin: 0 0 var(--cds-gap-xs); }
+.mp .dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); margin-top: var(--cds-gap-md); }
+.mp .dbox { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); }
+.mp .dbox .t { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; justify-content: space-between; }
+.mp .dbox .s { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); }
+.mp .dbox dl { margin: var(--cds-gap-xs) 0 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: var(--cds-font-size-caption); }
+.mp .dbox dt { color: var(--color-fg-muted); } .mp .dbox dd { margin: 0; text-align: right; }
+.mp .chart { position: relative; min-height: 240px; }
+.mp .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); display: none; z-index: 5; white-space: nowrap; }
+.mp .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.mp .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mp .method { font-size: var(--cds-font-size-caption); line-height: 1.7; color: var(--color-fg); }
+.mp .method table td, .mp .method table th { padding: 6px 8px; position: static; }
+.mp .method p { margin: 0 0 var(--cds-gap-sm); }
+.mp .xs { display: flex; flex-direction: column; gap: var(--cds-gap-md); border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-lg); }
+.mp .xs-h { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+.mp #heat td { text-align: center; min-width: 4.5rem; }
+.mp #heat td:first-child { text-align: left; white-space: normal; }
+.mp #heat tbody tr { cursor: default; }
+.mp .sig::after { content: " ●"; font-size: 9px; vertical-align: middle; }
+.mp .xs .card { position: relative; }
+.mp .nav { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-sm); }
+.mp .nav a { color: var(--color-fg-muted); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="mp">
+  <header id="top">
+    <h1>台灣海洋保護區成效儀表板</h1>
+    <p class="lead dash-skeleton" id="lead">—</p>
+    <nav class="nav"><a href="#ranking">成效排名</a><a href="#cross">分類交叉分析</a><a href="#pressure">人口與漁業壓力</a><a href="#method">評分方法</a></nav>
+  </header>
+
+  <section class="tiles" id="tiles">
+    <div class="tile"><div class="k">評估保護區</div><div class="v dash-skeleton" data-source="summary" data-field="total">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-good"></i>良好（≥70）</div><div class="v dash-skeleton" data-source="summary" data-field="good">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-ok"></i>尚可（55–69）</div><div class="v dash-skeleton" data-source="summary" data-field="ok">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-warn"></i>待加強（40–54）</div><div class="v dash-skeleton" data-source="summary" data-field="warn">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-bad"></i>不佳（&lt;40）</div><div class="v dash-skeleton" data-source="summary" data-field="bad">—</div></div>
+    <div class="tile"><div class="k">四項資料齊全</div><div class="v dash-skeleton" data-source="summary" data-field="full4">—</div></div>
+  </section>
+
+  <section class="card" id="ranking">
+    <h2>各保護區綜合成效</h2>
+    <p class="note">每項 0–100 分，越高越好；綜合分為有資料面向的平均。點一列看該區四項原始指標。灰字「—」表示該面向無資料。</p>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="搜尋保護區名稱">
+      <select id="cat"><option value="">全部類型</option></select>
+      <select id="grd"><option value="">全部等級</option><option>良好</option><option>尚可</option><option>待加強</option><option>不佳</option><option>資料不足</option></select>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl" data-source="mpa" data-row-key="no">
+        <thead><tr>
+          <th data-field="no" class="hide-sm"><button data-k="no">#</button></th>
+          <th data-field="mpa"><button data-k="mpa">保護區</button></th>
+          <th data-field="category" class="hide-sm"><button data-k="category">類型</button></th>
+          <th data-field="score_wq"><button data-k="score_wq">水質</button></th>
+          <th data-field="score_debris"><button data-k="score_debris">海廢</button></th>
+          <th data-field="score_bio"><button data-k="score_bio">生物多樣性</button></th>
+          <th data-field="score_enf"><button data-k="score_enf">執法</button></th>
+          <th data-field="score" aria-sort="descending"><button data-k="score">綜合</button></th>
+          <th data-field="grade"><button data-k="grade">等級</button></th>
+          <th data-field="weakest" class="hide-sm"><button data-k="weakest">最弱面向</button></th>
+          <th data-field="grade_2022" class="hide-sm"><button data-k="grade_2022">海保署 2022 分級</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card detail" id="detail">
+    <h3 id="d-name" data-source="mpa" data-field="mpa">—</h3>
+    <p class="note" id="d-sub">—</p>
+    <div class="dgrid">
+      <div class="dbox"><div class="t"><span>水質</span><span>海保署測站，近 3 年</span></div>
+        <div class="s" data-source="mpa" data-field="score_wq">—</div>
+        <dl><dt>現況</dt><dd data-source="mpa" data-field="wq_status">—</dd>
+            <dt>長期趨勢</dt><dd data-source="mpa" data-field="wq_trend">—</dd>
+            <dt>超標項目</dt><dd data-source="mpa" data-field="wq_exceed">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>海洋廢棄物</span><span>淨灘監測 2020–2024</span></div>
+        <div class="s" data-source="mpa" data-field="score_debris">—</div>
+        <dl><dt>平均 kg／次</dt><dd data-source="mpa" data-field="debris_kg">—</dd>
+            <dt>2020→2024 變化 %</dt><dd data-source="mpa" data-field="debris_change_pct">—</dd>
+            <dt>趨勢</dt><dd data-source="mpa" data-field="debris_trend">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>生物多樣性（魚類 eDNA）</span><span>2021–2024</span></div>
+        <div class="s" data-source="mpa" data-field="score_bio">—</div>
+        <dl><dt>棲地</dt><dd data-source="mpa" data-field="edna_habitat">—</dd>
+            <dt>每次採樣分類單元</dt><dd data-source="mpa" data-field="edna_mean">—</dd>
+            <dt>合計分類單元</dt><dd data-source="mpa" data-field="edna_taxa">—</dd>
+            <dt>採樣次數</dt><dd data-source="mpa" data-field="edna_samples">—</dd>
+            <dt>外來種數</dt><dd data-source="mpa" data-field="edna_exotic">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>執法強度</span><span>巡守通報 112–114 年</span></div>
+        <div class="s" data-source="mpa" data-field="score_enf">—</div>
+        <dl><dt>執法型態</dt><dd data-source="mpa" data-field="enf_type">—</dd>
+            <dt>巡守時數</dt><dd data-source="mpa" data-field="patrol_hours">—</dd>
+            <dt>取締件數</dt><dd data-source="mpa" data-field="cases">—</dd>
+            <dt>處分件數</dt><dd data-source="mpa" data-field="punished">—</dd>
+            <dt>處分率</dt><dd data-source="mpa" data-field="pun_rate">—</dd></dl></div>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section class="card" id="bycat">
+      <h2>依保護區類型比較四個面向</h2>
+      <p class="note">各類型的平均分數（只計有資料者）。點與點距離越大，代表該類型的面向越不均衡。</p>
+      <div class="legend" id="lg"></div>
+      <div class="chart" id="catchart" data-source="bycat"></div>
+    </section>
+    <section class="card" id="cover">
+      <h2>資料覆蓋</h2>
+      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性與海廢缺口最大，綜合分在資料少的區應保守解讀。</p>
+      <div class="chart" id="covchart" data-source="coverage"></div>
+    </section>
+  </div>
+
+  <section id="cross" class="xs">
+    <h2 class="xs-h">成效與分類的交叉分析</h2>
+    <p class="lead dash-skeleton" id="x-lead">—</p>
+
+    <div class="card">
+      <h2>關聯強度總表</h2>
+      <p class="note">類別變項用 Kruskal-Wallis（ε²，0 表示無差異，≥0.06 算中等）；連續或順序變項用 Spearman ρ。保護等級與建立階段的順序編碼是 1＝完全保護、4＝低度保護，所以 <b>ρ 為負代表越嚴格分數越高</b>。● 表示 p&lt;0.05（未校正），游標移到格子上可看 n、p 與 FDR 校正後的 q。</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="heat" data-source="heat" data-row-key="variable">
+          <thead><tr><th data-field="variable" style="padding:8px">變項</th><th data-field="綜合" style="padding:8px">綜合</th><th data-field="水質" style="padding:8px">水質</th><th data-field="海廢" style="padding:8px">海廢</th><th data-field="生物多樣性" style="padding:8px">生物多樣性</th><th data-field="執法" style="padding:8px">執法</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="tip" id="heat-tip"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2 id="strip-title">各分類的綜合分數分布</h2>
+        <p class="note">每個點是一處保護區，粗線是中位數。括號內為處數。</p>
+        <div class="toolbar"><select id="x-group">
+          <option value="best_level">最高保護等級（任一分區）</option>
+          <option value="dom_level">主要保護等級（最大分區）</option>
+          <option value="law">法源</option>
+          <option value="iucn">IUCN 分類</option>
+          <option value="type">保護區類型</option>
+        </select>
+        <select id="x-dim"><option value="score">綜合</option><option value="score_wq">水質</option><option value="score_debris">海廢</option><option value="score_bio">生物多樣性</option><option value="score_enf">執法</option></select></div>
+        <div class="chart" id="strip" data-source="cross"></div>
+      </div>
+      <div class="card">
+        <h2>面積、成立年份與綜合分數</h2>
+        <p class="note">點的顏色是主要保護等級。面積為對數尺度；看不出斜率，表示大小與歷史都無法預測成效。</p>
+        <div class="toolbar"><select id="x-x"><option value="area_km2">海域面積（km²，對數）</option><option value="year">成立年份</option></select></div>
+        <div class="legend" id="sc-lg"></div>
+        <div class="chart" id="scatter" data-source="cross"></div>
+      </div>
+    </div>
+
+    <div class="card method" id="x-read">
+      <h2>怎麼解讀</h2>
+      <p><b>綜合成效和分類幾乎無關。</b>類型、法源、IUCN 分類、保護等級、面積、成立年份與綜合分的關聯都不顯著；類別變項的 ε² 都接近 0，連續變項的 |ρ| 都在 0.2 以下（例如面積 ρ＝<span data-source="tests" data-field="effect" data-where="id=31">—</span>、成立年數 ρ＝<span data-source="tests" data-field="effect" data-where="id=36">—</span>）。海保署 2022 分級與本頁綜合分也沒有關聯。換句話說，「紙上的保護等級」和「海裡與執法上看得到的狀況」是兩回事。</p>
+      <p><b>唯一穩定的訊號在執法。</b>有完全或高度保護分區的保護區，執法分數較高（最高保護等級 ρ＝<span data-source="tests" data-field="effect" data-where="id=45">—</span>，p＝<span data-source="tests" data-field="p" data-where="id=45">—</span>；完全＋高度保護面積占比 ρ＝<span data-source="tests" data-field="effect" data-where="id=55">—</span>）。控制保護區類型後仍成立，在漁業法保育區內部也看得到。但要注意：這主要來自「有巡守、有查獲」，而不是「有處分」——完全保護區的取締多、處分率反而低（琉球、東沙、南方四島）。比較像是「規定越嚴，越有東西可以抓」，不等於執法有效。</p>
+      <p><b>兩個看似顯著、其實是混淆的結果。</b>①成立越久海廢越少（ρ＝<span data-source="tests" data-field="effect" data-where="id=38">—</span>）：老的保護區多是 1978–1983 年劃設的花東漁業保育區，東海岸本來就少垃圾；控制「是否在花東」後，年份的效果消失。②建立階段「積極管理」的生物多樣性反而較低（ρ＝<span data-source="tests" data-field="effect" data-where="id=59">—</span>）：分類表裡 22 處濕地的活動欄是套用範本，「積極管理」標得過寬，加上 eDNA 多為單次採樣，這個結果不宜解讀。</p>
+      <p><b>多重比較。</b>共做 <span data-source="xsum" data-field="n_tests">—</span> 項檢定，<span data-source="xsum" data-field="n_nominal">—</span> 項 p&lt;0.05，純屬隨機也會出現約 3 項；經 FDR 校正後沒有一項低於 q＜0.1。樣本量方面，71 處只能偵測 |ρ|≳0.33 的關聯，國家公園（4 處）、自然保留區（3 處）等小組幾乎沒有檢定力，因此「無關」應讀作「沒有證據顯示有關」。</p>
+      <p><b>對管理的意涵。</b>分類與等級決定的是「允許做什麼」，成效則取決於有沒有人巡守、查到之後有沒有處分、陸源壓力（海廢、營養鹽）有沒有被處理。要讓保護等級反映在成效上，下一步是逐區補齊處分率與監測資料，並把海廢與陸源污染納入管理計畫。</p>
+    </div>
+  </section>
+
+  <section id="pressure" class="xs">
+    <h2 class="xs-h">成效與人口、漁業壓力、管理投入</h2>
+    <p class="lead dash-skeleton" id="p-lead">—</p>
+
+    <div class="card">
+      <h2>多變項模型：誰最能解釋成效差異</h2>
+      <p class="note">標準化迴歸係數：自變項每增加 1 個標準差，分數變化多少分（橫線為 95% 信賴區間）。三個自變項同時放入，彼此控制。「生態環境」為水質、海廢、生物多樣性三項平均，不含執法，以避免巡守時數和執法分數互相套用。</p>
+      <div class="toolbar"><select id="p-model"><option value="M1">生態環境（不含執法）</option><option value="M2">生態環境（控制花東）</option><option value="M3">海廢</option><option value="M4">綜合</option></select></div>
+      <div class="chart" id="coef" data-source="pmodels"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>壓力或投入與成效的散佈</h2>
+        <p class="note">每點一處保護區；橘色為花東，灰色為其他地區。</p>
+        <div class="toolbar">
+          <select id="p-x"><option value="density">鄰近鄉鎮人口密度（人／km²，對數）</option><option value="fish_share">海廢中漁業來源占比（%）</option><option value="patrol_hours">巡守時數（112–114 年，對數）</option></select>
+          <select id="p-y"><option value="eco">生態環境（不含執法）</option><option value="score_debris">海廢</option><option value="score_wq">水質</option><option value="score_bio">生物多樣性</option><option value="score">綜合</option></select>
+        </div>
+        <div class="chart" id="pscatter" data-source="pmpa"></div>
+      </div>
+      <div class="card">
+        <h2>依人口密度分組的平均分數</h2>
+        <p class="note">鄰近鄉鎮人口密度三組；括號內為處數。</p>
+        <div class="chart" id="pband" data-source="pband"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>單變項相關（Spearman ρ）</h2>
+      <p class="note">ρ 為負表示壓力或投入越高、分數越低。標「＊」的格子有循環關係（例如巡守時數本來就是執法分數的一部分），不能當作證據。● 為 p&lt;0.05。</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="pheat" data-source="pheat" data-row-key="variable">
+          <thead><tr><th data-field="variable" style="padding:8px">變項</th><th data-field="綜合" style="padding:8px">綜合</th><th data-field="生態環境（不含執法）" style="padding:8px">生態環境</th><th data-field="水質" style="padding:8px">水質</th><th data-field="海廢" style="padding:8px">海廢</th><th data-field="生物多樣性" style="padding:8px">生物多樣性</th><th data-field="執法" style="padding:8px">執法</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="p-read">
+      <h2>怎麼解讀</h2>
+      <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；同時控制漁業來源占比後仍成立（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口無關：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
+      <p><b>漁業與養殖相關的壓力，比人口更能解釋成效。</b>淨灘垃圾中漁業來源（漁網、浮具、保麗龍、蚵架）占比越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=16">—</span>）。在多變項模型中，它是生態環境分數最強的預測因子（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-fish_sharez">—</span> 分），而人口密度放進同一模型後只剩 <span data-source="pmodels" data-field="beta" data-where="key=M1-ldz">—</span> 分、不顯著。也就是說，西南沿海濕地與澎湖、馬祖的低分，主要來自漁業與養殖廢棄物，而不只是住的人多。</p>
+      <p><b>但沒有證據顯示漁業讓魚類資源變少。</b>漁業來源占比和 eDNA 生物多樣性完全無關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=17">—</span>）。這不代表漁撈沒有影響，而是現有資料測不到：eDNA 只記出現與否、多為單次採樣，看不出數量或體型；這裡的漁業指標也只是海廢組成，不是真正的漁獲努力量。</p>
+      <p><b>管理投入和生態成果沒有正相關，甚至略為負相關。</b>巡守時數和生態環境分數 ρ＝<span data-source="ptests" data-field="rho" data-where="id=26">—</span>，控制人口與漁業後每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-lhz">—</span> 分。巡守時數只和執法分數正相關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=30">—</span>），而那是計分方式本身造成的。最可能的解釋是因果反向：受矚目或壓力大的地方（例如觀新藻礁、淡水河、許厝港）投入越多巡守，而巡守本身管不到陸源垃圾與漁業廢棄物。所以你的推論大致成立：<b>成效主要反映外部壓力，和目前形式的管理投入關聯不高。</b></p>
+      <p><b>限制。</b>人口是保護區所在或鄰接鄉鎮的整體人口，不是到海岸的距離；人口數取自維基百科鄉鎮列表，頁面未標資料年份。管理投入只有巡守人力與時數，沒有經費、管理計畫、監測投入。這是一次性的橫斷面資料，只能看關聯，不能推因果。</p>
+    </div>
+  </section>
+
+  <section class="card method" id="method">
+    <h2>評分方法</h2>
+    <p class="note">本頁為依公開資料的非官方評估，用於找出管理優先順序，不等於海保署官方成效分級。</p>
+    <table>
+      <thead><tr><th>面向</th><th>資料來源</th><th>計分方式（0–100）</th></tr></thead>
+      <tbody>
+        <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
+        <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
+        <tr><td>生物多樣性</td><td>海保署保護區站點魚類 eDNA（2021–2024）</td><td>「每次採樣分類單元數」在同棲地（礁岩／河口）內的百分位，換算為 20–100；外來種占比 &gt;10% 扣 10、&gt;20% 扣 20。只有 40 處有採樣。</td></tr>
+        <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: var(--cds-gap-md)"><b>人口與漁業壓力</b>：人口密度為保護區所在或鄰接鄉鎮的人口除以鄉鎮面積（維基百科「List of townships/cities and districts in Taiwan」，頁面未標年份）；東沙、棉花嶼花瓶嶼無常住人口記為 0；番仔石位置待確認未納入。漁業壓力以淨灘監測海廢中漁業相關品項占比代表（2020、2024 年組成）。管理投入為海保署 MPA 平台 112–114 年巡守時數與人數。迴歸為 OLS、自變項標準化。</p>
+    <p><b>交叉分析</b>：分類、法源、IUCN、保護等級、面積、成立年份與建立階段取自使用者提供的「臺灣海洋保護區之類型、IUCN 分類與保護等級（檢核修正版）」MPAbasic 工作表；保護等級用「最終保護等級（自動）」，以分區彙整為「最高等級」「最大分區等級」與「完全＋高度保護面積占比」。IUCN 用該表的建議值（自然保留區為 Ia）。</p>
+    <p>等級：綜合 ≥70 良好、55–69 尚可、40–54 待加強、&lt;40 不佳；只有兩個面向有資料者標「暫評」，少於兩個面向標「資料不足」。</p>
+    <p><b>限制</b>：eDNA 多為單次採樣、只記出現與否，無法反映保護前後差異；執法「零查獲」可能是無違規，也可能是沒查到；海廢測點座標依地名推定（誤差 1–3 km）；四個面向等權重，若要強調生態成果可再調整。</p>
+  </section>
+</div>
+
+<script>
+const GR = { "良好": "g-good", "尚可": "g-ok", "待加強": "g-warn", "不佳": "g-bad" };
+window.mpGradeClass = g => { const k = Object.keys(GR).find(x => (g || "").startsWith(x)); return k ? GR[k] : ""; };
+
+dash.calc("summary", {
+  title: "成效等級統計",
+  description: "依綜合等級計數保護區，並計算四項資料齊全的數量。",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const g = k => mpa.filter(r => (r.grade || "").startsWith(k)).length;
+    return [{ total: mpa.length, good: g("良好"), ok: g("尚可"), warn: g("待加強"), bad: g("不佳"),
+      nodata: g("資料不足"), full4: mpa.filter(r => Number(r.dims) === 4).length }];
+  }
+});
+
+dash.calc("bycat", {
+  title: "各類型四面向平均",
+  description: "依保護區類型平均四個面向分數與綜合分（空值不計）。",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const cats = [...new Set(mpa.map(r => r.category))];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+    return cats.map(c => { const rs = mpa.filter(r => r.category === c);
+      return { category: c, n: rs.length, wq: avg(rs, "score_wq"), debris: avg(rs, "score_debris"), bio: avg(rs, "score_bio"), enf: avg(rs, "score_enf"), score: avg(rs, "score") }; });
+  }
+});
+
+dash.calc("coverage", {
+  title: "各面向資料覆蓋",
+  description: "計算每個面向有分數的保護區數。",
+  inputs: ["mpa"],
+  fn: (mpa) => [["水質", "score_wq"], ["海廢", "score_debris"], ["生物多樣性", "score_bio"], ["執法", "score_enf"]]
+    .map(([dim, k]) => ({ dim, n: mpa.filter(r => r[k] !== "" && r[k] != null).length }))
+});
+
+dash.calc("lead", {
+  title: "摘要句的數字",
+  description: "找出綜合分最高與最低的保護區，以及最常見的最弱面向。",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const s = mpa.filter(r => r.score !== "" && Number(r.dims) >= 3).sort((a, b) => b.score - a.score);
+    const cnt = {}; mpa.forEach(r => { if (r.weakest) cnt[r.weakest] = (cnt[r.weakest] || 0) + 1; });
+    const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+    return [{ best: s[0].mpa, best_score: s[0].score, worst: s[s.length - 1].mpa, worst_score: s[s.length - 1].score, weak_dim: top[0], weak_n: top[1] }];
+  }
+});
+</script>
+
+<script>
+(function () {
+  const fmt = d3.format(",");
+  let sortK = "score", sortDir = -1, selNo = null, built = false;
+  const tbody = document.querySelector("#tbl tbody");
+  const $ = id => document.getElementById(id);
+  const cols = ["no", "mpa", "category", "score_wq", "score_debris", "score_bio", "score_enf", "score", "grade", "weakest", "grade_2022"];
+  const numCols = new Set(["no", "score_wq", "score_debris", "score_bio", "score_enf", "score"]);
+
+  function scoreCell(td, v, comp) {
+    td.className = "num" + (comp ? " comp" : "");
+    if (v === "" || v == null) { td.textContent = "—"; td.classList.add("na"); return; }
+    td.textContent = String(v);
+    const b = document.createElement("span"); b.className = "bar";
+    b.style.width = Math.max(2, Number(v) * 0.42) + "px";
+    b.style.background = Number(v) >= 70 ? "var(--color-ok)" : Number(v) >= 55 ? "var(--cds-chart-muted)" : Number(v) >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+    td.appendChild(b);
+  }
+
+  function renderTable(rows) {
+    const q = $("q").value.trim(), c = $("cat").value, g = $("grd").value;
+    let rs = rows.filter(r => (!q || r.mpa.includes(q)) && (!c || r.category === c) && (!g || (r.grade || "").startsWith(g)));
+    rs.sort((a, b) => {
+      let x = a[sortK], y = b[sortK];
+      if (numCols.has(sortK)) { x = x === "" ? -1 : Number(x); y = y === "" ? -1 : Number(y); return (x - y) * sortDir; }
+      return String(x).localeCompare(String(y), "zh-Hant") * sortDir;
+    });
+    tbody.textContent = "";
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      tr.dataset.key = String(r.no);
+      if (String(r.no) === String(selNo)) tr.classList.add("sel");
+      cols.forEach(k => {
+        const td = document.createElement("td");
+        if (["no", "category", "weakest", "grade_2022"].includes(k)) td.classList.add("hide-sm");
+        if (k.startsWith("score")) scoreCell(td, r[k], k === "score");
+        else if (k === "grade") { const s = document.createElement("span"); s.className = "pill"; const d = document.createElement("i"); d.className = "dot " + mpGradeClass(r.grade); s.appendChild(d); s.appendChild(document.createTextNode(r.grade)); td.appendChild(s); }
+        else td.textContent = r[k] === "" ? "—" : String(r[k]);
+        tr.appendChild(td);
+      });
+      tr.addEventListener("click", () => { selNo = r.no; showDetail(rows); tbody.querySelectorAll("tr").forEach(t => t.classList.toggle("sel", t.dataset.key === String(r.no))); $("detail").scrollIntoView({ behavior: "smooth", block: "nearest" }); dash.setLink("detail"); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showDetail(rows) {
+    const r = rows.find(x => String(x.no) === String(selNo)) || rows[0];
+    if (!r) return;
+    document.querySelectorAll('#detail [data-source="mpa"]').forEach(el => {
+      el.setAttribute("data-where", "no=" + r.no);
+      const v = r[el.dataset.field];
+      el.textContent = v === "" || v == null ? "—" : String(v);
+      el.classList.remove("dash-skeleton");
+    });
+    $("d-sub").textContent = `${r.category}｜綜合 ${r.score === "" ? "—" : r.score} 分（${r.grade}）｜最弱面向：${r.weakest || "—"}｜海保署 2022 分級：${r.grade_2022}`;
+  }
+
+  document.querySelectorAll("#tbl th button").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.k; sortDir = k === sortK ? -sortDir : (numCols.has(k) ? -1 : 1); sortK = k;
+    document.querySelectorAll("#tbl th").forEach(th => th.removeAttribute("aria-sort"));
+    b.parentElement.setAttribute("aria-sort", sortDir > 0 ? "ascending" : "descending");
+    const d = dash.data("mpa"); if (d.status === "ok") renderTable(d.data);
+  }));
+  ["q", "cat", "grd"].forEach(id => $(id).addEventListener("input", () => { const d = dash.data("mpa"); if (d.status === "ok") renderTable(d.data); }));
+
+  function drawCats() {
+    const el = $("catchart"), d = dash.data("bycat");
+    el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const dims = [["wq", "水質"], ["debris", "海廢"], ["bio", "生物多樣性"], ["enf", "執法"]];
+    const lg = $("lg"); lg.textContent = "";
+    dims.forEach(([k, n], i) => { const s = document.createElement("span"); const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = dash.colors[i]; s.appendChild(dot); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+    const rows = d.data.slice().sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    const W = el.clientWidth || 400, rowH = 34;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${rows.length * rowH + 30}`);
+    const meas = svg.append("text").attr("font-size", 12).text("自然保留區/紀念物（00）");
+    const labW = Math.min(W * 0.45, meas.node().getComputedTextLength() + 10); meas.remove();
+    const x = d3.scaleLinear([0, 100], [labW, W - 12]);
+    const g = svg.append("g");
+    [0, 25, 50, 75, 100].forEach(t => { g.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      g.append("text").attr("x", x(t)).attr("y", rows.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach((r, i) => {
+      const y = i * rowH + rowH / 2;
+      g.append("text").attr("x", 0).attr("y", y + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${r.category}（${r.n}）`);
+      const vals = dims.map(([k], j) => ({ k, j, v: r[k] })).filter(o => o.v != null);
+      if (vals.length > 1) g.append("line").attr("x1", x(d3.min(vals, o => o.v))).attr("x2", x(d3.max(vals, o => o.v))).attr("y1", y).attr("y2", y).attr("stroke", "var(--cds-chart-axis)").attr("stroke-width", 2).attr("stroke-linecap", "round");
+      vals.forEach(o => g.append("circle").attr("cx", x(o.v)).attr("cy", y).attr("r", 6).attr("fill", dash.colors[o.j]).attr("stroke", "var(--color-panel)").attr("stroke-width", 1.5));
+      g.append("rect").attr("x", 0).attr("y", i * rowH).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+        .on("mousemove", ev => {
+          tip.textContent = ""; const h = document.createElement("div"); h.style.color = "var(--cds-text-secondary)"; h.textContent = r.category; tip.appendChild(h);
+          dims.forEach(([k, n], j) => { const l = document.createElement("div"); const sw = document.createElement("i"); sw.className = "dot"; sw.style.background = dash.colors[j]; sw.style.marginRight = "6px"; l.appendChild(sw); l.appendChild(document.createTextNode(`${n} ${r[k] ?? "—"}`)); tip.appendChild(l); });
+          const l2 = document.createElement("div"); l2.textContent = `綜合 ${r.score ?? "—"}`; l2.style.fontWeight = "600"; tip.appendChild(l2);
+          tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+          tip.style.left = Math.min(mx + 12, el.clientWidth - tip.offsetWidth - 4) + "px"; tip.style.top = (my + 12) + "px";
+        }).on("mouseleave", () => { tip.style.display = "none"; });
+    });
+    el.style.minHeight = (rows.length * rowH + 30) + "px";
+  }
+
+  function drawCov() {
+    const el = $("covchart"), d = dash.data("coverage");
+    el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const W = el.clientWidth || 400, rowH = 44, rows = d.data, labW = 84;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${rows.length * rowH}`);
+    const x = d3.scaleLinear([0, 71], [labW, W - 44]);
+    rows.forEach((r, i) => {
+      const y = i * rowH;
+      svg.append("text").attr("x", 0).attr("y", y + 22).attr("font-size", 12).attr("fill", "var(--color-fg)").text(r.dim);
+      svg.append("rect").attr("x", labW).attr("y", y + 10).attr("width", x(71) - labW).attr("height", 18).attr("rx", 4).attr("fill", "var(--cds-chart-grid)");
+      svg.append("rect").attr("x", labW).attr("y", y + 10).attr("width", x(r.n) - labW).attr("height", 18).attr("rx", 4).attr("fill", dash.colors[i]);
+      svg.append("text").attr("x", x(r.n) + 6).attr("y", y + 23).attr("font-size", 12).attr("fill", "var(--color-fg-muted)").text(fmt(r.n));
+    });
+    el.style.minHeight = (rows.length * rowH) + "px";
+  }
+
+  dash.onData(() => {
+    const d = dash.data("mpa");
+    if (d.status === "ok") {
+      const rows = d.data;
+      if (!built) { const sel = $("cat"); [...new Set(rows.map(r => r.category))].forEach(c => { const o = document.createElement("option"); o.textContent = c; sel.appendChild(o); }); built = true; }
+      renderTable(rows);
+      if (selNo == null) { const top = rows.filter(r => r.score !== "").sort((a, b) => b.score - a.score)[0]; selNo = top ? top.no : rows[0].no; }
+      showDetail(rows);
+    } else { tbody.textContent = ""; }
+
+    const s = dash.data("summary");
+    document.querySelectorAll('[data-source="summary"]').forEach(el => {
+      if (s.status === "ok") { el.textContent = fmt(s.data[0][el.dataset.field]); el.classList.remove("dash-skeleton"); } else el.textContent = "—";
+    });
+
+    const L = dash.data("lead"), lead = $("lead");
+    if (L.status === "ok" && s.status === "ok") {
+      const a = L.data[0], b = s.data[0];
+      lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (t, src, f, strong) => { const e = document.createElement(strong ? "b" : "span"); e.textContent = t; if (src) { e.dataset.source = src; e.dataset.field = f; } lead.appendChild(e); };
+      add("整合水質、海廢、魚類 eDNA 與執法四項指標評估 71 處保護區：");
+      add(String(b.good), "summary", "good", true); add(" 處良好、");
+      add(String(b.bad), "summary", "bad", true); add(" 處不佳。最常拖累成效的是");
+      add(a.weak_dim, "lead", "weak_dim", true); add("（");
+      add(String(a.weak_n), "lead", "weak_n"); add(" 處以它為最弱面向）；水質普遍良好，差異主要來自海廢與執法。三項以上資料者中，");
+      add(a.best, "lead", "best", true); add(" 最高（"); add(String(a.best_score), "lead", "best_score"); add(" 分），");
+      add(a.worst, "lead", "worst", true); add(" 最低（"); add(String(a.worst_score), "lead", "worst_score"); add(" 分）。");
+    }
+    drawCats(); drawCov();
+  });
+
+  const named = document.getElementById(location.hash.slice(1));
+  if (named) named.scrollIntoView();
+})();
+</script>
+
+<script>
+dash.calc("heat", {
+  title: "關聯強度矩陣",
+  description: "把 60 項檢定整理成「變項 × 成效面向」的效果量表（ε² 或 ρ）。",
+  inputs: ["tests"],
+  fn: (tests) => {
+    const vars = [...new Set(tests.map(t => t.variable))];
+    return vars.map(v => { const o = { variable: v };
+      tests.filter(t => t.variable === v).forEach(t => { o[t.dimension] = Number(t.effect); }); return o; });
+  }
+});
+dash.calc("xsum", {
+  title: "交叉分析摘要數字",
+  description: "計算檢定總數、未校正 p<0.05 的數量、FDR q<0.1 的數量，以及綜合分數顯著的檢定數。",
+  inputs: ["tests"],
+  fn: (tests) => [{ n_tests: tests.length,
+    n_nominal: tests.filter(t => Number(t.p) < 0.05).length,
+    n_fdr: tests.filter(t => Number(t.q_fdr) < 0.1).length,
+    n_comp: tests.filter(t => t.dimension === "綜合").length,
+    n_comp_sig: tests.filter(t => t.dimension === "綜合" && Number(t.p) < 0.05).length }]
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const DIMS = ["綜合", "水質", "海廢", "生物多樣性", "執法"];
+  const LV = ["完全保護", "高度保護", "輕度保護", "低度保護"];
+  const LVC = { "完全保護": "var(--color-ok)", "高度保護": "var(--cds-chart-muted)", "輕度保護": "var(--color-warn)", "低度保護": "var(--color-bad)" };
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+
+  document.querySelectorAll(".mp .nav a").forEach(a => a.addEventListener("click", ev => {
+    ev.preventDefault(); const el = $(a.getAttribute("href").slice(1)); if (el) { el.scrollIntoView({ behavior: "smooth" }); dash.setLink(el.id); }
+  }));
+
+  function heat() {
+    const h = dash.data("heat"), t = dash.data("tests"), tb = document.querySelector("#heat tbody"), tip = $("heat-tip");
+    tb.textContent = "";
+    if (h.status !== "ok" || t.status !== "ok") return;
+    h.data.forEach(r => {
+      const tr = document.createElement("tr"); tr.dataset.key = r.variable;
+      const td0 = document.createElement("td"); td0.textContent = r.variable; tr.appendChild(td0);
+      DIMS.forEach(dm => {
+        const td = document.createElement("td"); const v = r[dm];
+        const rec = t.data.find(x => x.variable === r.variable && x.dimension === dm);
+        if (v == null || !rec) { td.textContent = "—"; td.className = "na"; tr.appendChild(td); return; }
+        const isRho = rec.effect_name === "ρ", mag = isRho ? Math.min(1, Math.abs(v) / 0.5) : Math.min(1, Math.max(0, v) / 0.14);
+        td.textContent = (isRho ? "ρ " : "ε² ") + d3.format("+.2f")(v).replace("+", isRho ? "+" : "");
+        td.style.background = `color-mix(in srgb, var(--cds-chart-status-critical) ${Math.round(mag * 45)}%, transparent)`;
+        if (Number(rec.p) < 0.05) { td.classList.add("sig"); td.style.fontWeight = "600"; }
+        td.addEventListener("mousemove", ev => {
+          tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = `${r.variable} × ${dm}`; tip.appendChild(a);
+          [`${rec.test}，n＝${rec.n}${rec.groups ? "，" + rec.groups + " 組" : ""}`, `p＝${d3.format(".3f")(rec.p)}`, `FDR q＝${d3.format(".3f")(rec.q_fdr)}`].forEach(x => { const l = document.createElement("div"); l.textContent = x; tip.appendChild(l); });
+          const box = tip.parentElement.getBoundingClientRect(); tip.style.display = "block";
+          tip.style.left = Math.min(ev.clientX - box.left + 12, box.width - tip.offsetWidth - 8) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        });
+        td.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function strip() {
+    const el = $("strip"), d = dash.data("cross"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const gk = $("x-group").value, yk = $("x-dim").value;
+    const rows = d.data.map(r => ({ ...r, y: num(r[yk]) })).filter(r => r.y != null);
+    let groups = [...new Set(rows.map(r => r[gk]))];
+    if (gk.endsWith("level")) groups = LV.filter(x => groups.includes(x));
+    else groups.sort((a, b) => d3.median(rows.filter(r => r[gk] === b), r => r.y) - d3.median(rows.filter(r => r[gk] === a), r => r.y));
+    const W = el.clientWidth || 400, rowH = 36, H = groups.length * rowH + 28;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const lab = g => `${g}（${rows.filter(r => r[gk] === g).length}）`;
+    const meas = svg.append("g"); let lw = 0;
+    groups.forEach(g => { const t = meas.append("text").attr("font-size", 12).text(lab(g)); lw = Math.max(lw, t.node().getComputedTextLength()); }); meas.remove();
+    lw = Math.min(lw + 12, W * 0.5);
+    const x = d3.scaleLinear([0, 100], [lw, W - 10]);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", groups.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", H - 8).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => {
+      const cy = i * rowH + rowH / 2, rs = rows.filter(r => r[gk] === g);
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(lab(g));
+      rs.forEach((r, j) => {
+        const jit = ((j * 7919) % 13 - 6) * 1.4;
+        svg.append("circle").attr("cx", x(r.y)).attr("cy", cy + jit).attr("r", 4).attr("fill", dash.colors[0]).attr("fill-opacity", 0.55)
+          .on("mousemove", ev => { tip.textContent = `${r.mpa}：${r.y}`; tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+            tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; })
+          .on("mouseleave", () => { tip.style.display = "none"; });
+      });
+      const md = d3.median(rs, r => r.y);
+      svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", cy - 12).attr("y2", cy + 12).attr("stroke", "var(--color-fg)").attr("stroke-width", 3).attr("stroke-linecap", "round");
+    });
+    el.style.minHeight = H + "px";
+  }
+
+  function scatter() {
+    const el = $("scatter"), d = dash.data("cross"); el.textContent = "";
+    const lg = $("sc-lg"); lg.textContent = "";
+    LV.forEach(l => { const s = document.createElement("span"); const i = document.createElement("i"); i.className = "dot"; i.style.background = LVC[l]; s.appendChild(i); s.appendChild(document.createTextNode(l)); lg.appendChild(s); });
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const xk = $("x-x").value, isA = xk === "area_km2";
+    const rows = d.data.map(r => ({ ...r, x: num(r[xk]), y: num(r.score) })).filter(r => r.y != null && r.x != null && (!isA || r.x > 0));
+    const W = el.clientWidth || 400, H = 280, m = { l: 34, r: 12, t: 10, b: 30 };
+    const x = isA ? d3.scaleLog(d3.extent(rows, r => r.x), [m.l, W - m.r]).nice() : d3.scaleLinear(d3.extent(rows, r => r.x), [m.l, W - m.r]).nice();
+    const y = d3.scaleLinear([0, 100], [H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(t)).attr("y2", y(t)).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(t) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const ticks = isA ? [0.001, 0.01, 0.1, 1, 10, 100, 1000].filter(t => t >= x.domain()[0] && t <= x.domain()[1]) : x.ticks(Math.max(3, Math.floor(W / 90)));
+    ticks.forEach(t => svg.append("text").attr("x", x(t)).attr("y", H - 10).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(isA ? d3.format("~g")(t) : String(t)));
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(r.x)).attr("cy", y(r.y)).attr("r", 5).attr("fill", LVC[r.dom_level] || "var(--cds-chart-muted)").attr("fill-opacity", 0.75).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${isA ? "面積 " + d3.format(",.3~f")(r.x) + " km²" : "成立 " + r.x}｜綜合 ${r.y}｜${r.dom_level}`; tip.appendChild(b);
+        tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el); tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  ["x-group", "x-dim"].forEach(id => $(id).addEventListener("change", strip));
+  $("x-x").addEventListener("change", scatter);
+
+  dash.onData(() => {
+    const t = dash.data("tests");
+    document.querySelectorAll('#x-read [data-source="xsum"]').forEach(el => { const x = dash.data("xsum"); el.textContent = x.status === "ok" ? String(x.data[0][el.dataset.field]) : "—"; });
+    document.querySelectorAll('#x-read [data-source="tests"]').forEach(el => {
+      if (t.status !== "ok") { el.textContent = "—"; return; }
+      const id = el.dataset.where.split("=")[1], r = t.data.find(x => String(x.id) === id);
+      if (!r) { el.textContent = "—"; return; }
+      el.textContent = el.dataset.field === "p" ? d3.format(".3f")(r.p) : d3.format("+.2f")(r.effect);
+    });
+    const s = dash.data("xsum"), L = $("x-lead");
+    if (s.status === "ok") { const a = s.data[0]; L.classList.remove("dash-skeleton"); L.textContent = "";
+      const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "xsum"; e.dataset.field = f; } L.appendChild(e); };
+      add("把綜合與四項分數，對保護區類型、法源、IUCN 分類、保護等級、面積、成立年份與建立階段做了 "); add(String(a.n_tests), "n_tests"); add(" 項檢定。綜合分數的 ");
+      add(String(a.n_comp), "n_comp"); add(" 項檢定中，有 "); add(String(a.n_comp_sig), "n_comp_sig", true); add(" 項達顯著；FDR 校正後全部 "); add(String(a.n_tests), "n_tests"); add(" 項中有 ");
+      add(String(a.n_fdr), "n_fdr", true); add(" 項達 q<0.1。分類與保護等級無法預測成效，唯一一致的訊號是：嚴格保護分區多的地方，執法分數較高。"); }
+    heat(); strip(); scatter();
+  });
+})();
+</script>
+
+<script>
+dash.calc("pheat", {
+  title: "壓力與投入相關矩陣",
+  description: "把人口、漁業、巡守變項與各成效面向的 Spearman ρ 整理成矩陣。",
+  inputs: ["ptests"],
+  fn: (ptests) => [...new Set(ptests.map(t => t.variable))].map(v => { const o = { variable: v };
+    ptests.filter(t => t.variable === v).forEach(t => { o[t.dimension] = Number(t.rho); }); return o; })
+});
+dash.calc("pband", {
+  title: "人口密度分組平均",
+  description: "依鄰近鄉鎮人口密度三組，平均生態環境、水質、海廢、生物多樣性、執法與綜合分（空值不計）。",
+  inputs: ["pmpa"],
+  fn: (pmpa) => {
+    const bands = ["<100 人／km²", "100–1,000", ">1,000"];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null && !isNaN(Number(x))).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
+    return bands.map(b => { const rs = pmpa.filter(r => r.dens_band === b);
+      return { band: b, n: rs.length, eco: avg(rs, "eco"), score_wq: avg(rs, "score_wq"), score_debris: avg(rs, "score_debris"), score_bio: avg(rs, "score_bio"), score_enf: avg(rs, "score_enf"), score: avg(rs, "score") }; });
+  }
+});
+dash.calc("plead", {
+  title: "壓力段摘要數字",
+  description: "取出人口密度—海廢、漁業占比—生態環境、巡守時數—生態環境三組關聯，以及低、高密度組生態環境平均。",
+  inputs: ["ptests", "pband"],
+  fn: (ptests, pband) => { const g = id => ptests.find(t => Number(t.id) === id);
+    return [{ dens_debris: Number(g(4).rho), fish_eco: Number(g(14).rho), hours_eco: Number(g(26).rho),
+      low_eco: pband[0].eco, high_eco: pband[2].eco }]; }
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const COLS = ["綜合", "生態環境（不含執法）", "水質", "海廢", "生物多樣性", "執法"];
+  const tipAt = (tip, el, ev) => { tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+    tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; };
+
+  function coef() {
+    const el = $("coef"), d = dash.data("pmodels"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const rows = d.data.filter(r => r.model === $("p-model").value);
+    const W = el.clientWidth || 400, rowH = 40, H = rows.length * rowH + 44;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const meas = svg.append("text").attr("font-size", 12).text("海廢漁業來源占比"); const lw = meas.node().getComputedTextLength() + 14; meas.remove();
+    const lim = Math.max(10, d3.max(rows, r => Math.max(Math.abs(Number(r.ci_low)), Math.abs(Number(r.ci_high))))) * 1.05;
+    const x = d3.scaleLinear([-lim, lim], [lw, W - 56]);
+    x.ticks(5).forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", t === 0 ? "var(--cds-chart-reference)" : "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", rows.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(d3.format("+")(t).replace("+0", "0")); });
+    svg.append("text").attr("x", x(-lim)).attr("y", H - 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("← 分數越低");
+    svg.append("text").attr("x", x(lim)).attr("y", H - 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("分數越高 →");
+    rows.forEach((r, i) => { const cy = i * rowH + rowH / 2, sig = Number(r.p) < 0.05;
+      const col = sig ? (Number(r.beta) < 0 ? "var(--cds-chart-status-critical)" : dash.colors[0]) : "var(--cds-chart-muted)";
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(r.term);
+      svg.append("line").attr("x1", x(r.ci_low)).attr("x2", x(r.ci_high)).attr("y1", cy).attr("y2", cy).attr("stroke", col).attr("stroke-width", 2).attr("stroke-linecap", "round");
+      svg.append("circle").attr("cx", x(r.beta)).attr("cy", cy).attr("r", 6).attr("fill", col);
+      svg.append("text").attr("x", W - 4).attr("y", cy + 4).attr("text-anchor", "end").attr("font-size", 12).attr("font-weight", sig ? 600 : 400).attr("fill", "var(--color-fg)").text(d3.format("+.1f")(r.beta) + (sig ? " ●" : "")); });
+    el.style.minHeight = H + "px";
+    const note = rows[0] ? `n＝${rows[0].n}，R²＝${d3.format(".2f")(rows[0].r2)}；● 表示 p<0.05` : "";
+    let cap = el.parentElement.querySelector(".coef-cap"); if (!cap) { cap = document.createElement("p"); cap.className = "note coef-cap"; cap.style.margin = "4px 0 0"; el.after(cap); } cap.textContent = note;
+  }
+
+  function scatter() {
+    const el = $("pscatter"), d = dash.data("pmpa"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const xk = $("p-x").value, yk = $("p-y").value, logx = xk !== "fish_share";
+    const rows = d.data.map(r => ({ ...r, x: num(r[xk]), y: num(r[yk]) })).filter(r => r.x != null && r.y != null).map(r => ({ ...r, xx: logx ? r.x + 1 : r.x }));
+    const W = el.clientWidth || 400, H = 280, m = { l: 34, r: 12, t: 10, b: 30 };
+    const x = logx ? d3.scaleLog([1, d3.max(rows, r => r.xx)], [m.l, W - m.r]).nice() : d3.scaleLinear([0, 100], [m.l, W - m.r]);
+    const y = d3.scaleLinear([0, 100], [H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(t)).attr("y2", y(t)).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(t) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const ticks = logx ? [1, 10, 100, 1000, 10000, 100000].filter(t => t <= x.domain()[1]) : [0, 25, 50, 75, 100];
+    ticks.forEach(t => svg.append("text").attr("x", x(t)).attr("y", H - 10).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(logx ? d3.format("~s")(t - (t === 1 ? 1 : 0)) : t + "%"));
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(r.xx)).attr("cy", y(r.y)).attr("r", 5)
+      .attr("fill", Number(r.east) === 1 ? "var(--color-warn)" : "var(--cds-chart-muted)").attr("fill-opacity", 0.8).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${$("p-x").selectedOptions[0].text.split("（")[0]} ${d3.format(",.0f")(r.x)}｜分數 ${d3.format(".0f")(r.y)}`; tip.appendChild(b);
+        const c = document.createElement("div"); c.textContent = r.townships; tip.appendChild(c); tipAt(tip, el, ev); })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  function band() {
+    const el = $("pband"), d = dash.data("pband"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const dims = [["eco", "生態環境"], ["score_debris", "海廢"], ["score_wq", "水質"], ["score_bio", "生物多樣性"], ["score_enf", "執法"]];
+    const W = el.clientWidth || 400, gH = 30, H = dims.length * (d.data.length * 14 + 22) + 20;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const lw = 70, x = d3.scaleLinear([0, 100], [lw, W - 40]);
+    const lg = document.createElement("div"); lg.className = "legend";
+    d.data.forEach((b, i) => { const s = document.createElement("span"); const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = dash.colors[i]; s.appendChild(dot); s.appendChild(document.createTextNode(`${b.band}（${b.n}）`)); lg.appendChild(s); });
+    el.prepend(lg);
+    let yy = 0;
+    dims.forEach(([k, n]) => { svg.append("text").attr("x", 0).attr("y", yy + 14).attr("font-size", 12).attr("fill", "var(--color-fg)").text(n);
+      d.data.forEach((b, i) => { const v = b[k], yb = yy + 4 + i * 14;
+        svg.append("rect").attr("x", lw).attr("y", yb).attr("width", v == null ? 0 : x(v) - lw).attr("height", 10).attr("rx", 4).attr("fill", dash.colors[i]);
+        svg.append("text").attr("x", (v == null ? lw : x(v)) + 4).attr("y", yb + 9).attr("font-size", 10).attr("fill", "var(--color-fg-muted)").text(v == null ? "—" : d3.format(".0f")(v)); });
+      yy += d.data.length * 14 + 22; });
+    el.style.minHeight = H + 30 + "px";
+  }
+
+  function heat() {
+    const h = dash.data("pheat"), t = dash.data("ptests"), tb = document.querySelector("#pheat tbody"); tb.textContent = "";
+    if (h.status !== "ok" || t.status !== "ok") return;
+    h.data.forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = r.variable;
+      const td0 = document.createElement("td"); td0.textContent = r.variable; tr.appendChild(td0);
+      COLS.forEach(c => { const td = document.createElement("td"); const v = r[c]; const rec = t.data.find(x => x.variable === r.variable && x.dimension === c);
+        if (v == null || !rec) { td.textContent = "—"; td.className = "na"; tr.appendChild(td); return; }
+        td.textContent = d3.format("+.2f")(v) + (rec.circular === "是" ? "＊" : "");
+        td.title = `n＝${rec.n}，p＝${d3.format(".3f")(rec.p)}，q＝${d3.format(".3f")(rec.q_fdr)}`;
+        const mag = Math.min(1, Math.abs(v) / 0.6);
+        td.style.background = rec.circular === "是" ? "transparent" : `color-mix(in srgb, ${v < 0 ? "var(--cds-chart-status-critical)" : "var(--color-ok)"} ${Math.round(mag * 45)}%, transparent)`;
+        if (rec.circular === "是") td.style.color = "var(--color-fg-muted)";
+        if (Number(rec.p) < 0.05 && rec.circular !== "是") { td.classList.add("sig"); td.style.fontWeight = "600"; }
+        tr.appendChild(td); });
+      tb.appendChild(tr); });
+  }
+
+  $("p-model").addEventListener("change", coef);
+  ["p-x", "p-y"].forEach(id => $(id).addEventListener("change", scatter));
+
+  dash.onData(() => {
+    const t = dash.data("ptests"), m = dash.data("pmodels");
+    document.querySelectorAll('#p-read [data-source]').forEach(el => {
+      const src = el.dataset.source === "ptests" ? t : m; if (src.status !== "ok") { el.textContent = "—"; return; }
+      const [k, v] = el.dataset.where.split("="); const r = src.data.find(x => String(x[k]) === v);
+      el.textContent = r ? d3.format("+.2f")(r[el.dataset.field]) : "—"; });
+    const L = dash.data("plead"), lead = $("p-lead");
+    if (L.status === "ok") { const a = L.data[0]; lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "plead"; e.dataset.field = f; } lead.appendChild(e); };
+      add("人口稀少（<100 人／km²）的保護區，生態環境平均 "); add(d3.format(".0f")(a.low_eco), "low_eco", true); add(" 分，人口密集（>1,000）者 ");
+      add(d3.format(".0f")(a.high_eco), "high_eco", true); add(" 分，差距主要在海廢（人口密度與海廢 ρ＝"); add(d3.format("+.2f")(a.dens_debris), "dens_debris");
+      add("）。更強的因素是漁業與養殖廢棄物（漁業來源占比與生態環境 ρ＝"); add(d3.format("+.2f")(a.fish_eco), "fish_eco", true);
+      add("）；巡守時數則與生態成果無正相關（ρ＝"); add(d3.format("+.2f")(a.hours_eco), "hours_eco", true); add("）。"); }
+    coef(); scatter(); band(); heat();
+  });
+})();
+</script>
+
+<footer class="site-foot">
+  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
+  本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
+  資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
+</footer>
+</div>
+<script>dash._start();</script>
+</body>
+</html>
