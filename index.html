@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -230,6 +230,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   <div class="grid2 ov-links">
     <a class="card ov-link" href="#ranking"><b>成效排名</b><span>71 處保護區的水質、海廢、生物多樣性與執法分數，可搜尋、篩選，點選看原始指標。</span><em>看成效排名 →</em></a>
     <a class="card ov-link" href="#bio"><b>生物多樣性</b><span>各保護區的生態系類型、珊瑚礁體檢覆蓋率與藍碳蘊含量，以及綜合生物多樣性評比。</span><em>看生物多樣性 →</em></a>
+    <a class="card ov-link" href="#clusters"><b>類別與集群</b><span>依國家公園、濕地、漁業資源保育區等類別比較成效，並以集群分析找出四種成效型態。</span><em>看類別與集群 →</em></a>
     <a class="card ov-link" href="#cross"><b>分類交叉分析</b><span>成效與保護區類型、法源、IUCN 分類、保護等級、面積、成立年份是否相關。</span><em>看分類交叉分析 →</em></a>
     <a class="card ov-link" href="#pressure"><b>人口與漁業壓力</b><span>鄰近人口、漁業與養殖廢棄物、巡守投入，哪一個最能解釋成效差異。</span><em>看壓力分析 →</em></a>
     <a class="card ov-link" href="#method"><b>評分方法</b><span>四面向的資料來源、計分方式、等級門檻與研究限制。</span><em>看評分方法 →</em></a>
@@ -410,6 +411,87 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   </section>
 </section>
 
+<section data-tab="clusters" class="tabpage" hidden>
+  <section id="clusters" class="xs">
+    <h2 class="xs-h">依保護區類別與集群分析看成效</h2>
+    <p class="lead dash-skeleton" id="cl-lead">—</p>
+
+    <div class="card">
+      <h2>各類別的平均分數</h2>
+      <p class="note">每格是該類別保護區的平均分數（只計有資料者），顏色越深越高。最後一列是類別之間差異的 Kruskal-Wallis 檢定；類別處數少者（國家公園 4、重棲 1、自然紀念物 3）平均值不穩定。</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="cat-tbl" data-source="catprof8" data-row-key="cat">
+          <thead><tr>
+            <th data-field="cat" style="padding:8px">類別</th><th data-field="n" style="padding:8px">處數</th>
+            <th data-field="score_wq" style="padding:8px">水質</th><th data-field="score_debris" style="padding:8px">海廢</th>
+            <th data-field="score_enf" style="padding:8px">執法</th><th data-field="bio_score" style="padding:8px">生物多樣性評比</th>
+            <th data-field="score" style="padding:8px">綜合</th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr id="cat-kw"></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>各類別內部的差異</h2>
+      <p class="note">每個點是一處保護區，粗線是中位數。同一類別內的分散程度遠大於類別之間的差距。</p>
+      <div class="toolbar"><select id="cat-dim"><option value="score">綜合</option><option value="score_wq">水質</option><option value="score_debris">海廢</option><option value="score_enf">執法</option><option value="bio_score">生物多樣性評比</option></select></div>
+      <div class="chart" id="cat-strip" data-source="cmpa"></div>
+    </div>
+
+    <div class="card">
+      <h2>集群分析：四種成效型態</h2>
+      <p class="note">以水質、海廢、執法、生物多樣性評比四項分數（標準化後）做 Ward 階層式集群；68 處至少有三項資料者納入，缺一項以中位數補值。長條為該群平均分數。</p>
+      <div class="cl-cards" id="cl-cards" data-source="cprof"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>集群分布圖（主成分）</h2>
+        <p class="note dash-skeleton" id="cl-pca-note">—</p>
+        <div class="toolbar"><select id="cl-color"><option value="cluster">依集群上色</option><option value="cat_group">依保護區類別上色</option></select></div>
+        <div class="legend" id="cl-lg"></div>
+        <div class="chart" id="cl-pca" data-source="cmpa"></div>
+      </div>
+      <div class="card">
+        <h2>各類別落在哪些集群</h2>
+        <p class="note">每列是一個類別，長條依其保護區落入各集群的比例分段，括號內為處數。若類別能決定成效，同一類別應集中在同一群。</p>
+        <div class="chart" id="cl-xtab" data-source="cxtab"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>各集群的保護區</h2>
+      <div class="toolbar">
+        <select id="cl-f"><option value="">全部集群</option></select>
+        <select id="cl-c"><option value="">全部類別</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table id="cl-tbl" data-source="cmpa" data-row-key="no">
+          <thead><tr>
+            <th data-field="mpa" style="padding:8px">保護區</th><th data-field="cat" style="padding:8px">類別</th>
+            <th data-field="cluster_name" style="padding:8px">集群</th>
+            <th data-field="score_wq" style="padding:8px">水質</th><th data-field="score_debris" style="padding:8px">海廢</th>
+            <th data-field="score_enf" style="padding:8px">執法</th><th data-field="bio_score" style="padding:8px">生物多樣性</th>
+            <th data-field="score" style="padding:8px">綜合</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="cl-read">
+      <h2>怎麼解讀</h2>
+      <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性評比 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性評比最高，但只有 4 處；漁業資源保育區的綜合平均最高，但同一類別內從 37 分到 79 分都有。</p>
+      <p><b>集群和類別幾乎無關。</b>四個集群都混有多種類別，31 處漁業資源保育區分散在全部四群；類別與集群的關聯 Cramér's V＝<span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>、置換檢定 p＝<span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>，分群一致度（ARI）＝<span data-source="cstats" data-field="value" data-where="key=ari_category">—</span>，等於隨機。</p>
+      <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」多是花東與恆春半島的小型保育區和東部河口，台江國家公園也在其中：海況好，但幾乎沒有巡守或查緝紀錄，一旦壓力上升就沒有防線。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、全面落後」包含高美、椬梧濕地與白海豚棲地，需要整治陸源污染，不只是劃設；其中三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。</p>
+      <p><b>對管理的意涵。</b>資源配置與管理策略應依成效型態分級，而不是依法源一體適用：缺管理的群組先補巡守與監測，海廢重的群組結合海廢清理與漁業／養殖廢棄物回收，水質差的群組要跨部會處理陸源污染。</p>
+      <p><b>方法與限制。</b>3 群的輪廓係數最高（<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>），但會把「均衡良好」與「有管理但海廢重」併成一大群，因此採 4 群（<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>）；k-means 分群結果一致度 ARI＝<span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>，只用四項齊全的 <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> 處重做為 <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span>。輪廓係數約 0.3 代表群界不算分明，宜視為型態而非明確分類。東沙、貓嶼、番仔石資料不足未納入。</p>
+    </div>
+  </section>
+</section>
+
 <section data-tab="cross" class="tabpage" hidden>
   <section id="cross" class="xs">
     <h2 class="xs-h">成效與分類的交叉分析</h2>
@@ -522,6 +604,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
         <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
         <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
         <tr><td>生物多樣性</td><td>海保署保護區站點魚類 eDNA（2021–2024）</td><td>「每次採樣分類單元數」在同棲地（礁岩／河口）內的百分位，換算為 20–100；外來種占比 &gt;10% 扣 10、&gt;20% 扣 20。只有 40 處有採樣。</td></tr>
+        <tr><td>類別與集群分析</td><td>上列四項分數與生物多樣性評比；保護區類別取自 MPATable1</td><td>水質、海廢、執法、生物多樣性評比標準化後做 Ward 階層式集群（至少三項有資料者 68 處，缺一項以中位數補值）；比較 2–6 群的輪廓係數，採可解讀的 4 群，並以 k-means 與完整資料子集檢核穩定度。類別與集群的關聯以 Cramér's V 與 5,000 次置換檢定評估；國家公園等小類別在檢定時合併為 6 組。</td></tr>
         <tr><td>生物多樣性評比（棲地）</td><td>生態系類型（人工判定）、珊瑚礁體檢 2008（中研院）、2023（台灣環境資訊協會）、2024–26（Reef Check Taiwan）、藍碳（海保署 2024 藍碳生態系調查逐點面積 × 全國平均碳密度）</td><td>棲地多樣性（主要 1、局部 0.5，滿 3 為 100）、珊瑚健康（最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（A 100、B 70）、魚類 eDNA，取有資料者平均；只有棲地一項不給等級。此評比另列於「生物多樣性」區塊，未改動上方綜合分。</td></tr>
         <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
       </tbody>
@@ -1298,9 +1381,211 @@ dash.calc("blead", {
 })();
 </script>
 
+<style>
+.mp .cl-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .cl-card { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: 6px; align-content: start; }
+.mp .cl-card .hd { display: flex; align-items: center; gap: 8px; }
+.mp .cl-card .nm { font-weight: 700; font-size: 15px; }
+.mp .cl-card .n { margin-left: auto; font-family: var(--font-anthropic-serif); font-size: 22px; }
+.mp .cl-card .ds { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.mp .cl-card .br { display: grid; grid-template-columns: 5.5em 1fr 2.2em; gap: 6px; align-items: center; font-size: var(--cds-font-size-caption); }
+.mp .cl-card .br i { display: block; height: 8px; border-radius: 4px; }
+.mp .cl-card .br .tr { background: var(--cds-chart-grid); border-radius: 4px; }
+.mp .cl-card .ex { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+.mp .cl-card .ex b { color: var(--color-fg); font-weight: 600; }
+.mp #cat-tbl td, .mp #cl-tbl td { text-align: center; }
+.mp #cat-tbl td:first-child, .mp #cl-tbl td:first-child, .mp #cl-tbl td:nth-child(2), .mp #cl-tbl td:nth-child(3) { text-align: left; }
+.mp #cat-kw td { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-align: center; border-top: 2px solid var(--color-border-line); }
+.mp #cat-tbl tbody tr, .mp #cl-tbl tbody tr { cursor: default; }
+</style>
+
+<script>
+window.CL_COLORS = ["#1a7f5a", "#2e86ab", "#e0a84a", "#d03b3b"];
+dash.calc("catprof8", {
+  title: "八類保護區平均分數",
+  description: "依 8 種法定類別平均水質、海廢、執法、生物多樣性評比與綜合分（空值不計）。",
+  inputs: ["cmpa"],
+  fn: (cmpa) => {
+    const order = ["國家公園", "漁業資源保育區", "重要濕地", "野生動物保護區", "野生動物重要棲息環境", "自然保留區", "自然紀念物", "風景區海域"];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
+    return order.map(c => { const rs = cmpa.filter(r => r.cat === c);
+      return { cat: c, n: rs.length, score_wq: avg(rs, "score_wq"), score_debris: avg(rs, "score_debris"), score_enf: avg(rs, "score_enf"), bio_score: avg(rs, "bio_score"), score: avg(rs, "score") }; })
+      .filter(r => r.n > 0);
+  }
+});
+dash.calc("cllead", {
+  title: "集群段摘要數字",
+  description: "取出集群數、納入處數、類別與集群的關聯（Cramér's V、置換檢定 p），以及最大群的名稱與處數。",
+  inputs: ["cstats", "cprof"],
+  fn: (cstats, cprof) => { const g = k => Number(cstats.find(r => r.key === k).value);
+    const big = cprof.slice().sort((a, b) => Number(b.n) - Number(a.n))[0];
+    return [{ k: g("k"), n_used: g("n_used"), v: g("cramers_v"), p: g("p_perm"), kw_p: g("kw_score_p"), big_name: big.name, big_n: Number(big.n) }]; }
+});
+</script>
+
 <script>
 (function () {
-  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
+  const $ = id => document.getElementById(id);
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const DIMS = [["score_wq", "水質"], ["score_debris", "海廢"], ["score_enf", "執法"], ["bio_score", "生物多樣性"]];
+  const CATG = ["國家公園", "漁業資源保育區", "重要濕地", "野生動物保護區／重棲", "自然保留區／紀念物", "風景區海域"];
+  const CATC = ["#1c5cab", "#3fa796", "#c97a2b", "#6250d6", "#8aa29e", "#d03b3b"];
+  const short = n => n.replace("東北角暨宜蘭海岸國家風景區(海域資源保護區)", "東北角風景區").replace("綠島海參坪至帆船鼻間海域資源保育區", "綠島海參坪海域")
+    .replace("基隆市望海巷潮境海灣資源保育區", "潮境海灣保育區").replace("桃園觀新藻礁生態系野生動物保護區", "觀新藻礁保護區")
+    .replace(/水產動植物繁殖保育區|漁業資源保育區|水產動植物保育區/, "保育區").replace("重要濕地", "濕地");
+  const cellBg = v => v == null ? "transparent" : `color-mix(in srgb, #1c5cab ${Math.round(Math.max(0, Math.min(1, (v - 30) / 60)) * 42)}%, transparent)`;
+  const tipAt = (tip, el, ev) => { tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+    tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; };
+  let built = false;
+
+  function catTable() {
+    const d = dash.data("catprof8"), st = dash.data("cstats"), tb = document.querySelector("#cat-tbl tbody"), kw = $("cat-kw");
+    tb.textContent = ""; kw.textContent = "";
+    if (d.status !== "ok") return;
+    d.data.forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = r.cat;
+      [["cat"], ["n"], ["score_wq"], ["score_debris"], ["score_enf"], ["bio_score"], ["score"]].forEach(([k]) => {
+        const td = document.createElement("td"); const v = r[k];
+        td.textContent = v == null ? "—" : String(v);
+        if (!["cat", "n"].includes(k)) { td.style.background = cellBg(v); if (k === "score") td.style.fontWeight = "600"; }
+        tr.appendChild(td); });
+      tb.appendChild(tr); });
+    if (st.status === "ok") {
+      const g = k => st.data.find(r => r.key === k);
+      const cells = ["類別差異檢定", "", ...["score_wq", "score_debris", "score_enf", "bio_score", "score"].map(f => "p＝" + d3.format(".2f")(Number(g("kw_" + f + "_p").value)))];
+      cells.forEach((t, i) => { const td = document.createElement("td"); td.textContent = t; if (i === 0) td.style.textAlign = "left"; kw.appendChild(td); });
+    }
+  }
+
+  function strip() {
+    const el = $("cat-strip"), d = dash.data("cmpa"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const yk = $("cat-dim").value;
+    const rows = d.data.map(r => ({ ...r, y: num(r[yk]) })).filter(r => r.y != null);
+    const groups = CATG.filter(g => rows.some(r => r.cat_group === g));
+    const W = el.clientWidth || 400, rowH = 38, H = groups.length * rowH + 28, lw = Math.min(W * 0.42, 170);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, 100], [lw, W - 10]);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", groups.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", H - 8).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => { const cy = i * rowH + rowH / 2, rs = rows.filter(r => r.cat_group === g);
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${g}（${rs.length}）`);
+      rs.forEach((r, j) => { const jit = ((j * 7919) % 13 - 6) * 1.5;
+        svg.append("circle").attr("cx", x(r.y)).attr("cy", cy + jit).attr("r", 4.5).attr("fill", CL_COLORS[(Number(r.cluster) || 1) - 1]).attr("fill-opacity", r.cluster === "" ? 0.25 : 0.8)
+          .on("mousemove", ev => { tip.textContent = `${r.mpa}：${r.y}｜${r.cluster_name || "未分群"}`; tipAt(tip, el, ev); }).on("mouseleave", () => { tip.style.display = "none"; }); });
+      const md = d3.median(rs, r => r.y);
+      svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", cy - 13).attr("y2", cy + 13).attr("stroke", "var(--color-fg)").attr("stroke-width", 3).attr("stroke-linecap", "round"); });
+    el.style.minHeight = H + "px";
+  }
+
+  function cards() {
+    const el = $("cl-cards"), d = dash.data("cprof"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    d.data.forEach(r => { const i = Number(r.cluster) - 1;
+      const c = document.createElement("div"); c.className = "cl-card";
+      const hd = document.createElement("div"); hd.className = "hd";
+      const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = CL_COLORS[i]; dot.style.width = dot.style.height = "12px";
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = r.name;
+      const n = document.createElement("span"); n.className = "n"; n.textContent = r.n; hd.append(dot, nm, n); c.appendChild(hd);
+      const ds = document.createElement("div"); ds.className = "ds"; ds.textContent = r.desc; c.appendChild(ds);
+      DIMS.forEach(([k, l]) => { const br = document.createElement("div"); br.className = "br";
+        const lb = document.createElement("span"); lb.textContent = l; const trk = document.createElement("span"); trk.className = "tr";
+        const bar = document.createElement("i"); bar.style.width = Math.max(1, Number(r[k])) + "%"; bar.style.background = CL_COLORS[i]; trk.appendChild(bar);
+        const v = document.createElement("span"); v.textContent = Math.round(Number(r[k])); br.append(lb, trk, v); c.appendChild(br); });
+      const ex = document.createElement("div"); ex.className = "ex";
+      const b1 = document.createElement("b"); b1.textContent = "類別："; ex.append(b1, document.createTextNode(r.main_cats)); ex.appendChild(document.createElement("br"));
+      const b2 = document.createElement("b"); b2.textContent = "例如："; ex.append(b2, document.createTextNode(r.examples.split("、").map(short).join("、")));
+      c.appendChild(ex); el.appendChild(c); });
+  }
+
+  function pca() {
+    const el = $("cl-pca"), d = dash.data("cmpa"), st = dash.data("cstats"); el.textContent = "";
+    const lg = $("cl-lg"); lg.textContent = "";
+    const by = $("cl-color").value, pr = dash.data("cprof");
+    const keys = by === "cluster" ? (pr.status === "ok" ? pr.data.map(r => [r.cluster, r.name]) : []) : CATG.map(g => [g, g]);
+    const colOf = v => by === "cluster" ? CL_COLORS[Number(v) - 1] : CATC[CATG.indexOf(v)];
+    keys.forEach(([k, l]) => { const s = document.createElement("span"); const i = document.createElement("i"); i.className = "dot"; i.style.background = colOf(k); s.append(i, document.createTextNode(l)); lg.appendChild(s); });
+    if (st.status === "ok") { const g = k => st.data.find(r => r.key === k).value;
+      const n = $("cl-pca-note"); n.classList.remove("dash-skeleton");
+      n.textContent = `兩個主成分合計解釋 ${d3.format(".0f")(Number(g("pc1_var")) + Number(g("pc2_var")))}% 的變異。橫軸往右：海廢分數高（較乾淨）、執法分數低；縱軸往上：生物多樣性評比與水質較高。`; }
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const rows = d.data.filter(r => r.pc1 !== "" && r.pc2 !== "");
+    const W = el.clientWidth || 400, H = 320, m = 24;
+    const x = d3.scaleLinear(d3.extent(rows, r => Number(r.pc1)), [m, W - m]).nice(), y = d3.scaleLinear(d3.extent(rows, r => Number(r.pc2)), [H - m, m]).nice();
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m).attr("y2", H - m).attr("stroke", "var(--cds-chart-grid)");
+    svg.append("line").attr("x1", m).attr("x2", W - m).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--cds-chart-grid)");
+    svg.append("text").attr("x", W - m).attr("y", y(0) - 6).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("海廢少、執法弱 →");
+    svg.append("text").attr("x", x(0) + 6).attr("y", m + 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("↑ 生物多樣性與水質佳");
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(Number(r.pc1))).attr("cy", y(Number(r.pc2))).attr("r", 5.5)
+      .attr("fill", colOf(by === "cluster" ? r.cluster : r.cat_group)).attr("fill-opacity", 0.8).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${r.cat}｜${r.cluster_name}｜綜合 ${r.score}`; tip.appendChild(b); tipAt(tip, el, ev); })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  function xtab() {
+    const el = $("cl-xtab"), d = dash.data("cxtab"), pr = dash.data("cprof"); el.textContent = "";
+    if (d.status !== "ok" || pr.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const cls = pr.data.map(r => String(r.cluster));
+    const groups = CATG.filter(g => d.data.some(r => r.cat_group === g));
+    const W = el.clientWidth || 400, rowH = 40, H = groups.length * rowH + 50, lw = Math.min(W * 0.42, 170);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, 1], [lw, W - 10]);
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => { const rs = d.data.filter(r => r.cat_group === g); const tot = d3.sum(rs, r => Number(r.n)); let acc = 0; const y0 = i * rowH + 8;
+      svg.append("text").attr("x", 0).attr("y", y0 + 16).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${g}（${tot}）`);
+      cls.forEach((c, j) => { const r = rs.find(z => String(Number(z.cluster)) === c); const v = r ? Number(r.n) : 0; if (!v) return;
+        const w = x(acc + v / tot) - x(acc);
+        svg.append("rect").attr("x", x(acc)).attr("y", y0).attr("width", Math.max(0, w - 1)).attr("height", 24).attr("fill", CL_COLORS[j])
+          .on("mousemove", ev => { tip.textContent = `${g}：${pr.data[j].name} ${v} 處（${d3.format(".0%")(v / tot)}）`; tipAt(tip, el, ev); }).on("mouseleave", () => { tip.style.display = "none"; });
+        if (w > 18) svg.append("text").attr("x", x(acc) + w / 2).attr("y", y0 + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "#fff").attr("pointer-events", "none").text(v);
+        acc += v / tot; }); });
+    let lx = lw; const ly = groups.length * rowH + 30;
+    pr.data.forEach((r, j) => { svg.append("rect").attr("x", lx).attr("y", ly - 9).attr("width", 10).attr("height", 10).attr("rx", 2).attr("fill", CL_COLORS[j]);
+      const t = svg.append("text").attr("x", lx + 14).attr("y", ly).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(r.name); lx += t.node().getComputedTextLength() + 28; });
+    el.style.minHeight = H + "px";
+  }
+
+  function table() {
+    const d = dash.data("cmpa"), tb = document.querySelector("#cl-tbl tbody"); tb.textContent = "";
+    if (d.status !== "ok") return;
+    const f = $("cl-f").value, c = $("cl-c").value;
+    d.data.filter(r => r.cluster !== "" && (!f || String(r.cluster) === f) && (!c || r.cat_group === c))
+      .sort((a, b) => Number(a.cluster) - Number(b.cluster) || Number(b.score) - Number(a.score))
+      .forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = String(r.no);
+        ["mpa", "cat", "cluster_name", "score_wq", "score_debris", "score_enf", "bio_score", "score"].forEach(k => { const td = document.createElement("td");
+          if (k === "cluster_name") { const s = document.createElement("span"); s.className = "pill"; const i = document.createElement("i"); i.className = "dot"; i.style.background = CL_COLORS[Number(r.cluster) - 1]; s.append(i, document.createTextNode(r.cluster_name)); td.appendChild(s); }
+          else { const nv = num(r[k]); td.textContent = r[k] === "" ? "—" : (nv != null && !["mpa", "cat"].includes(k) ? String(Math.round(nv)) : String(r[k])); if (k.startsWith("score") || k === "bio_score") td.style.background = cellBg(nv); }
+          tr.appendChild(td); });
+        tb.appendChild(tr); });
+  }
+
+  $("cat-dim").addEventListener("change", strip);
+  $("cl-color").addEventListener("change", pca);
+  ["cl-f", "cl-c"].forEach(id => $(id).addEventListener("change", table));
+
+  dash.onData(() => {
+    const pr = dash.data("cprof");
+    if (!built && pr.status === "ok") { built = true;
+      pr.data.forEach(r => { const o = document.createElement("option"); o.value = String(r.cluster); o.textContent = r.name; $("cl-f").appendChild(o); });
+      CATG.forEach(g => { const o = document.createElement("option"); o.value = g; o.textContent = g; $("cl-c").appendChild(o); }); }
+    const L = dash.data("cllead"), lead = $("cl-lead");
+    if (L.status === "ok") { const a = L.data[0]; lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (t, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = t; if (f) { e.dataset.source = "cllead"; e.dataset.field = f; } lead.appendChild(e); };
+      add("依法定類別比較，各類別的綜合分沒有顯著差異（p＝"); add(d3.format(".2f")(a.kw_p), "kw_p"); add("）。以四項分數對 ");
+      add(String(a.n_used), "n_used"); add(" 處保護區做集群分析，可分成 "); add(String(a.k), "k", true); add(" 種成效型態，但型態和類別幾乎無關（Cramér's V＝");
+      add(d3.format(".2f")(a.v), "v"); add("，p＝"); add(d3.format(".2f")(a.p), "p"); add("）：同一類別的保護區散在不同型態裡。決定成效的是問題型態，而不是法源。"); }
+    catTable(); strip(); cards(); pca(); xtab(); table();
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["clusters", "類別與集群"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
   const bar = document.getElementById("tabbar");
   TABS.forEach(([k, l]) => { const a = document.createElement("a"); a.href = "#" + k; a.dataset.k = k; a.textContent = l; bar.appendChild(a); });
   function show(k) {
@@ -1311,7 +1596,10 @@ dash.calc("blead", {
     requestAnimationFrame(() => dash._rerun());   // charts measure their width, so redraw once visible
   }
   window.addEventListener("hashchange", () => { show(location.hash.slice(1)); window.scrollTo({ top: 0 }); });
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   show(location.hash.slice(1));
+  window.scrollTo({ top: 0 });
+  window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0 }), 0));
   dash._start();
 })();
 </script>
