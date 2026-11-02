@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -90,7 +90,29 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     setLink() {},
     onData(fn) { subs.push(fn); try { fn(); } catch (e) { console.error(e); } },
   };
-  const run = () => subs.forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
+  const fmtVal = v => {
+    if (v === "" || v == null) return null;
+    const n = Number(v);
+    if (typeof v === "number" || (/^-?\d+(\.\d+)?$/.test(String(v)))) return Math.abs(n) >= 1000 ? n.toLocaleString("en-US", { maximumFractionDigits: 2 }) : String(v);
+    return String(v);
+  };
+  // Fill marked placeholders (data-source + data-field) that the page's own code leaves to the runtime.
+  function autoFill() {
+    document.querySelectorAll("[data-source][data-field]").forEach(el => {
+      if (el.tagName === "TH" || el.children.length) return;
+      if (!(el.dataset.shim === "1" || el.textContent.trim() === "—")) return;
+      const d = store[el.dataset.source]; if (!d || d.status !== "ok" || !Array.isArray(d.data)) return;
+      let row = d.data[0];
+      if (el.dataset.where) {
+        const conds = el.dataset.where.split("&").map(c => c.split("=").map(decodeURIComponent));
+        row = d.data.find(r => conds.every(([k, v]) => String(r[k]) === v));
+      } else if (el.dataset.row) row = d.data[Number(el.dataset.row)];
+      if (!row) return;
+      const v = fmtVal(row[el.dataset.field]);
+      if (v != null) { el.textContent = v; el.dataset.shim = "1"; el.classList.remove("dash-skeleton"); }
+    });
+  }
+  const run = () => { subs.forEach(fn => { try { fn(); } catch (e) { console.error(e); } }); autoFill(); };
   function runCalcs() {
     calcs.forEach(([id, spec]) => {
       try {
@@ -176,7 +198,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <header class="band"><div class="band-inner">
   <h1>台灣海洋保護區成效儀表板</h1>
   <p class="tagline">從「劃了多少」到「保護得好不好」</p>
-  <p>整合水質、海洋廢棄物、魚類環境 DNA 與執法強度四項成果指標，評估臺灣海洋保護區的實際成效，並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
+  <p>整合水質、海洋廢棄物、魚類環境 DNA 與執法強度四項成果指標，評估臺灣海洋保護區的實際成效；另以生態系類型、珊瑚礁體檢與藍碳評比生物多樣性價值，並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
 </div></header>
 <nav class="tabs" aria-label="分頁"><div class="tabs-inner" id="tabbar"></div></nav>
 <div id="dash-root"><div class="mp">
@@ -207,6 +229,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   </div>
   <div class="grid2 ov-links">
     <a class="card ov-link" href="#ranking"><b>成效排名</b><span>71 處保護區的水質、海廢、生物多樣性與執法分數，可搜尋、篩選，點選看原始指標。</span><em>看成效排名 →</em></a>
+    <a class="card ov-link" href="#bio"><b>生物多樣性</b><span>各保護區的生態系類型、珊瑚礁體檢覆蓋率與藍碳蘊含量，以及綜合生物多樣性評比。</span><em>看生物多樣性 →</em></a>
     <a class="card ov-link" href="#cross"><b>分類交叉分析</b><span>成效與保護區類型、法源、IUCN 分類、保護等級、面積、成立年份是否相關。</span><em>看分類交叉分析 →</em></a>
     <a class="card ov-link" href="#pressure"><b>人口與漁業壓力</b><span>鄰近人口、漁業與養殖廢棄物、巡守投入，哪一個最能解釋成效差異。</span><em>看壓力分析 →</em></a>
     <a class="card ov-link" href="#method"><b>評分方法</b><span>四面向的資料來源、計分方式、等級門檻與研究限制。</span><em>看評分方法 →</em></a>
@@ -269,6 +292,120 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
             <dt>取締件數</dt><dd data-source="mpa" data-field="cases">—</dd>
             <dt>處分件數</dt><dd data-source="mpa" data-field="punished">—</dd>
             <dt>處分率</dt><dd data-source="mpa" data-field="pun_rate">—</dd></dl></div>
+    </div>
+  </section>
+</section>
+
+<section data-tab="bio" class="tabpage" hidden>
+  <section id="bio" class="xs">
+    <h2 class="xs-h">生物多樣性：生態系、珊瑚礁體檢與藍碳</h2>
+    <p class="lead">71 處保護區中，<b data-source="blead" data-field="n_coral">—</b> 處以珊瑚礁為主要生態系、<b data-source="blead" data-field="n_mangrove">—</b> 處以紅樹林為主、<b data-source="blead" data-field="n_mud">—</b> 處以泥灘為主；有珊瑚礁體檢數據的 <b data-source="blead" data-field="n_reef">—</b> 處裡，最近一次覆蓋率達「優良」（≥50%）的只有 <b data-source="blead" data-field="n_reef_good">—</b> 處。依海保署 2024 藍碳調查的逐點面積，全國紅樹林有 <b data-source="blead" data-field="mg_in_pct">—</b>% 在保護區內，可估藍碳約 <b data-source="blead" data-field="bc_total">—</b> 公噸碳，東沙海草床就占 <b data-source="blead" data-field="bc_dongsha_pct">—</b>%。綜合棲地、珊瑚、藍碳與 eDNA 的評比，良好 <b data-source="blead" data-field="g_good">—</b> 處、尚可 <b data-source="blead" data-field="g_ok">—</b>、待加強 <b data-source="blead" data-field="g_warn">—</b>、不佳 <b data-source="blead" data-field="g_bad">—</b>，另 <b data-source="blead" data-field="g_nodata">—</b> 處只有棲地資料。</p>
+
+    <div class="card" id="hab-card">
+      <h2>各保護區生態系類型</h2>
+      <p class="note">「主要」為保護區的主體棲地，「有」為局部或小面積分布（如零星珊瑚、不足 1 公頃的海草）。依公告範圍、珊瑚礁體檢樣點、海保署 2019 海草床與紅樹林調查及地形判定；鹽沼另列，因它也是藍碳生態系。</p>
+      <div class="toolbar">
+        <input type="search" id="hab-q" placeholder="搜尋保護區名稱">
+        <select id="hab-f"><option value="">全部生態系</option><option value="coral">含珊瑚礁</option><option value="seagrass">含海草床</option><option value="rocky">含岩礁</option><option value="mangrove">含紅樹林</option><option value="mudflat">含泥灘</option><option value="saltmarsh">含鹽沼</option></select>
+      </div>
+      <div class="legend"><span><i class="hb hb-2"></i>主要</span><span><i class="hb hb-1"></i>有（局部）</span><span><i class="hb hb-0"></i>無或未記錄</span></div>
+      <div class="tbl-wrap">
+        <table id="hab" data-source="biohab" data-row-key="no">
+          <thead><tr>
+            <th data-field="no"><button data-k="no">#</button></th>
+            <th data-field="mpa"><button data-k="mpa">保護區</button></th>
+            <th data-field="coral"><button data-k="coral">珊瑚礁</button></th>
+            <th data-field="seagrass"><button data-k="seagrass">海草床</button></th>
+            <th data-field="rocky"><button data-k="rocky">岩礁</button></th>
+            <th data-field="mangrove"><button data-k="mangrove">紅樹林</button></th>
+            <th data-field="mudflat"><button data-k="mudflat">泥灘</button></th>
+            <th data-field="saltmarsh"><button data-k="saltmarsh">鹽沼</button></th>
+            <th data-field="n_types"><button data-k="n_types">類型數</button></th>
+            <th data-field="eco_note" class="hide-sm"><button data-k="eco_note">判定依據</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="reef-card">
+      <h2>珊瑚礁體檢：2008、2023 與 2024–26</h2>
+      <p class="note">每列一處保護區，點為該年各樣點的平均覆蓋率（淺、深兩層平均）。2008 與 2023 為活珊瑚（硬珊瑚＋軟珊瑚），2024–26 為硬珊瑚，數值通常略低幾個百分點。背景色帶為國際珊瑚礁體檢分級：&lt;25% 不佳、25–50% 普通、≥50% 優良。</p>
+      <div class="legend" id="reef-lg"></div>
+      <div class="chart" id="reefchart" data-source="biohab"></div>
+      <div class="tip" id="reef-tip"></div>
+      <details class="sub">
+        <summary>各樣點數據（<span data-source="blead" data-field="n_sites">—</span> 筆）</summary>
+        <div class="tbl-wrap">
+          <table id="reeftbl" data-source="reefsites" data-row-key="key">
+            <thead><tr>
+              <th data-field="key">樣點</th><th data-field="mpa">對應保護區</th><th data-field="metric">指標</th>
+              <th data-field="shallow">淺（2–6 m）%</th><th data-field="deep">深（6–12 m）%</th><th data-field="avg">平均 %</th><th data-field="grade">等級</th><th data-field="note" class="hide-sm">備註</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="bc-card">
+      <h2>藍碳蘊含量</h2>
+      <p class="note">面積取自海保署 2024 年藍碳生態系調查報告的逐點清單（2023 年調查：紅樹林 43 處、海草床 22 處），依「隸屬範圍」欄與座標對到保護區。估計碳量＝面積 × 海保署全國平均碳密度（紅樹林 <span data-source="blead" data-field="den_mg">—</span>、海草床 <span data-source="blead" data-field="den_sg">—</span> 公噸碳／公頃，由海保署公布的全國碳量除以面積）。鹽沼清單未列面積，只標示有無。</p>
+      <div class="chart" id="bcchart" data-source="bluecarbon" style="min-height:200px"></div>
+      <div class="tip" id="bc-tip"></div>
+      <div class="tbl-wrap">
+        <table id="bctbl" data-source="bluecarbon" data-row-key="no">
+          <thead><tr>
+            <th data-field="mpa">保護區</th><th data-field="bc_type">藍碳生態系</th><th data-field="mangrove_ha">紅樹林（公頃）</th><th data-field="seagrass_ha">海草床（公頃）</th>
+            <th data-field="est_tC">估計碳量（公噸 C）</th><th data-field="est_tCO2e">折合 CO₂e（公噸）</th><th data-field="tier_label">等級</th><th data-field="basis" class="hide-sm">清單地點與對應</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="gap-card">
+      <h2>保護區外的主要藍碳地點</h2>
+      <p class="note">清單中未落在 71 處保護區的地點，依面積排序。紅樹林有 <span data-source="blead" data-field="mg_out_ha">—</span> 公頃、本島與離島（不含東沙）海草床有 <span data-source="blead" data-field="sg_out_ha">—</span> 公頃在保護區外。</p>
+      <div class="tbl-wrap" style="max-height:360px">
+        <table id="gaptbl" data-source="bcsites" data-row-key="key">
+          <thead><tr><th data-field="key">地點</th><th data-field="county">縣市</th><th data-field="area_2023">2023 面積（公頃）</th><th data-field="area_2019">2019 面積（公頃）</th><th data-field="listed_belong" class="hide-sm">清單所列隸屬範圍</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="biorank-card">
+      <h2>生物多樣性評比</h2>
+      <p class="note">四個分項各 0–100，取有資料者平均：棲地多樣性（主要生態系 1 分、局部 0.5 分，滿 3 分為 100）、珊瑚健康（最近覆蓋率 ×1.6＋20，趨勢減少扣 10）、藍碳（A 級 100、B 級 70，小面積不計分）、魚類 eDNA（沿用上方生物多樣性分數）。只有棲地一項者不給等級。點欄位標題排序。</p>
+      <div class="toolbar">
+        <select id="br-g"><option value="">全部等級</option><option>良好</option><option>尚可</option><option>待加強</option><option>不佳</option><option>資料不足（僅棲地）</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table id="biorank" data-source="biohab" data-row-key="no">
+          <thead><tr>
+            <th data-field="no"><button data-k="no">#</button></th>
+            <th data-field="mpa"><button data-k="mpa">保護區</button></th>
+            <th data-field="s_habitat"><button data-k="s_habitat">棲地多樣性</button></th>
+            <th data-field="s_coral"><button data-k="s_coral">珊瑚健康</button></th>
+            <th data-field="s_bluecarbon"><button data-k="s_bluecarbon">藍碳</button></th>
+            <th data-field="s_edna"><button data-k="s_edna">魚類 eDNA</button></th>
+            <th data-field="bio_score"><button data-k="bio_score">評比分數</button></th>
+            <th data-field="bio_grade"><button data-k="bio_grade">等級</button></th>
+            <th data-field="rc_grade" class="hide-sm"><button data-k="rc_grade">珊瑚等級</button></th>
+            <th data-field="bc_tier" class="hide-sm"><button data-k="bc_tier">藍碳級</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="bio-read">
+      <h2>怎麼解讀</h2>
+      <p><b>珊瑚礁在退步，而且保護區內外都一樣。</b>富山（杉原）2008 年活珊瑚約 <span data-source="biohab" data-field="rc2008" data-where="no=25">—</span>%，2024–25 年硬珊瑚只剩 <span data-source="biohab" data-field="rc2025" data-where="no=25">—</span>%；墾丁 2023 年兩樣點平均 <span data-source="biohab" data-field="rc2023" data-where="no=10">—</span>%，合界到 2025 年降到 <span data-source="biohab" data-field="rc2025" data-where="no=10">—</span>%，淺層減少達顯著。南方四島東嶼坪從 2023 年的 <span data-source="biohab" data-field="rc2023" data-where="no=9">—</span>% 落到 2025 年的 <span data-source="biohab" data-field="rc2025" data-where="no=9">—</span>%，不過 2023 年量的是 6–8 米活珊瑚、2025 年是硬珊瑚，降幅可能被放大。唯一維持優良的是綠島（2023 年約 <span data-source="biohab" data-field="rc2023" data-where="no=16">—</span>%）。</p>
+      <p><b>藍碳集中在少數地方，而且有一半紅樹林不在保護區內。</b>東沙海草床約 <span data-source="bluecarbon" data-field="est_tC" data-where="no=7">—</span> 公噸碳；本島以淡水河（<span data-source="bluecarbon" data-field="est_tC" data-where="no=60">—</span>）、台江（<span data-source="bluecarbon" data-field="est_tC" data-where="no=8">—</span>）、朴子溪（<span data-source="bluecarbon" data-field="est_tC" data-where="no=50">—</span>）、北門（<span data-source="bluecarbon" data-field="est_tC" data-where="no=53">—</span>）的紅樹林最多。鰲鼓、北港溪口、濁水溪北岸、大鵬灣、員林大排各有 40–53 公頃紅樹林，卻都不在這 71 處內；本島最大的海草床澎湖鎮海灣（<span data-source="bcsites" data-field="area_2023" data-where="key=%E6%B5%B7%E8%8D%89%E5%BA%8A-%E9%8E%AE%E6%B5%B7%E7%81%A3">—</span> 公頃）也沒有保護。紅樹林在香山等泥灘濕地屬外來擴張、會壓縮招潮蟹與水鳥棲地，所以藍碳高不等於保育價值高，評比只把它當成一個分項。</p>
+      <p><b>評比和原本只看 eDNA 的結果不同。</b>海生館資源培育區（<span data-source="biohab" data-field="bio_score" data-where="no=15">—</span>）同時有珊瑚礁、海草、岩礁與沙灘，魚類也多；綠島（<span data-source="biohab" data-field="bio_score" data-where="no=16">—</span>）靠珊瑚健康拉高。反過來，富山與石梯坪雖然被當成珊瑚保育的代表，近年覆蓋率都已落到不佳，評比只到待加強。</p>
+      <p><b>限制。</b>珊瑚礁體檢由志工執行，2008 年數值是從報告長條圖讀出的約略值；2023 年綠島、小琉球與蘭嶼只給範圍，取中點。藍碳用全國平均碳密度，未反映各地樹齡與底泥差異。生態系類型為人工判定，番仔石位置仍待確認。</p>
     </div>
   </section>
 </section>
@@ -385,6 +522,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
         <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
         <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
         <tr><td>生物多樣性</td><td>海保署保護區站點魚類 eDNA（2021–2024）</td><td>「每次採樣分類單元數」在同棲地（礁岩／河口）內的百分位，換算為 20–100；外來種占比 &gt;10% 扣 10、&gt;20% 扣 20。只有 40 處有採樣。</td></tr>
+        <tr><td>生物多樣性評比（棲地）</td><td>生態系類型（人工判定）、珊瑚礁體檢 2008（中研院）、2023（台灣環境資訊協會）、2024–26（Reef Check Taiwan）、藍碳（海保署 2024 藍碳生態系調查逐點面積 × 全國平均碳密度）</td><td>棲地多樣性（主要 1、局部 0.5，滿 3 為 100）、珊瑚健康（最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（A 100、B 70）、魚類 eDNA，取有資料者平均；只有棲地一項不給等級。此評比另列於「生物多樣性」區塊，未改動上方綜合分。</td></tr>
         <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
       </tbody>
     </table>
@@ -396,7 +534,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 </section>
 
 <footer class="site-foot">
-  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
+  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
   本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
   資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
 </footer>
@@ -892,9 +1030,277 @@ dash.calc("plead", {
 })();
 </script>
 
+<style>
+.mp .hb { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; }
+.mp .hb-2 { background: var(--color-fg); }
+.mp .hb-1 { border: 1.5px solid var(--color-fg); box-sizing: border-box; }
+.mp .hb-0 { background: var(--color-border-line); }
+.mp #hab td.hc { text-align: center; white-space: nowrap; }
+.mp #hab td.hc span { margin-left: 4px; color: var(--color-fg-muted); }
+.mp #hab td.note-c, .mp #reeftbl td.note-c, .mp #bctbl td.note-c { white-space: normal; min-width: 14rem; color: var(--color-fg-muted); }
+.mp #hab tbody tr, .mp #reeftbl tbody tr, .mp #bctbl tbody tr, .mp #gaptbl tbody tr { cursor: default; }
+.mp #gaptbl td.note-c { white-space: normal; min-width: 12rem; color: var(--color-fg-muted); }
+.mp details.sub { margin-top: var(--cds-gap-md); }
+.mp details.sub summary { cursor: pointer; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.mp #reef-card, .mp #bc-card { position: relative; }
+</style>
+
+<script>
+dash.calc("blead", {
+  title: "生物多樣性摘要數字",
+  description: "計算以各生態系為主的保護區數、珊瑚體檢優良數、可估藍碳總量與東沙占比、評比等級分布，以及海保署全國平均碳密度。",
+  inputs: ["biohab", "bluecarbon", "reefsites", "bcsites"],
+  fn: (biohab, bluecarbon, reefsites, bcsites) => {
+    const c = (k) => biohab.filter(r => r[k] === "主要").length;
+    const reef = biohab.filter(r => r.rc2023 !== "" || r.rc2025 !== "");
+    const latest = r => Number(r.rc2025 !== "" ? r.rc2025 : r.rc2023);
+    const tot = bluecarbon.filter(r => r.in_total === "是").reduce((a, r) => a + (r.est_tC === "" ? 0 : Number(r.est_tC)), 0);
+    const sum = rs => rs.reduce((a, r) => a + Number(r.area_2023), 0);
+    const mg = bcsites.filter(r => r.type === "紅樹林"), sg = bcsites.filter(r => r.type === "海草床" && r.site !== "東沙環礁");
+    const r1 = x => Math.round(x * 10) / 10;
+    const ds = bluecarbon.find(r => String(r.no) === "7");
+    const g = k => biohab.filter(r => r.bio_grade === k).length;
+    return [{ n_coral: c("coral"), n_mangrove: c("mangrove"), n_mud: c("mudflat"), n_reef: reef.length,
+      n_reef_good: reef.filter(r => latest(r) >= 50).length, n_sites: reefsites.length,
+      bc_total: Math.round(tot), bc_dongsha_pct: Math.round(100 * Number(ds.est_tC) / tot),
+      mg_in_pct: Math.round(100 * sum(mg.filter(r => r.mpa)) / sum(mg)), mg_out_ha: r1(sum(mg.filter(r => !r.mpa))), sg_out_ha: r1(sum(sg.filter(r => !r.mpa))),
+      g_good: g("良好"), g_ok: g("尚可"), g_warn: g("待加強"), g_bad: g("不佳"), g_nodata: g("資料不足（僅棲地）"),
+      den_mg: Math.round(182000 / 680 * 10) / 10, den_sg: Math.round(144000 / 5456 * 10) / 10, den_sm: Math.round(16000 / 188 * 10) / 10 }];
+  }
+});
+</script>
+
 <script>
 (function () {
-  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
+  const $ = id => document.getElementById(id);
+  const fmt = d3.format(",");
+  const HAB = ["coral", "seagrass", "rocky", "mangrove", "mudflat", "saltmarsh"];
+  const shortName = n => n.replace("東北角暨宜蘭海岸國家風景區(海域資源保護區)", "東北角風景區").replace("桃園觀新藻礁生態系野生動物保護區", "觀新藻礁保護區")
+    .replace("基隆市望海巷潮境海灣資源保育區", "潮境海灣保育區").replace("綠島海參坪至帆船鼻間海域資源保育區", "綠島海參坪海域")
+    .replace(/水產動植物繁殖保育區|漁業資源保育區|水產動植物保育區/, "保育區").replace("重要濕地", "濕地").replace("環礁國家公園", "環礁");
+  function leftFor(names, narrow) { const w = d3.max(names, n => n.length) * 12.5 + 12; return Math.min(narrow ? 120 : 240, Math.max(80, w)); }
+  const RANK = { "主要": 2, "有": 1, "—": 0 };
+  let habSort = ["no", 1], brSort = ["bio_score", -1];
+
+  function sortRows(rows, k, dir) {
+    return rows.slice().sort((a, b) => {
+      let x = a[k], y = b[k];
+      if (HAB.includes(k)) { x = RANK[x] ?? 0; y = RANK[y] ?? 0; }
+      const xn = x === "" || x == null, yn = y === "" || y == null;
+      if (xn && yn) return 0; if (xn) return 1; if (yn) return -1;
+      const nx = Number(x), ny = Number(y);
+      if (!isNaN(nx) && !isNaN(ny)) return (nx - ny) * dir;
+      return String(x).localeCompare(String(y), "zh-Hant") * dir;
+    });
+  }
+  function bindSort(tableId, get, set, redraw) {
+    document.querySelectorAll("#" + tableId + " th button").forEach(b => b.onclick = () => {
+      const [k, d] = get(); const nk = b.dataset.k;
+      set([nk, nk === k ? -d : (nk === "mpa" || nk === "no" ? 1 : -1)]); redraw();
+    });
+  }
+  function ariaSort(tableId, k, d) {
+    document.querySelectorAll("#" + tableId + " th").forEach(th => {
+      const b = th.querySelector("button");
+      if (b && b.dataset.k === k) th.setAttribute("aria-sort", d > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort");
+    });
+  }
+  function scoreTd(td, v) {
+    td.className = "num";
+    if (v === "" || v == null) { td.textContent = "—"; td.classList.add("na"); return; }
+    td.textContent = String(v);
+    const b = document.createElement("span"); b.className = "bar";
+    b.style.width = Math.max(2, Number(v) * 0.42) + "px";
+    b.style.background = Number(v) >= 70 ? "var(--color-ok)" : Number(v) >= 55 ? "var(--cds-chart-muted)" : Number(v) >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+    td.appendChild(b);
+  }
+  function placeholderTbody(tb, n) { tb.innerHTML = ""; const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = n; td.textContent = "—"; td.className = "na"; tr.appendChild(td); tb.appendChild(tr); }
+
+  // ---------- habitat table ----------
+  function drawHab(rows) {
+    const tb = $("hab").querySelector("tbody"); tb.innerHTML = "";
+    const q = $("hab-q").value.trim(), f = $("hab-f").value;
+    let rs = rows.filter(r => (!q || r.mpa.includes(q)) && (!f || r[f] !== "—"));
+    rs = sortRows(rs, habSort[0], habSort[1]); ariaSort("hab", habSort[0], habSort[1]);
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      const td0 = document.createElement("td"); td0.className = "num"; td0.textContent = r.no; tr.appendChild(td0);
+      const td1 = document.createElement("td"); td1.textContent = r.mpa; tr.appendChild(td1);
+      HAB.forEach(k => {
+        const td = document.createElement("td"); td.className = "hc";
+        const v = r[k]; const i = document.createElement("i"); i.className = "hb hb-" + (RANK[v] ?? 0);
+        const s = document.createElement("span"); s.textContent = v;
+        td.appendChild(i); td.appendChild(s); tr.appendChild(td);
+      });
+      const tn = document.createElement("td"); tn.className = "num"; tn.textContent = r.n_types; tr.appendChild(tn);
+      const te = document.createElement("td"); te.className = "note-c hide-sm"; te.textContent = r.eco_note; tr.appendChild(te);
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- reef dot chart ----------
+  const YEARS = [["rc2008", "2008 活珊瑚", 0], ["rc2023", "2023 活珊瑚", 1], ["rc2025", "2024–26 硬珊瑚", 2]];
+  function yearColor(i) { const c = dash.colors || []; return [c[3] || "var(--cds-chart-muted)", c[1] || "var(--color-warn)", c[0] || "var(--color-fg)"][i]; }
+  function drawReef(rows) {
+    const el = $("reefchart"); el.innerHTML = "";
+    const lg = $("reef-lg"); lg.innerHTML = "";
+    YEARS.forEach(([, lab, i]) => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = yearColor(i); s.appendChild(d); s.appendChild(document.createTextNode(lab)); lg.appendChild(s); });
+    const rs = rows.filter(r => r.rc2008 !== "" || r.rc2023 !== "" || r.rc2025 !== "")
+      .sort((a, b) => Number(b.rc2025 !== "" ? b.rc2025 : b.rc2023 || 0) - Number(a.rc2025 !== "" ? a.rc2025 : a.rc2023 || 0));
+    const W = Math.max(320, el.clientWidth), narrow = W < 560;
+    const names = rs.map(r => narrow ? shortName(r.mpa).slice(0, 8) : shortName(r.mpa));
+    const left = leftFor(names, narrow), right = 16, top = 26, rowH = 26, H = top + rs.length * rowH + 30;
+    const x = d3.scaleLinear().domain([0, 80]).range([left, W - right]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "各保護區珊瑚覆蓋率");
+    const bands = [[0, 25, "var(--color-bad)", "不佳"], [25, 50, "var(--color-warn)", "普通"], [50, 80, "var(--color-ok)", "優良"]];
+    bands.forEach(([a, b, c, t]) => {
+      svg.append("rect").attr("x", x(a)).attr("y", top - 6).attr("width", x(b) - x(a)).attr("height", rs.length * rowH + 6).attr("fill", c).attr("opacity", 0.08);
+      svg.append("text").attr("x", (x(a) + x(b)) / 2).attr("y", top - 12).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t);
+    });
+    [0, 25, 50, 75].forEach(v => {
+      svg.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", top - 6).attr("y2", top + rs.length * rowH).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", x(v)).attr("y", top + rs.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v + "%");
+    });
+    const tip = $("reef-tip");
+    rs.forEach((r, i) => {
+      const y = top + i * rowH + rowH / 2;
+      const nm = names[i];
+      svg.append("text").attr("x", left - 8).attr("y", y + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "var(--color-fg)").text(nm);
+      const vals = YEARS.map(([k, , j]) => [r[k], j, k]).filter(v => v[0] !== "");
+      if (vals.length > 1) {
+        const xs = vals.map(v => x(Number(v[0])));
+        svg.append("line").attr("x1", d3.min(xs)).attr("x2", d3.max(xs)).attr("y1", y).attr("y2", y).attr("stroke", "var(--color-fg-muted)").attr("stroke-width", 1.5).attr("opacity", 0.5);
+      }
+      vals.forEach(([v, j, k]) => {
+        svg.append("circle").attr("cx", x(Number(v))).attr("cy", y).attr("r", 5.5)
+          .attr("fill", j === 0 ? "var(--color-panel)" : yearColor(j)).attr("stroke", yearColor(j)).attr("stroke-width", 2)
+          .on("mousemove", (ev) => {
+            tip.textContent = `${r.mpa}｜${YEARS[j][1]} ${v}%` + (k === "rc2025" && r.rc_trend ? `（${r.rc_trend}）` : "");
+            tip.style.display = "block";
+            const box = $("reef-card").getBoundingClientRect();
+            let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+            if (lx + tw > box.width - 8) lx = ev.clientX - box.left - tw - 12;
+            tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+          })
+          .on("mouseleave", () => { tip.style.display = "none"; });
+      });
+      if (r.rc_trend === "減少") svg.append("text").attr("x", W - right).attr("y", y + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-bad)").text("↓");
+    });
+  }
+  function drawReefTbl(rows) {
+    const tb = $("reeftbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      [["key", ""], ["mpa", ""], ["metric", ""], ["shallow", "num"], ["deep", "num"], ["avg", "num"], ["grade", ""], ["note", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = r[k] === "" ? "—" : r[k]; if (r[k] === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- blue carbon ----------
+  function drawBC(rows) {
+    const el = $("bcchart"); el.innerHTML = "";
+    const rs = rows.filter(r => r.est_tC !== "" && Number(r.est_tC) >= 1000).sort((a, b) => Number(b.est_tC) - Number(a.est_tC));
+    const W = Math.max(320, el.clientWidth), narrow = W < 560;
+    const names = rs.map(r => narrow ? shortName(r.mpa).slice(0, 8) : shortName(r.mpa));
+    const left = leftFor(names, narrow), right = 70, rowH = 26, top = 6, H = top + rs.length * rowH + 22;
+    const x = d3.scaleLinear().domain([0, d3.max(rs, r => Number(r.est_tC))]).nice().range([left, W - right]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "估計藍碳量");
+    x.ticks(4).forEach(v => {
+      svg.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", top).attr("y2", top + rs.length * rowH).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", x(v)).attr("y", H - 4).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(d3.format("~s")(v));
+    });
+    const tip = $("bc-tip"); const col = (dash.colors || [])[2] || "var(--color-ok)";
+    rs.forEach((r, i) => {
+      const y = top + i * rowH;
+      const nm = names[i];
+      svg.append("text").attr("x", left - 8).attr("y", y + rowH / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "var(--color-fg)").text(nm);
+      svg.append("rect").attr("x", x(0)).attr("y", y + 5).attr("height", rowH - 10).attr("width", Math.max(1, x(Number(r.est_tC)) - x(0))).attr("rx", 2)
+        .attr("fill", Number(r.seagrass_ha || 0) > Number(r.mangrove_ha || 0) ? ((dash.colors || [])[4] || "var(--cds-chart-muted)") : col)
+        .on("mousemove", (ev) => {
+          tip.textContent = `${r.mpa}｜紅樹林 ${r.mangrove_ha || 0} ha、海草 ${r.seagrass_ha || 0} ha｜約 ${fmt(r.est_tC)} 公噸 C`;
+          tip.style.display = "block";
+          const box = $("bc-card").getBoundingClientRect();
+          let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+          if (lx + tw > box.width - 8) lx = ev.clientX - box.left - tw - 12;
+          tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        })
+        .on("mouseleave", () => { tip.style.display = "none"; });
+      svg.append("text").attr("x", x(Number(r.est_tC)) + 6).attr("y", y + rowH / 2 + 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(fmt(r.est_tC));
+    });
+  }
+  function drawBCTbl(rows) {
+    const tb = $("bctbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr"); tr.dataset.key = r.no;
+      [["mpa", ""], ["bc_type", ""], ["mangrove_ha", "num"], ["seagrass_ha", "num"], ["est_tC", "num"], ["est_tCO2e", "num"], ["tier_label", ""], ["basis", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c;
+        const v = r[k]; td.textContent = v === "" ? "—" : ((k === "est_tC" || k === "est_tCO2e") ? fmt(v) : v);
+        if (v === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function drawGap(rows) {
+    const tb = $("gaptbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.filter(r => !r.mpa).sort((a, b) => Number(b.area_2023) - Number(a.area_2023)).forEach(r => {
+      const tr = document.createElement("tr");
+      [["key", ""], ["county", ""], ["area_2023", "num"], ["area_2019", "num"], ["listed_belong", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = r[k] === "" ? "—" : r[k]; if (r[k] === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- rating ----------
+  function drawRank(rows) {
+    const tb = $("biorank").querySelector("tbody"); tb.innerHTML = "";
+    const g = $("br-g").value;
+    let rs = rows.filter(r => !g || r.bio_grade === g);
+    rs = sortRows(rs, brSort[0], brSort[1]); ariaSort("biorank", brSort[0], brSort[1]);
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      const a = document.createElement("td"); a.className = "num"; a.textContent = r.no; tr.appendChild(a);
+      const b = document.createElement("td"); b.textContent = r.mpa; tr.appendChild(b);
+      ["s_habitat", "s_coral", "s_bluecarbon", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
+      const s = document.createElement("td"); scoreTd(s, r.bio_score); s.classList.add("comp"); tr.appendChild(s);
+      const gd = document.createElement("td"); const p = document.createElement("span"); p.className = "pill";
+      const d = document.createElement("i"); d.className = "dot " + (window.mpGradeClass ? window.mpGradeClass(r.bio_grade) : "");
+      if (r.bio_grade.startsWith("資料不足")) d.style.background = "var(--color-border-line)";
+      p.appendChild(d); p.appendChild(document.createTextNode(r.bio_grade)); gd.appendChild(p); tr.appendChild(gd);
+      const rc = document.createElement("td"); rc.className = "hide-sm"; rc.textContent = r.rc_grade || "—"; if (!r.rc_grade) rc.classList.add("na"); tr.appendChild(rc);
+      const bc = document.createElement("td"); bc.className = "hide-sm"; bc.textContent = r.bc_tier || "—"; if (!r.bc_tier) bc.classList.add("na"); tr.appendChild(bc);
+      tb.appendChild(tr);
+    });
+  }
+
+  let H = [];
+  bindSort("hab", () => habSort, v => habSort = v, () => drawHab(H));
+  bindSort("biorank", () => brSort, v => brSort = v, () => drawRank(H));
+  $("hab-q").addEventListener("input", () => drawHab(H));
+  $("hab-f").addEventListener("change", () => drawHab(H));
+  $("br-g").addEventListener("change", () => drawRank(H));
+
+  dash.onData(() => {
+    const b = dash.data("biohab"), rf = dash.data("reefsites"), bc = dash.data("bluecarbon");
+    if (b.status === "ok") {
+      H = b.data; drawHab(H); drawReef(H); drawRank(H);
+    } else {
+      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 10); $("reefchart").innerHTML = "";
+    }
+    if (rf.status === "ok") drawReefTbl(rf.data); else placeholderTbody($("reeftbl").querySelector("tbody"), 8);
+    if (bc.status === "ok") { drawBC(bc.data); drawBCTbl(bc.data); } else { $("bcchart").innerHTML = ""; placeholderTbody($("bctbl").querySelector("tbody"), 8); }
+    const bs = dash.data("bcsites");
+    if (bs.status === "ok") drawGap(bs.data); else placeholderTbody($("gaptbl").querySelector("tbody"), 5);
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
   const bar = document.getElementById("tabbar");
   TABS.forEach(([k, l]) => { const a = document.createElement("a"); a.href = "#" + k; a.dataset.k = k; a.textContent = l; bar.appendChild(a); });
   function show(k) {
