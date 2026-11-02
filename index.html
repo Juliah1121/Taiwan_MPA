@@ -2,44 +2,78 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>台灣海洋保護區成效儀表板</title>
 <meta name="description" content="整合水質、海洋廢棄物、魚類環境DNA與執法強度，評估臺灣 71 處海洋保護區（MPA）成效，並與保護區分類、人口與漁業壓力交叉分析。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="台灣海洋保護區成效儀表板">
+<meta property="og:description" content="整合水質、海洋廢棄物、魚類環境DNA與執法強度，評估臺灣 71 處海洋保護區成效。">
+<meta property="og:locale" content="zh_TW">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
 :root {
-  --font-anthropic-sans: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-  --font-anthropic-serif: Georgia, "Noto Serif TC", "Songti TC", "PMingLiU", serif;
-  --color-bg: #ffffff; --color-panel: #f7f9fb; --color-fg: #14212b; --color-fg-muted: #5b6b7a; --color-border-line: #dfe5ea;
+  --font-anthropic-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-anthropic-serif: "Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif;
+  --band: #0f2230; --band-ink: #eef3f5; --band-accent: #6da7ec;
+  --color-bg: #f3f6f6; --color-panel: #ffffff; --color-fg: #0f2230; --color-fg-muted: #4a5a63; --color-border-line: #d8e0e2;
   --color-ok: #1a7f5a; --color-warn: #b7791f; --color-bad: #c0392b;
-  --cds-text-secondary: #5b6b7a; --cds-border: #d5dde3; --cds-surface-popover: #ffffff; --cds-shadow-popover: 0 4px 16px rgba(10,30,50,.14);
-  --cds-chart-muted: #9aa9b5; --cds-chart-grid: #e8edf1; --cds-chart-axis: #b4c0ca; --cds-chart-reference: #7a8b99; --cds-chart-status-critical: #d64545;
-  --cds-font-size-caption: 12px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
-  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 40px;
-  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px; --cds-pad-xl: 32px;
-  --cds-radius: 10px; --cds-dur-slow: .4s;
+  --cds-text-secondary: #4a5a63; --cds-border: #d5dde3; --cds-surface-popover: #ffffff; --cds-shadow-popover: 0 4px 16px rgba(10,30,50,.14);
+  --cds-chart-muted: #9aa9b5; --cds-chart-grid: #e4eaeb; --cds-chart-axis: #b4c0ca; --cds-chart-reference: #7a8b99; --cds-chart-status-critical: #d03b3b;
+  --cds-font-size-caption: 12.5px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 22px; --cds-gap-xl: 40px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-pad-xl: 32px;
+  --cds-radius: 4px; --cds-dur-slow: .4s;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #0f1720; --color-panel: #17222d; --color-fg: #e6edf3; --color-fg-muted: #9fb0bf; --color-border-line: #2a3846;
+    --band: #08121a; --band-ink: #e8eef0;
+    --color-bg: #0e171d; --color-panel: #15212a; --color-fg: #e8eef0; --color-fg-muted: #b4c2c8; --color-border-line: #2a3a44;
     --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
-    --cds-text-secondary: #9fb0bf; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
-    --cds-chart-muted: #6d8091; --cds-chart-grid: #24313d; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #f07167;
+    --cds-text-secondary: #b4c2c8; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+    --cds-chart-muted: #6d8091; --cds-chart-grid: #22313a; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #e66767;
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --color-bg: #0f1720; --color-panel: #17222d; --color-fg: #e6edf3; --color-fg-muted: #9fb0bf; --color-border-line: #2a3846;
+  --band: #08121a; --band-ink: #e8eef0;
+  --color-bg: #0e171d; --color-panel: #15212a; --color-fg: #e8eef0; --color-fg-muted: #b4c2c8; --color-border-line: #2a3a44;
   --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
-  --cds-text-secondary: #9fb0bf; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
-  --cds-chart-muted: #6d8091; --cds-chart-grid: #24313d; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #f07167;
+  --cds-text-secondary: #b4c2c8; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+  --cds-chart-muted: #6d8091; --cds-chart-grid: #22313a; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #e66767;
+  color-scheme: dark;
 }
-html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); }
-#dash-root { --dash-gutter: 16px; padding: 24px var(--dash-gutter) 48px; box-sizing: border-box; max-width: 100vw; overflow-x: hidden; }
+html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 15px; line-height: 1.6; }
+[hidden] { display: none !important; }
+.band { background: var(--band); color: var(--band-ink); }
+.band-inner, .tabs-inner { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.band-inner { padding-block: 22px 14px; display: grid; gap: 6px; }
+.band h1 { font-family: var(--font-anthropic-serif); font-weight: 900; font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0; }
+.band p { margin: 0; max-width: 980px; color: #c9d6de; }
+.band .tagline { color: var(--band-ink); font-size: 16px; font-weight: 500; }
+.tabs { position: sticky; top: 0; z-index: 9; background: var(--band); border-bottom: 1px solid #22384a; }
+.tabs-inner { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: thin; }
+.tabs a { color: #b9c9d3; text-decoration: none; font-size: 14px; padding: 10px 14px; white-space: nowrap; border-bottom: 3px solid transparent; }
+.tabs a[aria-current="page"] { color: #fff; border-bottom-color: var(--band-accent); font-weight: 500; }
+.tabs a:hover { color: #fff; }
+.tabs a:focus-visible { outline: 2px solid var(--band-accent); outline-offset: -2px; }
+#dash-root { --dash-gutter: 16px; max-width: 1240px; margin: 0 auto; padding: 24px max(16px, env(safe-area-inset-left, 0px)) 64px; box-sizing: border-box; overflow-x: hidden; }
 #dash-root svg text { font-family: var(--font-anthropic-sans); }
+.tabpage { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.tabpage > .xs { border-top: 0 !important; padding-top: 0 !important; }
+.mp .xs-h { font-family: var(--font-anthropic-serif) !important; font-weight: 600 !important; font-size: 28px !important; margin: 0; }
+.mp h2 { font-family: var(--font-anthropic-serif); }
+.mp .ov-links { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+.ov-links .ov-link { display: grid; align-content: start; gap: 4px; text-decoration: none; color: var(--color-fg); }
+.ov-links .ov-link b { font-family: var(--font-anthropic-serif); font-size: 18px; font-weight: 600; }
+.ov-links .ov-link span { color: var(--color-fg-muted); font-size: 14px; }
+.ov-links .ov-link em { font-style: normal; color: #1c5cab; font-size: 14px; margin-top: 4px; }
+.ov-links .ov-link:hover { border-color: #1c5cab; }
 .dash-skeleton { color: transparent !important; position: relative; min-height: 1em; }
 .dash-skeleton::after { content: ""; position: absolute; inset: 20% 0; max-width: 60%; border-radius: 6px; background: var(--cds-chart-grid); animation: sk 1.2s ease-in-out infinite alternate; }
 @keyframes sk { from { opacity: .5 } to { opacity: 1 } }
-.site-foot { max-width: 1280px; margin: 32px auto 0; font-size: 12px; color: var(--color-fg-muted); line-height: 1.6; }
+.site-foot { font-size: 12px; color: var(--color-fg-muted); border-top: 1px solid var(--color-border-line); padding-top: 12px; line-height: 1.6; }
 .site-foot a { color: inherit; }
 </style>
 <script>
@@ -49,23 +83,23 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
-    colors: ["#0e7c86", "#f2b134", "#6cc3b6", "#f26b5b", "#2e86ab", "#7a5ea8", "#8aa29e", "#c9733c"],
+    colors: ["#1c5cab", "#eda100", "#3fa796", "#d03b3b", "#2e86ab", "#6250d6", "#8aa29e", "#c97a2b"],
     data(id) { return store[id] || { status: "missing", data: [], columns: [], meta: [] }; },
     calc(id, spec) { calcs.push([id, spec]); store[id] = { status: "loading", data: [], columns: [], meta: [] }; },
     loader() {}, refresh() {}, params() { return {}; }, setParams() {}, resetParams() {},
-    setLink(name) { try { history.replaceState(null, "", "#" + name); } catch (e) {} },
+    setLink() {},
     onData(fn) { subs.push(fn); try { fn(); } catch (e) { console.error(e); } },
   };
   const run = () => subs.forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
   function runCalcs() {
     calcs.forEach(([id, spec]) => {
       try {
-        const rows = spec.inputs.map(i => store[i].data);
-        const out = spec.fn(...rows);
+        const out = spec.fn(...spec.inputs.map(i => store[i].data));
         store[id] = { status: "ok", data: out, columns: Array.isArray(out) && out[0] ? Object.keys(out[0]) : [], meta: [] };
       } catch (e) { console.error("calc", id, e); store[id] = { status: "error", data: [], columns: [], meta: [], message: String(e) }; }
     });
   }
+  dash._rerun = run;
   dash._start = function () {
     Promise.all(Object.entries(FILES).map(([id, f]) => d3.csv("data/" + f).then(rows => {
       store[id] = { status: "ok", data: rows, columns: rows.columns, meta: [] };
@@ -76,10 +110,8 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   window.dash = dash;
 })();
 </script>
-</head>
-<body>
-<div id="dash-root">
 <style>
+/* page styles */
 #dash-root { --dash-gutter: clamp(12px, 3vw, 32px); }
 .mp { font-family: var(--font-anthropic-sans); max-width: 1280px; margin-inline: auto; display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
 .mp h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
@@ -139,13 +171,19 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
 
-<div class="mp">
-  <header id="top">
-    <h1>台灣海洋保護區成效儀表板</h1>
-    <p class="lead dash-skeleton" id="lead">—</p>
-    <nav class="nav"><a href="#ranking">成效排名</a><a href="#cross">分類交叉分析</a><a href="#pressure">人口與漁業壓力</a><a href="#method">評分方法</a></nav>
-  </header>
+</head>
+<body>
+<header class="band"><div class="band-inner">
+  <h1>台灣海洋保護區成效儀表板</h1>
+  <p class="tagline">從「劃了多少」到「保護得好不好」</p>
+  <p>整合水質、海洋廢棄物、魚類環境 DNA 與執法強度四項成果指標，評估臺灣海洋保護區的實際成效，並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
+</div></header>
+<nav class="tabs" aria-label="分頁"><div class="tabs-inner" id="tabbar"></div></nav>
+<div id="dash-root"><div class="mp">
 
+<section data-tab="overview" class="tabpage" aria-labelledby="ov-h">
+  <h2 id="ov-h" class="xs-h" hidden>總覽</h2>
+  <p class="lead dash-skeleton" id="lead">—</p>
   <section class="tiles" id="tiles">
     <div class="tile"><div class="k">評估保護區</div><div class="v dash-skeleton" data-source="summary" data-field="total">—</div></div>
     <div class="tile"><div class="k"><i class="dot g-good"></i>良好（≥70）</div><div class="v dash-skeleton" data-source="summary" data-field="good">—</div></div>
@@ -154,7 +192,28 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     <div class="tile"><div class="k"><i class="dot g-bad"></i>不佳（&lt;40）</div><div class="v dash-skeleton" data-source="summary" data-field="bad">—</div></div>
     <div class="tile"><div class="k">四項資料齊全</div><div class="v dash-skeleton" data-source="summary" data-field="full4">—</div></div>
   </section>
+  <div class="grid2">
+    <section class="card" id="bycat">
+      <h2>依保護區類型比較四個面向</h2>
+      <p class="note">各類型的平均分數（只計有資料者）。點與點距離越大，代表該類型的面向越不均衡。</p>
+      <div class="legend" id="lg"></div>
+      <div class="chart" id="catchart" data-source="bycat"></div>
+    </section>
+    <section class="card" id="cover">
+      <h2>資料覆蓋</h2>
+      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性與海廢缺口最大，綜合分在資料少的區應保守解讀。</p>
+      <div class="chart" id="covchart" data-source="coverage"></div>
+    </section>
+  </div>
+  <div class="grid2 ov-links">
+    <a class="card ov-link" href="#ranking"><b>成效排名</b><span>71 處保護區的水質、海廢、生物多樣性與執法分數，可搜尋、篩選，點選看原始指標。</span><em>看成效排名 →</em></a>
+    <a class="card ov-link" href="#cross"><b>分類交叉分析</b><span>成效與保護區類型、法源、IUCN 分類、保護等級、面積、成立年份是否相關。</span><em>看分類交叉分析 →</em></a>
+    <a class="card ov-link" href="#pressure"><b>人口與漁業壓力</b><span>鄰近人口、漁業與養殖廢棄物、巡守投入，哪一個最能解釋成效差異。</span><em>看壓力分析 →</em></a>
+    <a class="card ov-link" href="#method"><b>評分方法</b><span>四面向的資料來源、計分方式、等級門檻與研究限制。</span><em>看評分方法 →</em></a>
+  </div>
+</section>
 
+<section data-tab="ranking" class="tabpage" hidden>
   <section class="card" id="ranking">
     <h2>各保護區綜合成效</h2>
     <p class="note">每項 0–100 分，越高越好；綜合分為有資料面向的平均。點一列看該區四項原始指標。灰字「—」表示該面向無資料。</p>
@@ -182,7 +241,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </table>
     </div>
   </section>
-
   <section class="card detail" id="detail">
     <h3 id="d-name" data-source="mpa" data-field="mpa">—</h3>
     <p class="note" id="d-sub">—</p>
@@ -213,21 +271,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
             <dt>處分率</dt><dd data-source="mpa" data-field="pun_rate">—</dd></dl></div>
     </div>
   </section>
+</section>
 
-  <div class="grid2">
-    <section class="card" id="bycat">
-      <h2>依保護區類型比較四個面向</h2>
-      <p class="note">各類型的平均分數（只計有資料者）。點與點距離越大，代表該類型的面向越不均衡。</p>
-      <div class="legend" id="lg"></div>
-      <div class="chart" id="catchart" data-source="bycat"></div>
-    </section>
-    <section class="card" id="cover">
-      <h2>資料覆蓋</h2>
-      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性與海廢缺口最大，綜合分在資料少的區應保守解讀。</p>
-      <div class="chart" id="covchart" data-source="coverage"></div>
-    </section>
-  </div>
-
+<section data-tab="cross" class="tabpage" hidden>
   <section id="cross" class="xs">
     <h2 class="xs-h">成效與分類的交叉分析</h2>
     <p class="lead dash-skeleton" id="x-lead">—</p>
@@ -276,7 +322,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <p><b>對管理的意涵。</b>分類與等級決定的是「允許做什麼」，成效則取決於有沒有人巡守、查到之後有沒有處分、陸源壓力（海廢、營養鹽）有沒有被處理。要讓保護等級反映在成效上，下一步是逐區補齊處分率與監測資料，並把海廢與陸源污染納入管理計畫。</p>
     </div>
   </section>
+</section>
 
+<section data-tab="pressure" class="tabpage" hidden>
   <section id="pressure" class="xs">
     <h2 class="xs-h">成效與人口、漁業壓力、管理投入</h2>
     <p class="lead dash-skeleton" id="p-lead">—</p>
@@ -325,7 +373,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <p><b>限制。</b>人口是保護區所在或鄰接鄉鎮的整體人口，不是到海岸的距離；人口數取自維基百科鄉鎮列表，頁面未標資料年份。管理投入只有巡守人力與時數，沒有經費、管理計畫、監測投入。這是一次性的橫斷面資料，只能看關聯，不能推因果。</p>
     </div>
   </section>
+</section>
 
+<section data-tab="method" class="tabpage" hidden>
   <section class="card method" id="method">
     <h2>評分方法</h2>
     <p class="note">本頁為依公開資料的非官方評估，用於找出管理優先順序，不等於海保署官方成效分級。</p>
@@ -343,7 +393,14 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     <p>等級：綜合 ≥70 良好、55–69 尚可、40–54 待加強、&lt;40 不佳；只有兩個面向有資料者標「暫評」，少於兩個面向標「資料不足」。</p>
     <p><b>限制</b>：eDNA 多為單次採樣、只記出現與否，無法反映保護前後差異；執法「零查獲」可能是無違規，也可能是沒查到；海廢測點座標依地名推定（誤差 1–3 km）；四個面向等權重，若要強調生態成果可再調整。</p>
   </section>
-</div>
+</section>
+
+<footer class="site-foot">
+  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
+  本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
+  資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
+</footer>
+</div></div>
 
 <script>
 const GR = { "良好": "g-good", "尚可": "g-ok", "待加強": "g-warn", "不佳": "g-bad" };
@@ -835,12 +892,22 @@ dash.calc("plead", {
 })();
 </script>
 
-<footer class="site-foot">
-  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
-  本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
-  資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
-</footer>
-</div>
-<script>dash._start();</script>
+<script>
+(function () {
+  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
+  const bar = document.getElementById("tabbar");
+  TABS.forEach(([k, l]) => { const a = document.createElement("a"); a.href = "#" + k; a.dataset.k = k; a.textContent = l; bar.appendChild(a); });
+  function show(k) {
+    if (!TABS.some(t => t[0] === k)) k = "overview";
+    document.querySelectorAll("section[data-tab]").forEach(s => { s.hidden = s.dataset.tab !== k; });
+    bar.querySelectorAll("a").forEach(a => { if (a.dataset.k === k) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    const cur = bar.querySelector('[aria-current="page"]'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: "nearest", inline: "nearest" });
+    requestAnimationFrame(() => dash._rerun());   // charts measure their width, so redraw once visible
+  }
+  window.addEventListener("hashchange", () => { show(location.hash.slice(1)); window.scrollTo({ top: 0 }); });
+  show(location.hash.slice(1));
+  dash._start();
+})();
+</script>
 </body>
 </html>
