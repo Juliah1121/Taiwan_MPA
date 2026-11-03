@@ -1,0 +1,5 @@
+no,park,mpa,habitat,years,records_marine,events,sites,fish_species,fish_families,fish_chao2,completeness,fish_rare50,per_event,crust_species,landcrab_species,fw_fish,exotic_fish,threatened,protected,butterfly,grouper,parrot,angelfish,trend_rho,trend_p,early_mean,late_mean,split_year,mw_p,dropped_records,source_records
+7,Dongsha,Dongsha Atoll National Park,Coral reef,2011–2019,10662,442,128,504,61,591,85,283.6,15.4,74,4,0,0,11,2,30,10,23,10,-0.22,0.0,42.3,10.3,2011,0.0,0,11065
+10,Kenting,Kenting National Park,Coral reef,2009–2021,1682,441,62,247,53,371,67,85.4,3.7,83,10,33,13,3,1,15,7,13,4,-0.39,0.0,5.9,2.5,2016,0.0,0,13009
+9,South Penghu,South Penghu Marine National Park,Coral reef,2011–2021,9662,451,248,521,63,630,83,274.4,20.8,67,1,0,0,7,1,33,28,20,12,-0.09,0.0574,16.6,39.0,2017,0.0,0,10141
+8,Taijiang,Taijiang National Park,Estuary & lagoon,2009–2022,741,139,88,169,66,250,67,96.6,3.9,130,8,4,8,8,0,0,2,0,0,0.23,0.0068,3.6,4.1,2017,0.2862,125,13430

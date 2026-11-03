@@ -1,0 +1,34 @@
+key,year,site,mpa,metric,shallow,deep,avg,grade,note
+2008-Shanyuan Middle Reef,2008,Shanyuan Middle Reef,Fushan Conservation Area,Live coral,34,,34.0,Fair,"Approximate, read from figure"
+2008-Shanyuan South Reef,2008,Shanyuan South Reef,Fushan Conservation Area,Live coral,73,,73.0,Good,"Approximate, read from figure"
+2008-Green Island Chaikou,2008,Green Island Chaikou,Green Island Conservation Area,Live coral,38,33,35.5,Fair,"Approximate, read from figure"
+2008-Green Island Niutoushan,2008,Green Island Niutoushan,Green Island Conservation Area,Live coral,45,22,33.5,Fair,"Approximate, read from figure"
+2008-Green Island Haishenping,2008,Green Island Haishenping,Green Island Haishenping–Fanchuanbi Marine Reserve,Live coral,41,50,45.5,Fair,"Approximate, read from figure; also in Green Island Conservation Area"
+2008-Penghu Qingwan,2008,Penghu Qingwan,(Not an MPA),Live coral,30,30,30.0,Fair,Not an MPA
+2023-Kenting Houbihu,2023,Kenting Houbihu,Kenting National Park,Live coral,51.88,51.25,51.6,Good,No-fishing zone; spring–autumn mean
+2023-Kenting Hejie,2023,Kenting Hejie,Kenting National Park,Live coral,34.69,38.44,36.6,Fair,Spring–autumn mean
+2023-Taitung Jihui,2023,Taitung Jihui,Xiaogang Conservation Area,Live coral,38.5,38.5,38.5,Fair,
+2023-Hualien Shitiping,2023,Hualien Shitiping,Shitiping Conservation Area,Live coral,,48.75,48.8,Fair,6–8 m
+2023-Keelung Chaojing,2023,Keelung Chaojing,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Live coral,,43.13,43.1,Fair,10 m; also in Keelung Conservation Area
+2023-Keelung Heping Island,2023,Keelung Heping Island,Keelung Conservation Area,Live coral,21.3,,21.3,Poor,
+2023-Longdong No. 4,2023,Longdong No. 4,Northeast & Yilan Coast Scenic Area (marine reserve),Live coral,14.55,35.96,25.3,Fair,Mean of 4 transects
+2023-Longdong No. 1.5,2023,Longdong No. 1.5,Northeast & Yilan Coast Scenic Area (marine reserve),Live coral,14.07,23.75,18.9,Poor,Mean of two surveys
+2023-Bitou,2023,Bitou,(Not an MPA),Live coral,45.63,,45.6,Fair,Report calls it general waters; not an MPA
+2023-Fanzai'ao,2023,Fanzai'ao,Ruifang Conservation Area,Live coral,17.5,6.3,11.9,Poor,Included in Ruifang Conservation Area in 2014
+2023-Yeliu,2023,Yeliu,Yeliu Conservation Area,Live coral,15.0,18.8,16.9,Poor,
+2023-Penghu Hangwan,2023,Penghu Hangwan,Caiyuan Wetland,Live coral,27.81,,27.8,Fair,Assigned to Caiyuan Wetland as before
+2023-Penghu Shanshui harbor east,2023,Penghu Shanshui harbor east,(Not an MPA),Live coral,25.3,,25.3,Fair,Not an MPA
+2023-Dongyuping,2023,Dongyuping,South Penghu Marine National Park,Live coral,,36.47,36.5,Fair,"6–8 m, mean of 3 transects"
+"2023-Green Island (Dabaisha, Shilang, Guiwan)",2023,"Green Island (Dabaisha, Shilang, Guiwan)",Green Island Conservation Area,Live coral,67.81,64.69,66.2,Good,Report gives only a range; midpoint used
+"2023-Xiao Liuqiu (Meiren Cave, Yuchengwei, Houshi reef)",2023,"Xiao Liuqiu (Meiren Cave, Yuchengwei, Houshi reef)",Liuqiu Conservation Area,Live coral,16.25,16.25,16.2,Poor,Report gives only a range of 13.1–19.4%; midpoint used
+"2023-Orchid Island (Yunu Rock, Muji Rock, Nanshi)",2023,"Orchid Island (Yunu Rock, Muji Rock, Nanshi)",(Not an MPA),Live coral,41.55,58.15,49.8,Fair,Not an MPA; range midpoint used
+2025-Dongyuping (3 transects),2025,Dongyuping (3 transects),South Penghu Marine National Park,Hard coral,10.6,,10.6,Poor,"Single survey, Aug 2025"
+2025-Kenting Hejie,2025,Kenting Hejie,Kenting National Park,Hard coral,27.8,,27.8,Fair,Apr 2024 → Dec 2025 declining
+2025-Shitiping,2025,Shitiping,Shitiping Conservation Area,Hard coral,22.5,,22.5,Poor,Jul 2024 → Aug 2025 declining
+2026-Longdong No. 1.5,2026,Longdong No. 1.5,Northeast & Yilan Coast Scenic Area (marine reserve),Hard coral,12.2,,12.2,Poor,Sep 2024 → Jun 2026 declining
+2025-Chaojing,2025,Chaojing,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Hard coral,43.4,,43.4,Fair,Single survey 2025; also in Keelung Conservation Area
+"2025-Xiao Liuqiu (Shanfu, Yuchengwei, Meiren Cave)",2025,"Xiao Liuqiu (Shanfu, Yuchengwei, Meiren Cave)",Liuqiu Conservation Area,Hard coral,18.9,,18.9,Poor,"Single survey, Oct 2025"
+2025-Yeliu,2025,Yeliu,Yeliu Conservation Area,Hard coral,20.0,,20.0,Poor,Single survey 2025
+2025-Shanyuan,2025,Shanyuan,Fushan Conservation Area,Hard coral,21.2,,21.2,Poor,Jul 2024 → Sep 2025 stable
+2025-Jihui,2025,Jihui,Xiaogang Conservation Area,Hard coral,41.4,,41.4,Fair,Jul 2024 → Aug 2025 mixed
+2025-Hangwan,2025,Hangwan,Caiyuan Wetland,Hard coral,33.1,,33.1,Fair,"Single survey, Aug 2025"

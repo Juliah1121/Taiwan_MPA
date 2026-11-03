@@ -1,0 +1,25 @@
+cat_group,cluster,n
+National park,1.0,2
+National park,2.0,0
+National park,3.0,1
+National park,4.0,0
+Fisheries resource conservation area,1.0,15
+Fisheries resource conservation area,2.0,6
+Fisheries resource conservation area,3.0,7
+Fisheries resource conservation area,4.0,2
+Nature reserve / monument,1.0,3
+Nature reserve / monument,2.0,0
+Nature reserve / monument,3.0,2
+Nature reserve / monument,4.0,0
+Important wetland,1.0,8
+Important wetland,2.0,4
+Important wetland,3.0,9
+Important wetland,4.0,1
+Wildlife refuge / major habitat,1.0,2
+Wildlife refuge / major habitat,2.0,0
+Wildlife refuge / major habitat,3.0,3
+Wildlife refuge / major habitat,4.0,0
+Scenic-area marine reserve,1.0,1
+Scenic-area marine reserve,2.0,0
+Scenic-area marine reserve,3.0,1
+Scenic-area marine reserve,4.0,0

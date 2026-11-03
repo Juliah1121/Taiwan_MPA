@@ -1,0 +1,17 @@
+key,a,b,jaccard,shared
+Dongsha-Dongsha,Dongsha,Dongsha,1.0,504
+Dongsha-Kenting,Dongsha,Kenting,0.318,181
+Dongsha-South Penghu,Dongsha,South Penghu,0.434,310
+Dongsha-Taijiang,Dongsha,Taijiang,0.02,13
+Kenting-Dongsha,Kenting,Dongsha,0.318,181
+Kenting-Kenting,Kenting,Kenting,1.0,247
+Kenting-South Penghu,Kenting,South Penghu,0.302,178
+Kenting-Taijiang,Kenting,Taijiang,0.061,24
+South Penghu-Dongsha,South Penghu,Dongsha,0.434,310
+South Penghu-Kenting,South Penghu,Kenting,0.302,178
+South Penghu-South Penghu,South Penghu,South Penghu,1.0,521
+South Penghu-Taijiang,South Penghu,Taijiang,0.024,16
+Taijiang-Dongsha,Taijiang,Dongsha,0.02,13
+Taijiang-Kenting,Taijiang,Kenting,0.061,24
+Taijiang-South Penghu,Taijiang,South Penghu,0.024,16
+Taijiang-Taijiang,Taijiang,Taijiang,1.0,169

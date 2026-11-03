@@ -1,0 +1,24 @@
+no,mpa,bc_type,mangrove_ha,seagrass_ha,est_tC,est_tCO2e,in_total,tier,tier_label,basis
+7,Dongsha Atoll National Park,Seagrass bed,,7716,203702,746907,Yes,A,"A ≥10,000 tC","Dongsha Atoll seagrass 7,716 ha (after Liu et al. 2018; Lin et al. 2023)"
+60,Tamsui River Wetland,Mangrove,130.95,,35042,128487,Yes,A,"A ≥10,000 tC",Zhuwei 58.62 + Guandu 50.51 + Shezi Island 11.26 + Waziwei 10.56; adjacent Luzhou 16.59 ha not counted
+8,Taijiang National Park,"Mangrove, seagrass",106.9,0.178,28611,104907,Yes,A,"A ≥10,000 tC",Sicao 98.48 + Qigu Lagoon 8.42; Qigu seagrass 0.178
+50,Puzi River Estuary Wetland,"Mangrove, seagrass",80.17,0.768,21474,78738,Yes,A,"A ≥10,000 tC","Puzi River mouth 80.17; Baishuihu seagrass 0.768 (inventory says ""none""; inferred inside the wetland from its location)"
+53,Beimen Wetland,Mangrove,75.26,,20140,73847,Yes,A,"A ≥10,000 tC","Beimen–Xuejia 75.26 (inventory says ""none""; inferred to overlap Beimen Wetland at the Jishui River mouth); Shuangchun 22.3 ha not counted"
+55,Haomeiliao Wetland,"Mangrove, seagrass",36.1,1.345,9696,35552,Yes,B,"B 1,000–10,000 tC",Haomeiliao mangrove 36.1; seagrass 1.345
+58,Bazhang River Estuary Wetland,Mangrove,17.77,,4755,17435,Yes,B,"B 1,000–10,000 tC",Bazhang River mouth 17.77
+63,Xinfeng Wetland,Mangrove,8.12,,2173,7968,Yes,B,"B 1,000–10,000 tC",Xinfeng (Hongmaogang) 8.12
+1,Taoyuan Guanxin Algal Reef Wildlife Refuge,Mangrove,7.23,,1935,7095,Yes,B,"B 1,000–10,000 tC",Xinwu River mouth 7.23 (listed under the Guanxin Algal Reef refuge)
+52,Xiangshan Wetland,"Mangrove, seagrass",6.27,0.211,1683,6171,Yes,B,"B 1,000–10,000 tC",Xiangshan: only about 6.27 left at Haishangu; seagrass 0.211
+62,Qingluo Wetland,Mangrove,2.8,,749,2746,Yes,C,"C <1,000 tC or not quantified",Qingluo 2.8
+71,Yanshui River Estuary Wetland,Mangrove,2.34,,626,2295,Yes,C,"C <1,000 tC or not quantified","Anping Harbor 2.34 (approximate coordinates; inferred inside Yanshui Estuary); Sicao 98.48 ha counted under Taijiang, not double-counted"
+67,Caiyuan Wetland,"Mangrove, seagrass",1.11,0.084,299,1096,Yes,C,"C <1,000 tC or not quantified",Caiyuan 1.11; Chongguang seagrass restoration area 0.084 (inferred from location)
+22,Checheng Conservation Area,Seagrass bed,,9.122,241,884,Yes,C,"C <1,000 tC or not quantified","Haikou 9.122 (inventory says ""none""; on the Haikou harbor boundary at the reserve's southern end)"
+68,Gaomei Wetland,"Mangrove, seagrass, salt marsh",0.61,0.01,164,601,Yes,C,"C <1,000 tC or not quantified",Qingshui Drainage 0.61 (southern boundary); seagrass 0.01; Yunlin-sedge salt-marsh area not available
+56,Xucuogang Wetland,Mangrove,0.39,,104,381,Yes,C,"C <1,000 tC or not quantified",Xinjie River mouth 0.39 (Avicennia no longer forms a stand)
+10,Kenting National Park,Seagrass bed,,1.353,36,132,Yes,C,"C <1,000 tC or not quantified",Daguang 0.942 + Nanwan 0.396 + Wanlitong 0.015
+17,Liuqiu Conservation Area,Seagrass bed,,0.664,18,66,Yes,C,"C <1,000 tC or not quantified",Duzaiping 0.496 + Geban Bay 0.14 + Shanfu 0.028
+16,Green Island Conservation Area,Seagrass bed,,0.298,8,29,Yes,C,"C <1,000 tC or not quantified",Green Island 0.298 (the whole coast is in the reserve)
+54,Qigu Salt Pan Wetland,Seagrass bed,,0.178,5,18,No (overlap),C,"C <1,000 tC or not quantified","Qigu seagrass 0.178, overlapping Taijiang; counted once in the total"
+15,Marine Museum Resource Cultivation Area,Seagrass bed,,,,,Yes,C,"C <1,000 tC or not quantified",Houwan seagrass under restoration; not in the 2023 inventory
+65,Dadu River Estuary Wetland,Salt marsh,,,,,Yes,C,"C <1,000 tC or not quantified","Yunlin sedge, area not available; no Dadu River mangrove in the inventory"
+70,Qingshui Wetland,Salt marsh,,,,,Yes,C,"C <1,000 tC or not quantified","Patches of Yunlin sedge, area not available"

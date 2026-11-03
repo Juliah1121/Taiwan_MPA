@@ -1,0 +1,2069 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taiwan MPA Effectiveness Dashboard</title>
+<meta name="description" content="Evaluates the effectiveness of Taiwan's 71 marine protected areas (MPAs) by integrating water quality, marine debris, biodiversity (field surveys and environmental DNA) and enforcement, and cross-analyses the results against MPA classification, population and fishing pressure.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Taiwan MPA Effectiveness Dashboard">
+<meta property="og:description" content="Integrating water quality, marine debris, biodiversity and enforcement to evaluate the effectiveness of Taiwan's 71 marine protected areas.">
+<meta property="og:locale" content="zh_TW">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root {
+  --font-anthropic-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-anthropic-serif: "Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif;
+  --band: #0f2230; --band-ink: #eef3f5; --band-accent: #6da7ec;
+  --color-bg: #f3f6f6; --color-panel: #ffffff; --color-fg: #0f2230; --color-fg-muted: #4a5a63; --color-border-line: #d8e0e2;
+  --color-ok: #1a7f5a; --color-warn: #b7791f; --color-bad: #c0392b;
+  --cds-text-secondary: #4a5a63; --cds-border: #d5dde3; --cds-surface-popover: #ffffff; --cds-shadow-popover: 0 4px 16px rgba(10,30,50,.14);
+  --cds-chart-muted: #9aa9b5; --cds-chart-grid: #e4eaeb; --cds-chart-axis: #b4c0ca; --cds-chart-reference: #7a8b99; --cds-chart-status-critical: #d03b3b;
+  --cds-font-size-caption: 12.5px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 22px; --cds-gap-xl: 40px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-pad-xl: 32px;
+  --cds-radius: 4px; --cds-dur-slow: .4s;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --band: #08121a; --band-ink: #e8eef0;
+    --color-bg: #0e171d; --color-panel: #15212a; --color-fg: #e8eef0; --color-fg-muted: #b4c2c8; --color-border-line: #2a3a44;
+    --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
+    --cds-text-secondary: #b4c2c8; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+    --cds-chart-muted: #6d8091; --cds-chart-grid: #22313a; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #e66767;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --band: #08121a; --band-ink: #e8eef0;
+  --color-bg: #0e171d; --color-panel: #15212a; --color-fg: #e8eef0; --color-fg-muted: #b4c2c8; --color-border-line: #2a3a44;
+  --color-ok: #4cc38a; --color-warn: #e0a84a; --color-bad: #f07167;
+  --cds-text-secondary: #b4c2c8; --cds-border: #33424f; --cds-surface-popover: #1d2a36; --cds-shadow-popover: 0 4px 16px rgba(0,0,0,.5);
+  --cds-chart-muted: #6d8091; --cds-chart-grid: #22313a; --cds-chart-axis: #4a5a68; --cds-chart-reference: #8fa1b0; --cds-chart-status-critical: #e66767;
+  color-scheme: dark;
+}
+html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 15px; line-height: 1.6; }
+[hidden] { display: none !important; }
+.band { background: var(--band); color: var(--band-ink); }
+.band-inner, .tabs-inner { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.band-inner { padding-block: 22px 14px; display: grid; gap: 6px; }
+.band h1 { font-family: var(--font-anthropic-serif); font-weight: 900; font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0; }
+.band p { margin: 0; max-width: 980px; color: #c9d6de; }
+.band .tagline { color: var(--band-ink); font-size: 16px; font-weight: 500; }
+.tabs { position: sticky; top: 0; z-index: 9; background: var(--band); border-bottom: 1px solid #22384a; }
+.tabs-inner { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: thin; }
+.tabs a { color: #b9c9d3; text-decoration: none; font-size: 14px; padding: 10px 14px; white-space: nowrap; border-bottom: 3px solid transparent; }
+.tabs a[aria-current="page"] { color: #fff; border-bottom-color: var(--band-accent); font-weight: 500; }
+.tabs a:hover { color: #fff; }
+.tabs a:focus-visible { outline: 2px solid var(--band-accent); outline-offset: -2px; }
+#dash-root { --dash-gutter: 16px; max-width: 1240px; margin: 0 auto; padding: 24px max(16px, env(safe-area-inset-left, 0px)) 64px; box-sizing: border-box; overflow-x: hidden; }
+#dash-root svg text { font-family: var(--font-anthropic-sans); }
+.tabpage { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.tabpage > .xs { border-top: 0 !important; padding-top: 0 !important; }
+.mp .xs-h { font-family: var(--font-anthropic-serif) !important; font-weight: 600 !important; font-size: 28px !important; margin: 0; }
+.mp h2 { font-family: var(--font-anthropic-serif); }
+.mp .ov-links { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+.ov-links .ov-link { display: grid; align-content: start; gap: 4px; text-decoration: none; color: var(--color-fg); }
+.ov-links .ov-link b { font-family: var(--font-anthropic-serif); font-size: 18px; font-weight: 600; }
+.ov-links .ov-link span { color: var(--color-fg-muted); font-size: 14px; }
+.ov-links .ov-link em { font-style: normal; color: #1c5cab; font-size: 14px; margin-top: 4px; }
+.ov-links .ov-link:hover { border-color: #1c5cab; }
+.dash-skeleton { color: transparent !important; position: relative; min-height: 1em; }
+.dash-skeleton::after { content: ""; position: absolute; inset: 20% 0; max-width: 60%; border-radius: 6px; background: var(--cds-chart-grid); animation: sk 1.2s ease-in-out infinite alternate; }
+@keyframes sk { from { opacity: .5 } to { opacity: 1 } }
+.site-foot { font-size: 12px; color: var(--color-fg-muted); border-top: 1px solid var(--color-border-line); padding-top: 12px; line-height: 1.6; }
+.site-foot a { color: inherit; }
+</style>
+<script>
+/* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
+(function () {
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv"};
+  const store = {}; const calcs = []; const subs = [];
+  Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
+  const dash = {
+    colors: ["#1c5cab", "#eda100", "#3fa796", "#d03b3b", "#2e86ab", "#6250d6", "#8aa29e", "#c97a2b"],
+    data(id) { return store[id] || { status: "missing", data: [], columns: [], meta: [] }; },
+    calc(id, spec) { calcs.push([id, spec]); store[id] = { status: "loading", data: [], columns: [], meta: [] }; },
+    loader() {}, refresh() {}, params() { return {}; }, setParams() {}, resetParams() {},
+    setLink() {},
+    onData(fn) { subs.push(fn); try { fn(); } catch (e) { console.error(e); } },
+  };
+  const fmtVal = v => {
+    if (v === "" || v == null) return null;
+    const n = Number(v);
+    if (typeof v === "number" || (/^-?\d+(\.\d+)?$/.test(String(v)))) return Math.abs(n) >= 1000 ? n.toLocaleString("en-US", { maximumFractionDigits: 2 }) : String(v);
+    return String(v);
+  };
+  // Fill marked placeholders (data-source + data-field) that the page's own code leaves to the runtime.
+  function autoFill() {
+    document.querySelectorAll("[data-source][data-field]").forEach(el => {
+      if (el.tagName === "TH" || el.children.length) return;
+      if (!(el.dataset.shim === "1" || el.textContent.trim() === "—")) return;
+      const d = store[el.dataset.source]; if (!d || d.status !== "ok" || !Array.isArray(d.data)) return;
+      let row = d.data[0];
+      if (el.dataset.where) {
+        const conds = el.dataset.where.split("&").map(c => c.split("=").map(decodeURIComponent));
+        row = d.data.find(r => conds.every(([k, v]) => String(r[k]) === v));
+      } else if (el.dataset.row) row = d.data[Number(el.dataset.row)];
+      if (!row) return;
+      const v = fmtVal(row[el.dataset.field]);
+      if (v != null) { el.textContent = v; el.dataset.shim = "1"; el.classList.remove("dash-skeleton"); }
+    });
+  }
+  const run = () => { subs.forEach(fn => { try { fn(); } catch (e) { console.error(e); } }); autoFill(); };
+  function runCalcs() {
+    calcs.forEach(([id, spec]) => {
+      try {
+        const out = spec.fn(...spec.inputs.map(i => store[i].data));
+        store[id] = { status: "ok", data: out, columns: Array.isArray(out) && out[0] ? Object.keys(out[0]) : [], meta: [] };
+      } catch (e) { console.error("calc", id, e); store[id] = { status: "error", data: [], columns: [], meta: [], message: String(e) }; }
+    });
+  }
+  dash._rerun = run;
+  dash._start = function () {
+    Promise.all(Object.entries(FILES).map(([id, f]) => d3.csv("data/" + f).then(rows => {
+      store[id] = { status: "ok", data: rows, columns: rows.columns, meta: [] };
+    }).catch(e => { store[id] = { status: "error", data: [], columns: [], meta: [], message: String(e) }; })))
+      .then(() => { runCalcs(); run(); });
+    let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(run, 150); });
+  };
+  window.dash = dash;
+})();
+</script>
+<style>
+/* page styles */
+#dash-root { --dash-gutter: clamp(12px, 3vw, 32px); }
+.mp { font-family: var(--font-anthropic-sans); max-width: 1280px; margin-inline: auto; display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.mp h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.mp .lead { color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-body); line-height: 1.6; }
+.mp .lead b { color: var(--color-fg); font-weight: 600; }
+.mp h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.mp .note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-md); line-height: 1.5; }
+.mp .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.mp .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); }
+.mp .tile .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; align-items: center; gap: 6px; }
+.mp .tile .v { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-weight: 400; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.mp .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.mp .g-good { background: var(--color-ok); } .mp .g-ok { background: var(--cds-chart-muted); } .mp .g-warn { background: var(--color-warn); } .mp .g-bad { background: var(--color-bad); }
+.mp .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .toolbar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; margin-bottom: var(--cds-gap-sm); }
+.mp input[type=search], .mp select { font: inherit; font-size: var(--cds-font-size-caption); padding: 6px 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); }
+.mp input[type=search] { flex: 1 1 12rem; }
+.mp .tbl-wrap { max-height: 560px; overflow: auto; border-top: 1px solid var(--color-border-line); }
+.mp table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.mp th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; white-space: nowrap; }
+.mp th button { all: unset; cursor: pointer; padding: 8px 8px; display: block; }
+.mp th[aria-sort=ascending] button::after { content: " ↑"; } .mp th[aria-sort=descending] button::after { content: " ↓"; }
+.mp td { padding: 7px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+.mp tbody tr { cursor: pointer; }
+.mp tbody tr:hover, .mp tbody tr.sel { background: var(--cds-chart-grid); }
+.mp td.num { white-space: nowrap; }
+.mp .bar { display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px; background: var(--cds-chart-muted); }
+.mp td.comp { font-weight: 600; }
+.mp .pill { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.mp .na { color: var(--color-fg-muted); }
+@media (max-width: 720px) { .mp .hide-sm { display: none; } }
+.mp .detail h3 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); margin: 0 0 var(--cds-gap-xs); }
+.mp .dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); margin-top: var(--cds-gap-md); }
+.mp .dbox { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); }
+.mp .dbox .t { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; justify-content: space-between; }
+.mp .dbox .s { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); }
+.mp .dbox dl { margin: var(--cds-gap-xs) 0 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: var(--cds-font-size-caption); }
+.mp .dbox dt { color: var(--color-fg-muted); } .mp .dbox dd { margin: 0; text-align: right; }
+.mp .chart { position: relative; min-height: 240px; }
+.mp .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); display: none; z-index: 5; white-space: nowrap; }
+.mp .legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.mp .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mp .method { font-size: var(--cds-font-size-caption); line-height: 1.7; color: var(--color-fg); }
+.mp .method table td, .mp .method table th { padding: 6px 8px; position: static; }
+.mp .method p { margin: 0 0 var(--cds-gap-sm); }
+.mp .xs { display: flex; flex-direction: column; gap: var(--cds-gap-md); border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-lg); }
+.mp .xs-h { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+.mp #heat td { text-align: center; min-width: 4.5rem; }
+.mp #heat td:first-child { text-align: left; white-space: normal; }
+.mp #heat tbody tr { cursor: default; }
+.mp .sig::after { content: " ●"; font-size: 9px; vertical-align: middle; }
+.mp .xs .card { position: relative; }
+.mp .nav { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-sm); }
+.mp .nav a { color: var(--color-fg-muted); }
+/* MPA directory */
+.mp .st-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--cds-gap-md); align-items: start; }
+@media (max-width: 860px) { .mp .st-grid { grid-template-columns: 1fr; } }
+.mp .st-map { min-height: 420px; }
+.mp .st-map svg { display: block; width: 100%; height: auto; }
+.mp .st-map .land { fill: var(--cds-chart-grid); stroke: var(--color-panel); stroke-width: .6; }
+.mp .st-map .inset { fill: none; stroke: var(--cds-chart-axis); stroke-dasharray: 3 3; }
+.mp .st-map .ilab { font-size: 11px; fill: var(--color-fg-muted); }
+.mp .st-map .pt { cursor: pointer; stroke: var(--color-panel); stroke-width: 1.2; }
+.mp .st-map .pt.dim { opacity: .15; pointer-events: none; }
+.mp .st-map .pt.sel { stroke: var(--color-fg); stroke-width: 2.4; }
+.mp .st-bar button { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.mp .st-bar button[aria-pressed="true"] { border-color: var(--color-fg); background: var(--color-fg); color: var(--color-panel); }
+.mp .st-detail h3 { font-family: var(--font-anthropic-serif); font-weight: 600; font-size: 22px; line-height: 1.3; margin: 4px 0 2px; }
+.mp .st-kicker { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; align-items: center; gap: 6px; }
+.mp .st-dl { display: grid; grid-template-columns: 8.5em 1fr; gap: 6px 12px; margin: var(--cds-gap-md) 0; font-size: 14px; }
+.mp .st-dl dt { color: var(--color-fg-muted); } .mp .st-dl dd { margin: 0; overflow-wrap: anywhere; }
+.mp .st-block { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); font-size: 14px; }
+.mp .st-block p { margin: 2px 0 0; line-height: 1.6; }
+.mp .st-block ul { margin: 4px 0 0; padding-left: 1.2em; line-height: 1.6; }
+.mp .st-bh { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 600; }
+.mp .st-score { display: flex; align-items: baseline; gap: 10px; margin-top: 4px; }
+.mp .st-big { font-family: var(--font-anthropic-serif); font-size: 34px; line-height: 1; }
+.mp .st-row { display: grid; grid-template-columns: 7.5em 1fr 2.5em; gap: 8px; align-items: center; font-size: var(--cds-font-size-caption); margin-top: 4px; }
+.mp .st-row .trk { height: 8px; border-radius: 4px; background: var(--cds-chart-grid); position: relative; overflow: hidden; }
+.mp .st-row .trk i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+.mp .st-row .v { text-align: right; font-variant-numeric: tabular-nums; }
+.mp .st-links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
+.mp .st-links a, .mp .st-src a { color: #1c5cab; }
+.mp .st-group { margin-top: var(--cds-gap-lg); }
+.mp .st-group h3 { font-family: var(--font-anthropic-serif); font-weight: 600; font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
+.mp .st-group > p { margin: 2px 0 var(--cds-gap-sm); color: var(--color-fg-muted); font-size: 14px; line-height: 1.6; max-width: 70em; }
+.mp .st-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-sm); }
+.mp .st-card { all: unset; box-sizing: border-box; cursor: pointer; background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 4px solid var(--c); border-radius: var(--cds-radius); padding: 8px 10px; display: grid; gap: 2px; font-size: var(--cds-font-size-caption); }
+.mp .st-card b { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.mp .st-card span { color: var(--color-fg-muted); }
+.mp .st-card:hover, .mp .st-card:focus-visible, .mp .st-card.sel { border-color: var(--color-fg); border-left-color: var(--c); }
+.mp .st-card:focus-visible { outline: 2px solid #1c5cab; outline-offset: 1px; }
+:root[data-theme="dark"] .mp .st-links a, :root[data-theme="dark"] .mp .st-src a { color: #6da7ec; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mp .st-links a, :root:not([data-theme="light"]) .mp .st-src a { color: #6da7ec; } }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.band-inner { position: relative; }
+.band .lang { position: absolute; top: 18px; right: max(16px, env(safe-area-inset-right, 0px)); color: var(--band-ink); font-size: 13px; text-decoration: none; border: 1px solid #3a5568; border-radius: 999px; padding: 3px 12px; }
+.band .lang:hover { border-color: var(--band-accent); }
+@media (max-width: 560px) { .band .lang { position: static; justify-self: start; } }
+</style>
+
+</head>
+<body>
+<header class="band"><div class="band-inner">
+  <a class="lang" href="../" hreflang="zh-Hant" lang="zh-Hant">中文</a>
+  <h1>Taiwan MPA Effectiveness Dashboard</h1>
+  <p class="tagline">From “how much is designated” to “how well is it protected”</p>
+  <p>Four outcome indicators — water quality, marine debris, biodiversity and enforcement — are combined to evaluate how well Taiwan's marine protected areas actually work. Biodiversity combines ecosystem types, reef checks, blue carbon, field records from the Taiwan Biodiversity Network (TBN, including long-term surveys in four national parks) and a fish environmental-DNA pilot. The dashboard also examines how effectiveness relates to MPA classification, protection level, nearby population and fishing pressure, to inform tiered management and resource allocation.</p>
+</div></header>
+<nav class="tabs" aria-label="Sections"><div class="tabs-inner" id="tabbar"></div></nav>
+<div id="dash-root"><div class="mp">
+
+<section data-tab="overview" class="tabpage" aria-labelledby="ov-h">
+  <h2 id="ov-h" class="xs-h" hidden>Overview</h2>
+  <p class="lead dash-skeleton" id="lead">—</p>
+  <section class="tiles" id="tiles">
+    <div class="tile"><div class="k">MPAs assessed</div><div class="v dash-skeleton" data-source="summary" data-field="total">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-good"></i>Good (≥70)</div><div class="v dash-skeleton" data-source="summary" data-field="good">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-ok"></i>Fair (55–69)</div><div class="v dash-skeleton" data-source="summary" data-field="ok">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-warn"></i>Needs improvement (40–54)</div><div class="v dash-skeleton" data-source="summary" data-field="warn">—</div></div>
+    <div class="tile"><div class="k"><i class="dot g-bad"></i>Poor (&lt;40)</div><div class="v dash-skeleton" data-source="summary" data-field="bad">—</div></div>
+    <div class="tile"><div class="k">All four indicators</div><div class="v dash-skeleton" data-source="summary" data-field="full4">—</div></div>
+  </section>
+  <div class="grid2">
+    <section class="card" id="bycat">
+      <h2>Four dimensions by MPA type</h2>
+      <p class="note">Mean score for each type (sites with data only). The wider the spread between dots, the less balanced that type is across dimensions.</p>
+      <div class="legend" id="lg"></div>
+      <div class="chart" id="catchart" data-source="bycat"></div>
+    </section>
+    <section class="card" id="cover">
+      <h2>Data coverage</h2>
+      <p class="note">Number of MPAs with data for each dimension (of 71). Adding field records raised biodiversity coverage from 40 to 57 MPAs, but it is still the largest gap; composite scores for data-poor sites should be read with caution.</p>
+      <div class="chart" id="covchart" data-source="coverage"></div>
+    </section>
+  </div>
+
+  <div class="grid2 ov-links">
+    <a class="card ov-link" href="#sites"><b>MPA directory</b><span>The 71 MPAs by six categories: year, location, area, legal basis and protection targets, with a map of Taiwan.</span><em>Open the directory →</em></a>
+    <a class="card ov-link" href="#ranking"><b>Ranking</b><span>Water-quality, debris, biodiversity and enforcement scores for all 71 MPAs; search, filter and click for the raw indicators.</span><em>See the ranking →</em></a>
+    <a class="card ov-link" href="#bio"><b>Biodiversity</b><span>Ecosystem types, reef checks, blue carbon, TBN species records and eDNA, combined into a biodiversity score for each MPA.</span><em>See biodiversity →</em></a>
+    <a class="card ov-link" href="#clusters"><b>Categories &amp; clusters</b><span>Effectiveness by legal category (national parks, wetlands, fisheries areas, etc.), and four effectiveness types from cluster analysis.</span><em>See categories &amp; clusters →</em></a>
+    <a class="card ov-link" href="#cross"><b>Classification analysis</b><span>Is effectiveness related to MPA type, legal basis, IUCN category, protection level, size or year of establishment?</span><em>See the analysis →</em></a>
+    <a class="card ov-link" href="#pressure"><b>Population &amp; fishing pressure</b><span>Nearby population, fishing and aquaculture waste, patrol effort: which best explains the differences?</span><em>See pressure analysis →</em></a>
+    <a class="card ov-link" href="#method"><b>Methods</b><span>Data sources, scoring, grade thresholds and limitations for the four dimensions.</span><em>See methods →</em></a>
+  </div>
+</section>
+
+<section data-tab="sites" class="tabpage" hidden>
+  <section id="sites" class="xs">
+    <h2 class="xs-h">MPA directory</h2>
+    <p class="lead">Taiwan currently lists <b>71</b> marine protected areas, grouped into six categories by legal basis. Click a dot on the map or a card below to see each site's year of establishment, location, area, legal basis, protection targets and restrictions, together with its score on this dashboard. For the full official notices, see each site's page on the Ocean Conservation Administration's MPA platform.</p>
+    <div class="toolbar st-bar" role="group" aria-label="Filter by category" id="st-chips"></div>
+    <div class="toolbar">
+      <input type="search" id="st-q" placeholder="Search by name or county">
+      <select id="st-color" aria-label="Map colours"><option value="cat">Colour by category</option><option value="grade">Colour by grade</option></select>
+    </div>
+    <div class="st-grid">
+      <section class="card st-mapcard">
+        <h2>Where the MPAs are</h2>
+        <p class="note">Dots mark a representative point in each MPA's marine area (from eDNA sampling stations, coordinates in the notice, or place names). They are indicative only, not official boundaries.</p>
+        <div class="legend" id="st-lg"></div>
+        <div class="chart st-map" id="st-map" data-source="dir"></div>
+      </section>
+      <section class="card st-detail" id="st-detail" aria-live="polite">
+        <div class="st-kicker"><i class="dot" id="st-d-dot"></i><span id="st-d-cat">—</span></div>
+        <h3 id="st-d-name">—</h3>
+        <p class="note" id="st-d-off"></p>
+        <dl class="st-dl" id="st-d-dl"></dl>
+        <div class="st-block"><div class="st-bh">Protection targets</div><p id="st-d-tg">—</p></div>
+        <div class="st-block"><div class="st-bh">Main restrictions</div><p id="st-d-rs">—</p></div>
+        <div class="st-block" id="st-d-zwrap"><div class="st-bh">Zones and protection levels (MPA Guide)</div><ul id="st-d-zones"></ul></div>
+        <div class="st-block st-eval">
+          <div class="st-bh">Effectiveness (this dashboard, v3)</div>
+          <div class="st-score"><span class="st-big" id="st-d-score">—</span><span id="st-d-grade"></span></div>
+          <div id="st-d-bars"></div>
+          <p class="note" id="st-d-cl"></p>
+          <div class="st-links" id="st-d-links"></div>
+        </div>
+        <p class="note st-src"><a id="st-d-oca" href="#" target="_blank" rel="noopener">OCA MPA platform page (Chinese) ↗</a></p>
+      </section>
+    </div>
+    <div id="st-groups"></div>
+    <p class="note">Sources: Ocean Conservation Administration MPA platform pages and notices; Fisheries Agency notices for conservation areas; MPATable1 (area, year, IUCN category and MPA Guide protection level). Notice details for some wetlands and natural monuments are not yet available and are shown as “—”. English names are the author's translations. Basemap: taiwan-atlas (county boundaries from the National Land Surveying and Mapping Center, MIT licence).</p>
+  </section>
+</section>
+
+<section data-tab="ranking" class="tabpage" hidden>
+  <section class="card" id="ranking">
+    <h2>Composite effectiveness by MPA</h2>
+    <p class="note">Each dimension is scored 0–100 (higher is better); the composite is the mean of the dimensions with data. Click a row to see that site's raw indicators. A grey “—” means no data for that dimension.</p>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search MPA name">
+      <select id="cat"><option value="">All types</option></select>
+      <select id="grd"><option value="">All grades</option><option>Good</option><option>Fair</option><option>Needs improvement</option><option>Poor</option><option>Insufficient data</option></select>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl" data-source="mpa" data-row-key="no">
+        <thead><tr>
+          <th data-field="no" class="hide-sm"><button data-k="no">#</button></th>
+          <th data-field="mpa"><button data-k="mpa">MPA</button></th>
+          <th data-field="category" class="hide-sm"><button data-k="category">Type</button></th>
+          <th data-field="score_wq"><button data-k="score_wq">Water</button></th>
+          <th data-field="score_debris"><button data-k="score_debris">Debris</button></th>
+          <th data-field="score_bio"><button data-k="score_bio">Biodiversity</button></th>
+          <th data-field="score_enf"><button data-k="score_enf">Enforcement</button></th>
+          <th data-field="score" aria-sort="descending"><button data-k="score">Composite</button></th>
+          <th data-field="grade"><button data-k="grade">Grade</button></th>
+          <th data-field="weakest" class="hide-sm"><button data-k="weakest">Weakest</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card detail" id="detail">
+    <h3 id="d-name" data-source="mpa" data-field="mpa">—</h3>
+    <p class="note" id="d-sub">—</p>
+    <div class="dgrid">
+      <div class="dbox"><div class="t"><span>Water quality</span><span>OCA stations, last 3 years</span></div>
+        <div class="s" data-source="mpa" data-field="score_wq">—</div>
+        <dl><dt>Status</dt><dd data-source="mpa" data-field="wq_status">—</dd>
+            <dt>Long-term trend</dt><dd data-source="mpa" data-field="wq_trend">—</dd>
+            <dt>Exceedances</dt><dd data-source="mpa" data-field="wq_exceed">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>Marine debris</span><span>Beach-litter monitoring 2020–2024</span></div>
+        <div class="s" data-source="mpa" data-field="score_debris">—</div>
+        <dl><dt>Mean kg per survey</dt><dd data-source="mpa" data-field="debris_kg">—</dd>
+            <dt>Change 2020→2024 %</dt><dd data-source="mpa" data-field="debris_change_pct">—</dd>
+            <dt>Trend</dt><dd data-source="mpa" data-field="debris_trend">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>Marine biodiversity</span><span>Field records + eDNA + habitats</span></div>
+        <div class="s" data-source="mpa" data-field="score_bio">—</div>
+        <dl><dt>Confirmed species</dt><dd data-source="mpa" data-field="bio_conf_sp">—</dd>
+            <dt>IUCN threatened species</dt><dd data-source="mpa" data-field="bio_threatened">—</dd>
+            <dt>Species-record score</dt><dd data-source="mpa" data-field="bio_s_species">—</dd>
+            <dt>eDNA pilot score</dt><dd data-source="mpa" data-field="s_edna_v2">—</dd>
+            <dt>Coral health score</dt><dd data-source="mpa" data-field="bio_s_coral">—</dd>
+            <dt>Blue carbon score</dt><dd data-source="mpa" data-field="bio_s_bluecarbon">—</dd>
+            <dt>Habitat diversity score</dt><dd data-source="mpa" data-field="bio_s_habitat">—</dd></dl></div>
+      <div class="dbox"><div class="t"><span>Enforcement</span><span>Patrol reports 2023–2025</span></div>
+        <div class="s" data-source="mpa" data-field="score_enf">—</div>
+        <dl><dt>Enforcement type</dt><dd data-source="mpa" data-field="enf_type">—</dd>
+            <dt>Patrol hours</dt><dd data-source="mpa" data-field="patrol_hours">—</dd>
+            <dt>Violations detected</dt><dd data-source="mpa" data-field="cases">—</dd>
+            <dt>Sanctioned</dt><dd data-source="mpa" data-field="punished">—</dd>
+            <dt>Sanction rate</dt><dd data-source="mpa" data-field="pun_rate">—</dd></dl></div>
+    </div>
+  </section>
+</section>
+
+<section data-tab="bio" class="tabpage" hidden>
+  <section id="bio" class="xs">
+    <h2 class="xs-h">Biodiversity: ecosystems, reef checks and blue carbon</h2>
+    <p class="lead">Of the 71 MPAs, <b data-source="blead" data-field="n_coral">—</b> have coral reef as their main ecosystem, <b data-source="blead" data-field="n_mangrove">—</b> mangrove and <b data-source="blead" data-field="n_mud">—</b> mudflat. Of the <b data-source="blead" data-field="n_reef">—</b> with reef-check data, only <b data-source="blead" data-field="n_reef_good">—</b> still reach “good” coral cover (≥50%) in the latest survey. Based on site areas in the OCA's 2024 blue-carbon survey, <b data-source="blead" data-field="mg_in_pct">—</b>% of Taiwan's mangroves lie inside MPAs, which hold an estimated <b data-source="blead" data-field="bc_total">—</b> tonnes of carbon — <b data-source="blead" data-field="bc_dongsha_pct">—</b>% of it in Dongsha's seagrass. Combining field species records, eDNA, coral, blue carbon and habitats, the marine biodiversity score rates <b data-source="blead" data-field="g_good">—</b> MPAs good, <b data-source="blead" data-field="g_ok">—</b> fair, <b data-source="blead" data-field="g_warn">—</b> needing improvement and <b data-source="blead" data-field="g_bad">—</b> poor; <b data-source="blead" data-field="g_nodata">—</b> have no biological observations at all.</p>
+
+    <div class="card" id="hab-card">
+      <h2>Ecosystem types by MPA</h2>
+      <p class="note">“Main” marks a site's dominant habitat; “present” marks a local or small patch (e.g. scattered corals, or less than 1 ha of seagrass). Based on official boundaries, reef-check sites, the OCA's 2019 seagrass and mangrove surveys and topography. Salt marsh is listed separately because it is also a blue-carbon ecosystem.</p>
+      <div class="toolbar">
+        <input type="search" id="hab-q" placeholder="Search MPA name">
+        <select id="hab-f"><option value="">All ecosystems</option><option value="coral">With coral reef</option><option value="seagrass">With seagrass</option><option value="rocky">With rocky reef</option><option value="mangrove">With mangrove</option><option value="mudflat">With mudflat</option><option value="saltmarsh">With salt marsh</option></select>
+      </div>
+      <div class="legend"><span><i class="hb hb-2"></i>Main</span><span><i class="hb hb-1"></i>Present (local)</span><span><i class="hb hb-0"></i>Absent or not recorded</span></div>
+      <div class="tbl-wrap">
+        <table id="hab" data-source="biohab" data-row-key="no">
+          <thead><tr>
+            <th data-field="no"><button data-k="no">#</button></th>
+            <th data-field="mpa"><button data-k="mpa">MPA</button></th>
+            <th data-field="coral"><button data-k="coral">Coral reef</button></th>
+            <th data-field="seagrass"><button data-k="seagrass">Seagrass</button></th>
+            <th data-field="rocky"><button data-k="rocky">Rocky reef</button></th>
+            <th data-field="mangrove"><button data-k="mangrove">Mangrove</button></th>
+            <th data-field="mudflat"><button data-k="mudflat">Mudflat</button></th>
+            <th data-field="saltmarsh"><button data-k="saltmarsh">Salt marsh</button></th>
+            <th data-field="n_types"><button data-k="n_types">Types</button></th>
+            <th data-field="eco_note" class="hide-sm"><button data-k="eco_note">Basis</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="reef-card">
+      <h2>Reef check: 2008, 2023 and 2024–26</h2>
+      <p class="note">One row per MPA; each dot is the mean cover across that year's sites (average of shallow and deep). 2008 and 2023 measure live coral (hard + soft); 2024–26 measures hard coral, usually a few points lower. Background bands follow the international Reef Check grades: &lt;25% poor, 25–50% fair, ≥50% good.</p>
+      <div class="legend" id="reef-lg"></div>
+      <div class="chart" id="reefchart" data-source="biohab"></div>
+      <div class="tip" id="reef-tip"></div>
+      <details class="sub">
+        <summary>Site data (<span data-source="blead" data-field="n_sites">—</span> records)</summary>
+        <div class="tbl-wrap">
+          <table id="reeftbl" data-source="reefsites" data-row-key="key">
+            <thead><tr>
+              <th data-field="key">Site</th><th data-field="mpa">MPA</th><th data-field="metric">Metric</th>
+              <th data-field="shallow">Shallow (2–6 m) %</th><th data-field="deep">Deep (6–12 m) %</th><th data-field="avg">Mean %</th><th data-field="grade">Grade</th><th data-field="note" class="hide-sm">Notes</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="bc-card">
+      <h2>Blue carbon stocks</h2>
+      <p class="note">Areas come from the site list in the OCA's 2024 blue-carbon ecosystem survey (surveyed in 2023: 43 mangrove and 22 seagrass sites), matched to MPAs by the list's “belongs to” field and coordinates. Estimated carbon = area × the OCA's national mean carbon density (mangrove <span data-source="blead" data-field="den_mg">—</span>, seagrass <span data-source="blead" data-field="den_sg">—</span> tC per ha, derived from the OCA's national stock divided by area). Salt-marsh areas are not listed, so only presence is shown.</p>
+      <div class="chart" id="bcchart" data-source="bluecarbon" style="min-height:200px"></div>
+      <div class="tip" id="bc-tip"></div>
+      <div class="tbl-wrap">
+        <table id="bctbl" data-source="bluecarbon" data-row-key="no">
+          <thead><tr>
+            <th data-field="mpa">MPA</th><th data-field="bc_type">Blue-carbon ecosystems</th><th data-field="mangrove_ha">Mangrove (ha)</th><th data-field="seagrass_ha">Seagrass (ha)</th>
+            <th data-field="est_tC">Estimated carbon (t C)</th><th data-field="est_tCO2e">CO₂e (t)</th><th data-field="tier_label">Tier</th><th data-field="basis" class="hide-sm">Inventory sites and matching</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="gap-card">
+      <h2>Major blue-carbon sites outside MPAs</h2>
+      <p class="note">Inventory sites that fall outside the 71 MPAs, sorted by area. <span data-source="blead" data-field="mg_out_ha">—</span> ha of mangrove and <span data-source="blead" data-field="sg_out_ha">—</span> ha of seagrass on the main island and outlying islands (excluding Dongsha) lie outside MPAs.</p>
+      <div class="tbl-wrap" style="max-height:360px">
+        <table id="gaptbl" data-source="bcsites" data-row-key="key">
+          <thead><tr><th data-field="key">Site</th><th data-field="county">County</th><th data-field="area_2023">Area 2023 (ha)</th><th data-field="area_2019">Area 2019 (ha)</th><th data-field="listed_belong" class="hide-sm">Listed as belonging to</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="tbn-card">
+      <h2>National-park long-term species surveys (2009–2022)</h2>
+      <p class="note">Occurrence records of fish, crustaceans and mammals from the national parks' biodiversity database (“species survey points”, downloaded via TBN). Only marine fish and marine/intertidal crustaceans are counted; terrestrial mammals, land crabs, stream fish and shrimp, and exotic fish are listed separately. <span data-source="tbn_park" data-field="dropped_records" data-where="park=Taijiang">—</span> records in the Taijiang file located in Penghu County were removed. One survey = one date at one coordinate.</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="tbnpark" data-source="tbn_park" data-row-key="park">
+          <thead><tr>
+            <th data-field="park">National park</th><th data-field="years">Years</th><th data-field="events">Surveys</th>
+            <th data-field="fish_species">Marine fish (species)</th><th data-field="fish_chao2">Chao2 estimate</th><th data-field="completeness">Completeness %</th>
+            <th data-field="fish_families">Fish families</th><th data-field="crust_species">Marine crustaceans (species)</th>
+            <th data-field="butterfly">Butterflyfish</th><th data-field="parrot">Parrotfish</th><th data-field="grouper">Groupers</th>
+            <th data-field="threatened">IUCN threatened</th><th data-field="exotic_fish">Exotic fish</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="grid2" style="margin-top: var(--cds-gap-md)">
+        <div style="position:relative; min-width:0">
+          <h3 class="sub-h">Species accumulation curves</h3>
+          <p class="note">Marine fish species against number of surveys (interpolated from occurrence frequency). A curve still rising means the species list is not saturated. Kenting and Taijiang record only about 4 species per survey, so their curves sit far below Dongsha and South Penghu — a reflection of survey methods, not of fewer fish.</p>
+          <div class="legend" id="tbn-lg"></div>
+          <div class="chart" id="tbncurve" data-source="tbn_curve"></div>
+          <div class="tip" id="tbn-tip"></div>
+        </div>
+        <div style="min-width:0">
+          <h3 class="sub-h">Similarity of fish assemblages (Jaccard)</h3>
+          <p class="note">Species shared by two parks as a share of their combined list.</p>
+          <div class="tbl-wrap" style="max-height:none">
+            <table id="tbnjac" data-source="tbn_jaccard" data-row-key="key">
+              <thead><tr><th data-field="key">Pair</th><th data-field="shared">Shared species</th><th data-field="jaccard">Jaccard</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <h3 class="sub-h" style="margin-top: var(--cds-gap-md)">Compared with the eDNA list</h3>
+          <p class="note">Marine fish species recorded in the same park by the two methods (Kenting excludes stream and exotic fish). Field surveys are confirmed records; eDNA is a pilot, so species found only by eDNA are listed as awaiting field confirmation.</p>
+          <div class="tbl-wrap" style="max-height:none">
+            <table id="tbncross" data-source="tbn_cross" data-row-key="park">
+              <thead><tr><th data-field="park">National park</th><th data-field="tbn">Long-term surveys</th><th data-field="edna">eDNA</th><th data-field="both">Both</th><th data-field="edna_only">Awaiting confirmation</th><th data-field="union">Combined list</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <details class="sub">
+        <summary>IUCN threatened species (Vulnerable or above, <span data-source="tbnlead" data-field="n_threat">—</span> records)</summary>
+        <div class="tbl-wrap">
+          <table id="tbnthreat" data-source="tbn_threat" data-row-key="key">
+            <thead><tr><th data-field="key">Park – scientific name</th><th data-field="name">Common name</th><th data-field="family">Family</th><th data-field="iucn">IUCN</th><th data-field="protected">Protected status</th><th data-field="group">Group</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="biorank-card">
+      <h2>Marine biodiversity score</h2>
+      <p class="note">This is the “biodiversity” dimension of the composite assessment above. Five components, each 0–100, are combined as a weighted mean: species records (weight 1; TBN confirmed species + eDNA-only species × 0.5, converted to a 20–100 percentile among MPAs of the same habitat, +5 for one or more IUCN threatened species and +10 for five or more), coral health (1; latest cover × 1.6 + 20, −10 if declining), blue carbon (1; tier A 100, tier B 70), habitat diversity (1; 1 point per main ecosystem, 0.5 per local one, 3 points = 100) and the eDNA pilot (0.5; percentile of taxa per sample within habitat). A score is given only if at least one real observation exists: species records, coral or eDNA. Click a column heading to sort.</p>
+      <div class="toolbar">
+        <select id="br-g"><option value="">All grades</option><option>Good</option><option>Fair</option><option>Needs improvement</option><option>Poor</option><option>Insufficient data (no biological observations)</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table id="biorank" data-source="biohab" data-row-key="no">
+          <thead><tr>
+            <th data-field="no"><button data-k="no">#</button></th>
+            <th data-field="mpa"><button data-k="mpa">MPA</button></th>
+            <th data-field="s_habitat"><button data-k="s_habitat">Habitat diversity</button></th>
+            <th data-field="s_coral"><button data-k="s_coral">Coral health</button></th>
+            <th data-field="s_bluecarbon"><button data-k="s_bluecarbon">Blue carbon</button></th>
+            <th data-field="s_species"><button data-k="s_species">Species records</button></th>
+            <th data-field="s_edna"><button data-k="s_edna">eDNA pilot</button></th>
+            <th data-field="conf_sp" class="hide-sm"><button data-k="conf_sp">Confirmed species</button></th>
+            <th data-field="bio_score"><button data-k="bio_score">Score</button></th>
+            <th data-field="bio_grade"><button data-k="bio_grade">Grade</button></th>
+            <th data-field="rc_grade" class="hide-sm"><button data-k="rc_grade">Coral grade</button></th>
+            <th data-field="bc_tier" class="hide-sm"><button data-k="bc_tier">Blue-carbon tier</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="bio-read">
+      <h2>How to read this</h2>
+      <p><b>Reefs are declining, inside MPAs and out.</b> At Fushan (Shanyuan), live coral was about <span data-source="biohab" data-field="rc2008" data-where="no=25">—</span>% in 2008, and hard coral only <span data-source="biohab" data-field="rc2025" data-where="no=25">—</span>% in 2024–25. Kenting's two sites averaged <span data-source="biohab" data-field="rc2023" data-where="no=10">—</span>% in 2023, and Hejie fell to <span data-source="biohab" data-field="rc2025" data-where="no=10">—</span>% by 2025, with a significant shallow-water decline. Dongyuping in South Penghu dropped from <span data-source="biohab" data-field="rc2023" data-where="no=9">—</span>% in 2023 to <span data-source="biohab" data-field="rc2025" data-where="no=9">—</span>% in 2025, although 2023 measured live coral at 6–8 m and 2025 hard coral, so the decline may be overstated. Only Green Island remains good (about <span data-source="biohab" data-field="rc2023" data-where="no=16">—</span>% in 2023).</p>
+      <p><b>Blue carbon is concentrated in a few places, and half of Taiwan's mangroves lie outside MPAs.</b> Dongsha's seagrass holds about <span data-source="bluecarbon" data-field="est_tC" data-where="no=7">—</span> tonnes of carbon. On the main island the largest mangrove stocks are in the Tamsui River (<span data-source="bluecarbon" data-field="est_tC" data-where="no=60">—</span>), Taijiang (<span data-source="bluecarbon" data-field="est_tC" data-where="no=8">—</span>), Puzi River (<span data-source="bluecarbon" data-field="est_tC" data-where="no=50">—</span>) and Beimen (<span data-source="bluecarbon" data-field="est_tC" data-where="no=53">—</span>). Aogu, the Beigang River mouth, the north bank of the Zhuoshui River, Dapeng Bay and the Yuanlin Drainage each have 40–53 ha of mangrove, yet none is among the 71 MPAs; the largest seagrass bed outside Dongsha, Zhenhai Bay in Penghu (<span data-source="bcsites" data-field="area_2023" data-where="key=Seagrass%20bed-Zhenhai%20Bay">—</span> ha), is unprotected too. On mudflat wetlands such as Xiangshan, mangroves are an invasive expansion that squeezes fiddler-crab and waterbird habitat, so high blue carbon does not mean high conservation value; the rating treats it as just one component.</p>
+      <p><b>Adding field records changed the ranking most where long-term surveys exist.</b> Dongsha (<span data-source="biohab" data-field="bio_score" data-where="no=7">—</span>) and Taijiang (<span data-source="biohab" data-field="bio_score" data-where="no=8">—</span>) have many confirmed records, threatened species and blue carbon, and score highest; Dongsha, South Penghu, Beimen, Qigu Salt Pan and the dolphin habitat, which had no eDNA, now have scores. Conversely, small east-coast reserves with a single eDNA sample (e.g. Xiaohu, Yiwan) dropped, because eDNA now carries half weight and there are no field records to back it up. Coral cover at Fushan (<span data-source="biohab" data-field="bio_score" data-where="no=25">—</span>) and Shitiping (<span data-source="biohab" data-field="bio_score" data-where="no=38">—</span>) has recently fallen to poor, and coral health still pulls their scores down.</p>
+      <p><b>Long-term surveys in four national parks.</b> Dongsha (<span data-source="tbn_park" data-field="fish_species" data-where="park=Dongsha">—</span> species) and South Penghu (<span data-source="tbn_park" data-field="fish_species" data-where="park=South Penghu">—</span>) have the most marine fish, with lists about 85% complete, and the most similar assemblages (Jaccard <span data-source="tbn_jaccard" data-field="jaccard" data-where="key=Dongsha-South%20Penghu">—</span>); South Penghu records <span data-source="tbn_park" data-field="grouper" data-where="park=South Penghu">—</span> grouper species, the most of the four. Kenting has only <span data-source="tbn_park" data-field="fish_species" data-where="park=Kenting">—</span>, because its database records are mostly terrestrial and stream surveys (sika deer, land crabs, stream fish), with fewer than 4 marine fish per survey; Kenting's 7 eDNA stations add <span data-source="tbn_cross" data-field="edna_only" data-where="park=Kenting">—</span> fish not recorded by the long-term surveys (awaiting field confirmation), for a combined list of <span data-source="tbn_cross" data-field="union" data-where="park=Kenting">—</span> species. Taijiang is dominated by crustaceans (<span data-source="tbn_park" data-field="crust_species" data-where="park=Taijiang">—</span> species, the most of the four) and has <span data-source="tbn_park" data-field="exotic_fish" data-where="park=Taijiang">—</span> exotic fish. These records are already part of the nationwide TBN records in the species-record component; survey methods and effort vary greatly between years, so they are not used to judge trends.</p>
+      <p><b>Limitations.</b> The species-record component reflects what is “known so far”: well-surveyed and larger MPAs naturally have more records (area vs biodiversity score ρ = <span data-source="tests" data-field="effect" data-where="id=34">—</span>), while 200 m coastal strips often have no records that can be placed inside them. MPA boundaries mainly follow the Ocean Affairs Council's 2017 layer; Yeliu and Dong'ao are approximate, and Sanxianjiao and Yiwu have no boundary. Reef checks are carried out by volunteers, and 2008 values are read from figures. Blue carbon uses national mean carbon densities. Ecosystem types are assigned manually.</p>
+    </div>
+  </section>
+</section>
+
+<section data-tab="clusters" class="tabpage" hidden>
+  <section id="clusters" class="xs">
+    <h2 class="xs-h">Effectiveness by MPA category and cluster</h2>
+    <p class="lead dash-skeleton" id="cl-lead">—</p>
+
+    <div class="card">
+      <h2>Mean scores by category</h2>
+      <p class="note">Each cell is the mean score of that category's MPAs (sites with data only); darker is higher. The last row is a Kruskal-Wallis test of differences between categories; means for small categories (national parks 4, major wildlife habitat 1, natural monuments 3) are unstable.</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="cat-tbl" data-source="catprof8" data-row-key="cat">
+          <thead><tr>
+            <th data-field="cat" style="padding:8px">Category</th><th data-field="n" style="padding:8px">n</th>
+            <th data-field="score_wq" style="padding:8px">Water</th><th data-field="score_debris" style="padding:8px">Debris</th>
+            <th data-field="score_enf" style="padding:8px">Enforcement</th><th data-field="bio_score" style="padding:8px">Biodiversity</th>
+            <th data-field="score" style="padding:8px">Composite</th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr id="cat-kw"></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Variation within categories</h2>
+      <p class="note">Each dot is one MPA; the thick line is the median. The spread within a category is far larger than the differences between categories.</p>
+      <div class="toolbar"><select id="cat-dim"><option value="score">Composite</option><option value="score_wq">Water quality</option><option value="score_debris">Marine debris</option><option value="score_enf">Enforcement</option><option value="bio_score">Biodiversity</option></select></div>
+      <div class="chart" id="cat-strip" data-source="cmpa"></div>
+    </div>
+
+    <div class="card">
+      <h2>Cluster analysis: four effectiveness types</h2>
+      <p class="note">Ward hierarchical clustering of standardised water, debris, enforcement and biodiversity scores; the 67 MPAs with at least three dimensions are included, with one missing value imputed by the median. Bars show each cluster's mean scores.</p>
+      <div class="cl-cards" id="cl-cards" data-source="cprof"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Cluster map (principal components)</h2>
+        <p class="note dash-skeleton" id="cl-pca-note">—</p>
+        <div class="toolbar"><select id="cl-color"><option value="cluster">Colour by cluster</option><option value="cat_group">Colour by MPA category</option></select></div>
+        <div class="legend" id="cl-lg"></div>
+        <div class="chart" id="cl-pca" data-source="cmpa"></div>
+      </div>
+      <div class="card">
+        <h2>Which clusters each category falls into</h2>
+        <p class="note">One row per category; bars are split by the share of its MPAs in each cluster, with counts in brackets. If category determined effectiveness, each category would sit in a single cluster.</p>
+        <div class="chart" id="cl-xtab" data-source="cxtab"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>MPAs in each cluster</h2>
+      <div class="toolbar">
+        <select id="cl-f"><option value="">All clusters</option></select>
+        <select id="cl-c"><option value="">All categories</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table id="cl-tbl" data-source="cmpa" data-row-key="no">
+          <thead><tr>
+            <th data-field="mpa" style="padding:8px">MPA</th><th data-field="cat" style="padding:8px">Category</th>
+            <th data-field="cluster_name" style="padding:8px">Cluster</th>
+            <th data-field="score_wq" style="padding:8px">Water</th><th data-field="score_debris" style="padding:8px">Debris</th>
+            <th data-field="score_enf" style="padding:8px">Enforcement</th><th data-field="bio_score" style="padding:8px">Biodiversity</th>
+            <th data-field="score" style="padding:8px">Composite</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="cl-read">
+      <h2>How to read this</h2>
+      <p><b>Legal category does not tell you how well an MPA performs.</b> None of the five dimensions differs significantly between categories (composite Kruskal-Wallis p = <span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>, biodiversity p = <span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>). National parks have the highest biodiversity scores (mean about 84) and the highest composite mean, but there are only four; fisheries resource conservation areas range from 38 to 81.</p>
+      <p><b>Clusters are almost unrelated to categories.</b> Every cluster mixes several categories, and the 31 fisheries areas are spread across all four; the association between category and cluster is Cramér's V = <span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>, permutation p = <span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>, adjusted Rand index = <span data-source="cstats" data-field="value" data-where="key=ari_category">—</span> — no better than chance.</p>
+      <p><b>What really separates MPAs is the type of problem they face.</b> “Clean but unmanaged” sites are small reserves on the east coast and Hengchun (Fengbin, Xiaoma, Xiaogang, Xiaohu, Shuilian, Checheng) and eastern estuaries (Lanyang, Wuweigang, Beinan, Hualien): the sea is in good shape, but there are almost no patrol or enforcement records. “Managed but debris-laden” sites are concentrated in west-coast estuarine wetlands and the outer islands of Penghu, Matsu and Kinmen, together with South Penghu, the Northeast Coast and the dolphin habitat: patrols and enforcement exist, but litter cancels out the gains. “Poor water, weak management” now covers only Gaomei, Sanxianjiao and Su'ao; water quality at Sanxianjiao and Su'ao rests on a few 2023 samples, so read it with caution. With field records added, biodiversity-rich wetlands such as Taijiang, Beimen and Qigu Salt Pan moved into “balanced performers”.</p>
+      <p><b>What this means for management.</b> Resources and strategies should be tiered by effectiveness type, not applied uniformly by legal basis: unmanaged clusters first need patrols and monitoring, debris-laden clusters need litter clean-up combined with recovery of fishing and aquaculture waste, and the poor-water cluster needs cross-agency control of land-based pollution.</p>
+      <p><b>Methods and limitations.</b> Two or three clusters give higher silhouette scores (<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>) but merge “balanced performers” and “managed but debris-laden” into one large group, so four clusters are kept (<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>); agreement with k-means is ARI = <span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>, and <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span> when redone with only the <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> sites that have all four dimensions. The new biodiversity score blurs the cluster boundaries further (silhouette about 0.2), so the clusters should be read as types rather than sharp classes. Dongsha (only biodiversity and enforcement), Maoyu, Gaoshan and Fanzaishi have too little data and are excluded.</p>
+    </div>
+  </section>
+</section>
+
+<section data-tab="cross" class="tabpage" hidden>
+  <section id="cross" class="xs">
+    <h2 class="xs-h">Effectiveness vs classification</h2>
+    <p class="lead dash-skeleton" id="x-lead">—</p>
+
+    <div class="card">
+      <h2>Strength of association</h2>
+      <p class="note">Categorical variables use Kruskal-Wallis (ε²; 0 = no difference, ≥0.06 = moderate); continuous or ordinal variables use Spearman ρ. Protection levels and establishment stages are coded 1 = fully protected … 4 = minimally protected, so <b>a negative ρ means stricter protection goes with higher scores</b>. ● marks p&lt;0.05 (uncorrected); hover over a cell for n, p and the FDR-corrected q.</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="heat" data-source="heat" data-row-key="variable">
+          <thead><tr><th data-field="variable" style="padding:8px">Variable</th><th data-field="Composite" style="padding:8px">Composite</th><th data-field="Water quality" style="padding:8px">Water</th><th data-field="Marine debris" style="padding:8px">Debris</th><th data-field="Biodiversity" style="padding:8px">Biodiversity</th><th data-field="Enforcement" style="padding:8px">Enforcement</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="tip" id="heat-tip"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2 id="strip-title">Composite scores by classification</h2>
+        <p class="note">Each dot is one MPA; the thick line is the median. Counts in brackets.</p>
+        <div class="toolbar"><select id="x-group">
+          <option value="best_level">Highest protection level (any zone)</option>
+          <option value="dom_level">Main protection level (largest zone)</option>
+          <option value="law">Legal basis</option>
+          <option value="iucn">IUCN category</option>
+          <option value="type">MPA type</option>
+        </select>
+        <select id="x-dim"><option value="score">Composite</option><option value="score_wq">Water quality</option><option value="score_debris">Marine debris</option><option value="score_bio">Biodiversity</option><option value="score_enf">Enforcement</option></select></div>
+        <div class="chart" id="strip" data-source="cross"></div>
+      </div>
+      <div class="card">
+        <h2>Area, year of establishment and composite score</h2>
+        <p class="note">Dot colour shows the main protection level. Area is on a log scale; the absence of a slope means neither size nor age predicts effectiveness.</p>
+        <div class="toolbar"><select id="x-x"><option value="area_km2">Marine area (km², log)</option><option value="year">Year established</option></select></div>
+        <div class="legend" id="sc-lg"></div>
+        <div class="chart" id="scatter" data-source="cross"></div>
+      </div>
+    </div>
+
+    <div class="card method" id="x-read">
+      <h2>How to read this</h2>
+      <p><b>Overall effectiveness is only weakly related to classification.</b> For type, legal basis and IUCN category, ε² for the composite score is close to 0. Area (ρ = <span data-source="tests" data-field="effect" data-where="id=31">—</span>) and highest protection level (ρ = <span data-source="tests" data-field="effect" data-where="id=41">—</span>) have uncorrected p slightly below 0.05, driven mainly by the new biodiversity score (see below); years since establishment ρ = <span data-source="tests" data-field="effect" data-where="id=36">—</span>. In other words, protection “on paper” and what can be seen in the water and in enforcement are two different things.</p>
+      <p><b>The only consistent signal is in enforcement.</b> MPAs with fully or highly protected zones score higher on enforcement (highest protection level ρ = <span data-source="tests" data-field="effect" data-where="id=45">—</span>, p = <span data-source="tests" data-field="p" data-where="id=45">—</span>; share of area fully or highly protected ρ = <span data-source="tests" data-field="effect" data-where="id=55">—</span>). This holds after controlling for MPA type and is also seen within Fisheries Act reserves. But it comes mainly from “patrols and detections”, not from “sanctions” — fully protected areas detect many violations but have lower sanction rates (Liuqiu, Dongsha, South Penghu). It looks more like “stricter rules mean more to catch” than effective enforcement.</p>
+      <p><b>Larger MPAs score higher on biodiversity.</b> Area vs biodiversity ρ = <span data-source="tests" data-field="effect" data-where="id=34">—</span> (p = <span data-source="tests" data-field="p" data-where="id=34">—</span>), the strongest of the 60 associations. This fits the species–area relationship, but also reflects that large MPAs (national parks, the dolphin habitat, large wetlands) are better surveyed; 200 m coastal strips have very few records. Another confounder is that older MPAs have less debris (ρ = <span data-source="tests" data-field="effect" data-where="id=38">—</span>): many old MPAs are east-coast fisheries reserves, where beaches are naturally cleaner, and the effect disappears once the east coast is controlled for. The earlier finding that “more active establishment stages have lower eDNA diversity” (ρ = −0.44 in the old version) disappears with the new score (ρ = <span data-source="tests" data-field="effect" data-where="id=59">—</span>), confirming it was an artefact of single eDNA samples.</p>
+      <p><b>Multiple comparisons.</b> <span data-source="xsum" data-field="n_tests">—</span> tests were run and <span data-source="xsum" data-field="n_nominal">—</span> have p&lt;0.05, where about 3 would be expected by chance; after FDR correction only area vs biodiversity falls below q &lt; 0.1. With 71 sites, only associations of |ρ| ≳ 0.33 can be detected, and small groups such as national parks (4) and nature reserves (3) have almost no power, so “no association” should be read as “no evidence of an association”.</p>
+      <p><b>What this means for management.</b> Classification and protection level determine what is allowed; effectiveness depends on whether anyone patrols, whether detected violations are sanctioned, and whether land-based pressures (debris, nutrients) are dealt with. For protection levels to show up in outcomes, the next step is to fill in sanction rates and monitoring site by site, and to bring debris and land-based pollution into management plans.</p>
+    </div>
+  </section>
+</section>
+
+<section data-tab="pressure" class="tabpage" hidden>
+  <section id="pressure" class="xs">
+    <h2 class="xs-h">Effectiveness vs population, fishing pressure and management input</h2>
+    <p class="lead dash-skeleton" id="p-lead">—</p>
+
+    <div class="card">
+      <h2>Multivariable models: what best explains the differences</h2>
+      <p class="note">Standardised regression coefficients: the change in score for a one-standard-deviation increase in each predictor (bars are 95% confidence intervals). All three predictors are entered together, controlling for each other. “Ecological score” is the mean of water, debris and biodiversity, excluding enforcement so that patrol hours and the enforcement score do not feed into each other.</p>
+      <div class="toolbar"><select id="p-model"><option value="M1">Ecological score (excl. enforcement)</option><option value="M2">Ecological score (controlling for east coast)</option><option value="M3">Marine debris</option><option value="M4">Composite</option></select></div>
+      <div class="chart" id="coef" data-source="pmodels"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Pressure or input vs effectiveness</h2>
+        <p class="note">One dot per MPA; orange = Hualien–Taitung east coast, grey = elsewhere.</p>
+        <div class="toolbar">
+          <select id="p-x"><option value="density">Population density of nearby townships (per km², log)</option><option value="fish_share">Fishing share of debris (%)</option><option value="patrol_hours">Patrol hours (2023–2025, log)</option></select>
+          <select id="p-y"><option value="eco">Ecological score (excl. enforcement)</option><option value="score_debris">Marine debris</option><option value="score_wq">Water quality</option><option value="score_bio">Biodiversity</option><option value="score">Composite</option></select>
+        </div>
+        <div class="chart" id="pscatter" data-source="pmpa"></div>
+      </div>
+      <div class="card">
+        <h2>Mean scores by population density</h2>
+        <p class="note">Three groups by population density of nearby townships; counts in brackets.</p>
+        <div class="chart" id="pband" data-source="pband"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Single-variable correlations (Spearman ρ)</h2>
+      <p class="note">A negative ρ means higher pressure or input goes with lower scores. Cells marked “*” are circular (e.g. patrol hours are part of the enforcement score) and are not evidence. ● = p&lt;0.05.</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="pheat" data-source="pheat" data-row-key="variable">
+          <thead><tr><th data-field="variable" style="padding:8px">Variable</th><th data-field="Composite" style="padding:8px">Composite</th><th data-field="Ecological score (excl. enforcement)" style="padding:8px">Ecological</th><th data-field="Water quality" style="padding:8px">Water</th><th data-field="Marine debris" style="padding:8px">Debris</th><th data-field="Biodiversity" style="padding:8px">Biodiversity</th><th data-field="Enforcement" style="padding:8px">Enforcement</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card method" id="p-read">
+      <h2>How to read this</h2>
+      <p><b>Population is linked to debris, but it is not the strongest factor.</b> The denser the nearby population, the lower the debris score (ρ = <span data-source="ptests" data-field="rho" data-where="id=4">—</span>), and this holds after controlling for the fishing share (<span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> points per SD). But the east coast is both sparsely populated and faces the Kuroshio with little litter, so the two cannot be separated; once the east coast is controlled for, population is no longer significant. Neither water quality (ρ = <span data-source="ptests" data-field="rho" data-where="id=3">—</span>) nor biodiversity (ρ = <span data-source="ptests" data-field="rho" data-where="id=5">—</span>) is significantly related to population: water-quality stations are mostly 1–2 km offshore, and site differences are small.</p>
+      <p><b>Fishing and aquaculture pressure explains effectiveness better than population.</b> The higher the share of beach litter from fishing (nets, floats, styrofoam, oyster racks), the lower the debris score (ρ = <span data-source="ptests" data-field="rho" data-where="id=16">—</span>). In the multivariable model it is the strongest predictor of the ecological score (<span data-source="pmodels" data-field="beta" data-where="key=M1-fish_sharez">—</span> points per SD), while population density in the same model falls to <span data-source="pmodels" data-field="beta" data-where="key=M1-ldz">—</span> and is not significant. In other words, the low scores of south-western coastal wetlands, Penghu and Matsu come mainly from fishing and aquaculture waste, not just from more people.</p>
+      <p><b>But there is no evidence that fishing reduces species.</b> The fishing share is not significantly related to the biodiversity score (ρ = <span data-source="ptests" data-field="rho" data-where="id=17">—</span>, if anything positive). This does not mean fishing has no effect; current data cannot measure it — species records capture presence only, not abundance or size, and the fishing indicator here is debris composition, not real fishing effort.</p>
+      <p><b>Management input is not linked to ecological outcomes.</b> Patrol hours vs ecological score ρ = <span data-source="ptests" data-field="rho" data-where="id=26">—</span>, and <span data-source="pmodels" data-field="beta" data-where="key=M1-lhz">—</span> points per SD after controlling for population and fishing, not significant (the significant negative link in the old version, which used eDNA scores, disappears with the new score). Patrol hours correlate positively only with the enforcement score (ρ = <span data-source="ptests" data-field="rho" data-where="id=30">—</span>), which is built into the scoring; the positive coefficient on the composite (<span data-source="pmodels" data-field="beta" data-where="key=M4-lhz">—</span>) comes from the same circularity. The conclusion stands: <b>effectiveness mainly reflects external pressure and is only weakly linked to management input in its current form.</b></p>
+      <p><b>Limitations.</b> Population is the total for the township(s) containing or adjoining each MPA, not distance to the coast; figures come from Wikipedia's township list, which does not state a year. Management input covers only patrol staff and hours, not budgets, management plans or monitoring. The data are a one-off cross-section, so they show associations, not causes.</p>
+    </div>
+  </section>
+</section>
+
+<section data-tab="method" class="tabpage" hidden>
+  <section class="card method" id="method">
+    <h2>Methods</h2>
+    <p class="note">This is a non-official assessment based on public data, intended to identify management priorities; it is not the OCA's official effectiveness grading.</p>
+    <table>
+      <thead><tr><th>Dimension</th><th>Data</th><th>Scoring (0–100)</th></tr></thead>
+      <tbody>
+        <tr><td>Water quality</td><td>OCA national and local monitoring stations inside or within 1 km of the MPA</td><td>Status: good 85, caution 55, poor 25; long-term trend: improving +15, stable 0, mixed −5, worsening −15; sites without stations are not scored.</td></tr>
+        <tr><td>Marine debris</td><td>Beach-litter monitoring 2020–2024 (sites within 10 km)</td><td>Percentile of log mean kg per survey across all MPAs (less litter scores higher); significant decrease +10, decrease +5, increase −5.</td></tr>
+        <tr><td>Biodiversity</td><td>TBN marine fish and crustacean records (including national-park long-term surveys; inside/outside judged against official boundaries), OCA fish eDNA (2021–2024, pilot), reef checks 2008/2023/2024–26, blue carbon (OCA 2024 site areas), ecosystem types</td><td>Weighted mean of five components: species records 1 (confirmed species + eDNA-only × 0.5, percentile 20–100 within habitat, +5–10 for threatened species), coral health 1, blue carbon 1 (A 100, B 70), habitat diversity 1, eDNA pilot 0.5. Scored only with at least one real observation — species records (≥10 confirmed species), coral or eDNA; 57 MPAs scored.</td></tr>
+        <tr><td>Categories and clusters</td><td>The four scores above and biodiversity; MPA categories from MPATable1</td><td>Ward hierarchical clustering of standardised water, debris, enforcement and biodiversity scores (67 MPAs with at least three dimensions; one missing value imputed by the median); silhouettes compared for 2–6 clusters and the interpretable 4-cluster solution kept, with stability checked by k-means and the complete-data subset. Category–cluster association tested with Cramér's V and 5,000 permutations; small categories such as national parks merged into 6 groups for testing.</td></tr>
+        <tr><td>National-park long-term surveys</td><td>National-park biodiversity database “species survey points” (downloaded via TBN, 2026-11-03): Dongsha, Kenting, Taijiang, South Penghu</td><td>Comparison of the four parks: observed species, Chao2, accumulation curves, Jaccard. The records are already part of the nationwide TBN records and are scored through the species-record component.</td></tr>
+        <tr><td>Enforcement</td><td>OCA MPA platform patrol and enforcement reports (2023–2025)</td><td>30 for any patrol or case; up to +20 for the patrol-hour percentile; +10 for any detected violation, then up to +40 by sanction rate (smoothed as (sanctions + 2.5)/(detections + 5) so one case with one sanction does not score full marks); +5 for patrols with no detections; 0 for no patrols and no cases. Xiangshan Wetland excluded because the reporting unit appears to be mis-entered.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: var(--cds-gap-md)"><b>Population and fishing pressure</b>: population density is the population of the township(s) containing or adjoining each MPA divided by township area (Wikipedia, “List of townships/cities and districts in Taiwan”, no year stated); Dongsha and Mianhua–Huaping have no residents and are set to 0; Fanzaishi is excluded because its location is unconfirmed. Fishing pressure is proxied by the share of fishing-related items in beach litter (2020 and 2024 composition). Management input is patrol hours and staff on the OCA MPA platform, 2023–2025. Regressions are OLS with standardised predictors.</p>
+    <p><b>Classification analysis</b>: type, legal basis, IUCN, protection level, area, year of establishment and establishment stage come from the MPAbasic sheet of the user-supplied “Types, IUCN categories and protection levels of Taiwan's MPAs (revised)”; protection level uses the “final protection level (auto)”, aggregated across zones as “highest level”, “largest-zone level” and “share of area fully or highly protected”. IUCN uses the table's suggested values (Ia for nature reserves).</p>
+    <p>Grades: composite ≥70 good, 55–69 fair, 40–54 needs improvement, &lt;40 poor; sites with only two dimensions are marked “provisional”, and sites with fewer than two “insufficient data”.</p>
+    <p><b>Limitations</b>: species records capture presence only and depend on survey effort, and eDNA is mostly single samples, so neither can show change before and after protection; “no detections” may mean no violations or simply that none were found; beach-litter site coordinates are inferred from place names (1–3 km error); the four dimensions are weighted equally and can be re-weighted to emphasise ecological outcomes.</p>
+  </section>
+</section>
+
+<footer class="site-foot">
+  Sources: Ocean Conservation Administration, Ocean Affairs Council (marine water-quality monitoring, beach-litter monitoring, fish eDNA at MPA stations, MPA platform patrol and enforcement reports, 2024 blue-carbon ecosystem survey); Taiwan Biodiversity Network (TBN, including long-term surveys in Kenting, Taijiang, Dongsha Atoll and South Penghu national parks); reef checks (Academia Sinica 2008, Taiwan Environmental Information Association 2023, Reef Check Taiwan 2024–26); MPATable1 classification checklist; Wikipedia township population list. MPA names and descriptions are translated by the author.
+  This is a non-official assessment based on public data, intended to identify management priorities; it is not the competent authorities' official effectiveness grading.
+  Data files: <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/en/data">en/data/</a> (English) · <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a> (Chinese)
+</footer>
+</div></div>
+
+<script>
+const GR = { "Good": "g-good", "Fair": "g-ok", "Needs improvement": "g-warn", "Poor": "g-bad" };
+window.mpGradeClass = g => { const k = Object.keys(GR).find(x => (g || "").startsWith(x)); return k ? GR[k] : ""; };
+
+dash.calc("summary", {
+  title: "Grade counts",
+  description: "Counts MPAs by composite grade and the number with all four indicators.",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const g = k => mpa.filter(r => (r.grade || "").startsWith(k)).length;
+    return [{ total: mpa.length, good: g("Good"), ok: g("Fair"), warn: g("Needs improvement"), bad: g("Poor"),
+      nodata: g("Insufficient data"), full4: mpa.filter(r => Number(r.dims) === 4).length }];
+  }
+});
+
+dash.calc("bycat", {
+  title: "Four dimensions by type",
+  description: "Mean of the four dimension scores and the composite by MPA type (blanks excluded).",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const cats = [...new Set(mpa.map(r => r.category))];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+    return cats.map(c => { const rs = mpa.filter(r => r.category === c);
+      return { category: c, n: rs.length, wq: avg(rs, "score_wq"), debris: avg(rs, "score_debris"), bio: avg(rs, "score_bio"), enf: avg(rs, "score_enf"), score: avg(rs, "score") }; });
+  }
+});
+
+dash.calc("coverage", {
+  title: "Coverage by dimension",
+  description: "Number of MPAs with a score for each dimension.",
+  inputs: ["mpa"],
+  fn: (mpa) => [["Water quality", "score_wq"], ["Marine debris", "score_debris"], ["Biodiversity", "score_bio"], ["Enforcement", "score_enf"]]
+    .map(([dim, k]) => ({ dim, n: mpa.filter(r => r[k] !== "" && r[k] != null).length }))
+});
+
+dash.calc("lead", {
+  title: "Figures for the summary sentence",
+  description: "Finds the highest- and lowest-scoring MPAs and the most common weakest dimension.",
+  inputs: ["mpa"],
+  fn: (mpa) => {
+    const s = mpa.filter(r => r.score !== "" && Number(r.dims) >= 3).sort((a, b) => b.score - a.score);
+    const cnt = {}; mpa.forEach(r => { if (r.weakest) cnt[r.weakest] = (cnt[r.weakest] || 0) + 1; });
+    const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+    return [{ best: s[0].mpa, best_score: s[0].score, worst: s[s.length - 1].mpa, worst_score: s[s.length - 1].score, weak_dim: top[0], weak_n: top[1] }];
+  }
+});
+</script>
+
+<script>
+(function () {
+  const fmt = d3.format(",");
+  let sortK = "score", sortDir = -1, selNo = null, built = false;
+  const tbody = document.querySelector("#tbl tbody");
+  const $ = id => document.getElementById(id);
+  const cols = ["no", "mpa", "category", "score_wq", "score_debris", "score_bio", "score_enf", "score", "grade", "weakest"];
+  const numCols = new Set(["no", "score_wq", "score_debris", "score_bio", "score_enf", "score"]);
+
+  function scoreCell(td, v, comp) {
+    td.className = "num" + (comp ? " comp" : "");
+    if (v === "" || v == null) { td.textContent = "—"; td.classList.add("na"); return; }
+    td.textContent = String(v);
+    const b = document.createElement("span"); b.className = "bar";
+    b.style.width = Math.max(2, Number(v) * 0.42) + "px";
+    b.style.background = Number(v) >= 70 ? "var(--color-ok)" : Number(v) >= 55 ? "var(--cds-chart-muted)" : Number(v) >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+    td.appendChild(b);
+  }
+
+  function renderTable(rows) {
+    const q = $("q").value.trim(), c = $("cat").value, g = $("grd").value;
+    let rs = rows.filter(r => (!q || r.mpa.includes(q)) && (!c || r.category === c) && (!g || (r.grade || "").startsWith(g)));
+    rs.sort((a, b) => {
+      let x = a[sortK], y = b[sortK];
+      if (numCols.has(sortK)) { x = x === "" ? -1 : Number(x); y = y === "" ? -1 : Number(y); return (x - y) * sortDir; }
+      return String(x).localeCompare(String(y), "zh-Hant") * sortDir;
+    });
+    tbody.textContent = "";
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      tr.dataset.key = String(r.no);
+      if (String(r.no) === String(selNo)) tr.classList.add("sel");
+      cols.forEach(k => {
+        const td = document.createElement("td");
+        if (["no", "category", "weakest"].includes(k)) td.classList.add("hide-sm");
+        if (k.startsWith("score")) scoreCell(td, r[k], k === "score");
+        else if (k === "grade") { const s = document.createElement("span"); s.className = "pill"; const d = document.createElement("i"); d.className = "dot " + mpGradeClass(r.grade); s.appendChild(d); s.appendChild(document.createTextNode(r.grade)); td.appendChild(s); }
+        else td.textContent = r[k] === "" ? "—" : String(r[k]);
+        tr.appendChild(td);
+      });
+      tr.addEventListener("click", () => { selNo = r.no; showDetail(rows); tbody.querySelectorAll("tr").forEach(t => t.classList.toggle("sel", t.dataset.key === String(r.no))); $("detail").scrollIntoView({ behavior: "smooth", block: "nearest" }); dash.setLink("detail"); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showDetail(rows) {
+    const r = rows.find(x => String(x.no) === String(selNo)) || rows[0];
+    if (!r) return;
+    document.querySelectorAll('#detail [data-source="mpa"]').forEach(el => {
+      el.setAttribute("data-where", "no=" + r.no);
+      const v = r[el.dataset.field];
+      el.textContent = v === "" || v == null ? "—" : String(v);
+      el.classList.remove("dash-skeleton");
+    });
+    $("d-sub").textContent = `${r.category} | composite ${r.score === "" ? "—" : r.score} (${r.grade}) | weakest: ${r.weakest || "—"}`;
+  }
+
+  document.querySelectorAll("#tbl th button").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.k; sortDir = k === sortK ? -sortDir : (numCols.has(k) ? -1 : 1); sortK = k;
+    document.querySelectorAll("#tbl th").forEach(th => th.removeAttribute("aria-sort"));
+    b.parentElement.setAttribute("aria-sort", sortDir > 0 ? "ascending" : "descending");
+    const d = dash.data("mpa"); if (d.status === "ok") renderTable(d.data);
+  }));
+  ["q", "cat", "grd"].forEach(id => $(id).addEventListener("input", () => { const d = dash.data("mpa"); if (d.status === "ok") renderTable(d.data); }));
+
+  function drawCats() {
+    const el = $("catchart"), d = dash.data("bycat");
+    el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const dims = [["wq", "Water quality"], ["debris", "Marine debris"], ["bio", "Biodiversity"], ["enf", "Enforcement"]];
+    const lg = $("lg"); lg.textContent = "";
+    dims.forEach(([k, n], i) => { const s = document.createElement("span"); const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = dash.colors[i]; s.appendChild(dot); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+    const rows = d.data.slice().sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    const W = el.clientWidth || 400, rowH = 34;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${rows.length * rowH + 30}`);
+    const meas = svg.append("text").attr("font-size", 12).text("Fisheries resource conservation area (00)");
+    const labW = Math.min(W * 0.45, meas.node().getComputedTextLength() + 10); meas.remove();
+    const x = d3.scaleLinear([0, 100], [labW, W - 12]);
+    const g = svg.append("g");
+    [0, 25, 50, 75, 100].forEach(t => { g.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      g.append("text").attr("x", x(t)).attr("y", rows.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach((r, i) => {
+      const y = i * rowH + rowH / 2;
+      g.append("text").attr("x", 0).attr("y", y + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${r.category} (${r.n})`);
+      const vals = dims.map(([k], j) => ({ k, j, v: r[k] })).filter(o => o.v != null);
+      if (vals.length > 1) g.append("line").attr("x1", x(d3.min(vals, o => o.v))).attr("x2", x(d3.max(vals, o => o.v))).attr("y1", y).attr("y2", y).attr("stroke", "var(--cds-chart-axis)").attr("stroke-width", 2).attr("stroke-linecap", "round");
+      vals.forEach(o => g.append("circle").attr("cx", x(o.v)).attr("cy", y).attr("r", 6).attr("fill", dash.colors[o.j]).attr("stroke", "var(--color-panel)").attr("stroke-width", 1.5));
+      g.append("rect").attr("x", 0).attr("y", i * rowH).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+        .on("mousemove", ev => {
+          tip.textContent = ""; const h = document.createElement("div"); h.style.color = "var(--cds-text-secondary)"; h.textContent = r.category; tip.appendChild(h);
+          dims.forEach(([k, n], j) => { const l = document.createElement("div"); const sw = document.createElement("i"); sw.className = "dot"; sw.style.background = dash.colors[j]; sw.style.marginRight = "6px"; l.appendChild(sw); l.appendChild(document.createTextNode(`${n} ${r[k] ?? "—"}`)); tip.appendChild(l); });
+          const l2 = document.createElement("div"); l2.textContent = `Composite ${r.score ?? "—"}`; l2.style.fontWeight = "600"; tip.appendChild(l2);
+          tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+          tip.style.left = Math.min(mx + 12, el.clientWidth - tip.offsetWidth - 4) + "px"; tip.style.top = (my + 12) + "px";
+        }).on("mouseleave", () => { tip.style.display = "none"; });
+    });
+    el.style.minHeight = (rows.length * rowH + 30) + "px";
+  }
+
+  function drawCov() {
+    const el = $("covchart"), d = dash.data("coverage");
+    el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const W = el.clientWidth || 400, rowH = 44, rows = d.data, labW = 84;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${rows.length * rowH}`);
+    const x = d3.scaleLinear([0, 71], [labW, W - 44]);
+    rows.forEach((r, i) => {
+      const y = i * rowH;
+      svg.append("text").attr("x", 0).attr("y", y + 22).attr("font-size", 12).attr("fill", "var(--color-fg)").text(r.dim);
+      svg.append("rect").attr("x", labW).attr("y", y + 10).attr("width", x(71) - labW).attr("height", 18).attr("rx", 4).attr("fill", "var(--cds-chart-grid)");
+      svg.append("rect").attr("x", labW).attr("y", y + 10).attr("width", x(r.n) - labW).attr("height", 18).attr("rx", 4).attr("fill", dash.colors[i]);
+      svg.append("text").attr("x", x(r.n) + 6).attr("y", y + 23).attr("font-size", 12).attr("fill", "var(--color-fg-muted)").text(fmt(r.n));
+    });
+    el.style.minHeight = (rows.length * rowH) + "px";
+  }
+
+  dash.onData(() => {
+    const d = dash.data("mpa");
+    if (d.status === "ok") {
+      const rows = d.data;
+      if (!built) { const sel = $("cat"); [...new Set(rows.map(r => r.category))].forEach(c => { const o = document.createElement("option"); o.textContent = c; sel.appendChild(o); }); built = true; }
+      renderTable(rows);
+      if (selNo == null) { const top = rows.filter(r => r.score !== "").sort((a, b) => b.score - a.score)[0]; selNo = top ? top.no : rows[0].no; }
+      showDetail(rows);
+      if (window.mpPendScroll) { window.mpPendScroll = false; setTimeout(() => $("detail").scrollIntoView({ block: "start" }), 350); }
+    } else { tbody.textContent = ""; }
+
+    const s = dash.data("summary");
+    document.querySelectorAll('[data-source="summary"]').forEach(el => {
+      if (s.status === "ok") { el.textContent = fmt(s.data[0][el.dataset.field]); el.classList.remove("dash-skeleton"); } else el.textContent = "—";
+    });
+
+    const L = dash.data("lead"), lead = $("lead");
+    if (L.status === "ok" && s.status === "ok") {
+      const a = L.data[0], b = s.data[0];
+      lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (t, src, f, strong) => { const e = document.createElement(strong ? "b" : "span"); e.textContent = t; if (src) { e.dataset.source = src; e.dataset.field = f; } lead.appendChild(e); };
+      add("Combining water quality, marine debris, biodiversity (field surveys and eDNA) and enforcement across 71 MPAs: ");
+      add(String(b.good), "summary", "good", true); add(" are good and ");
+      add(String(b.bad), "summary", "bad", true); add(" poor. The dimension that most often holds sites back is ");
+      add(a.weak_dim.toLowerCase(), "lead", "weak_dim", true); add(" (");
+      add(String(a.weak_n), "lead", "weak_n"); add(" MPAs have it as their weakest dimension); water quality is generally good, and differences come mainly from debris and enforcement. Among sites with at least three dimensions, ");
+      add(a.best, "lead", "best", true); add(" scores highest ("); add(String(a.best_score), "lead", "best_score"); add(") and ");
+      add(a.worst, "lead", "worst", true); add(" lowest ("); add(String(a.worst_score), "lead", "worst_score"); add(").");
+    }
+    drawCats(); drawCov();
+  });
+
+  function pick(no) {
+    const d = dash.data("mpa"); if (d.status !== "ok") { selNo = no; return; }
+    selNo = no; renderTable(d.data); showDetail(d.data);
+    requestAnimationFrame(() => $("detail").scrollIntoView({ block: "start" }));
+  }
+  const m0 = location.hash.match(/^#ranking\/(\d+)/); if (m0) { selNo = m0[1]; window.mpPendScroll = true; }
+  window.addEventListener("mp:route", ev => { if (ev.detail.tab === "ranking" && ev.detail.arg) pick(ev.detail.arg); });
+  const named = document.getElementById(location.hash.slice(1));
+  if (named) named.scrollIntoView();
+})();
+</script>
+
+<script>
+dash.calc("heat", {
+  title: "Association matrix",
+  description: "Arranges the 60 tests as a variable × dimension table of effect sizes (ε² or ρ).",
+  inputs: ["tests"],
+  fn: (tests) => {
+    const vars = [...new Set(tests.map(t => t.variable))];
+    return vars.map(v => { const o = { variable: v };
+      tests.filter(t => t.variable === v).forEach(t => { o[t.dimension] = Number(t.effect); }); return o; });
+  }
+});
+dash.calc("xsum", {
+  title: "Classification summary figures",
+  description: "Counts all tests, tests with uncorrected p<0.05, tests with FDR q<0.1, and significant tests on the composite score.",
+  inputs: ["tests"],
+  fn: (tests) => [{ n_tests: tests.length,
+    n_nominal: tests.filter(t => Number(t.p) < 0.05).length,
+    n_fdr: tests.filter(t => Number(t.q_fdr) < 0.1).length,
+    n_comp: tests.filter(t => t.dimension === "Composite").length,
+    n_comp_sig: tests.filter(t => t.dimension === "Composite" && Number(t.p) < 0.05).length }]
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const DIMS = ["Composite", "Water quality", "Marine debris", "Biodiversity", "Enforcement"];
+  const LV = ["Fully protected", "Highly protected", "Lightly protected", "Minimally protected"];
+  const LVC = { "Fully protected": "var(--color-ok)", "Highly protected": "var(--cds-chart-muted)", "Lightly protected": "var(--color-warn)", "Minimally protected": "var(--color-bad)" };
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+
+  document.querySelectorAll(".mp .nav a").forEach(a => a.addEventListener("click", ev => {
+    ev.preventDefault(); const el = $(a.getAttribute("href").slice(1)); if (el) { el.scrollIntoView({ behavior: "smooth" }); dash.setLink(el.id); }
+  }));
+
+  function heat() {
+    const h = dash.data("heat"), t = dash.data("tests"), tb = document.querySelector("#heat tbody"), tip = $("heat-tip");
+    tb.textContent = "";
+    if (h.status !== "ok" || t.status !== "ok") return;
+    h.data.forEach(r => {
+      const tr = document.createElement("tr"); tr.dataset.key = r.variable;
+      const td0 = document.createElement("td"); td0.textContent = r.variable; tr.appendChild(td0);
+      DIMS.forEach(dm => {
+        const td = document.createElement("td"); const v = r[dm];
+        const rec = t.data.find(x => x.variable === r.variable && x.dimension === dm);
+        if (v == null || !rec) { td.textContent = "—"; td.className = "na"; tr.appendChild(td); return; }
+        const isRho = rec.effect_name === "ρ", mag = isRho ? Math.min(1, Math.abs(v) / 0.5) : Math.min(1, Math.max(0, v) / 0.14);
+        td.textContent = (isRho ? "ρ " : "ε² ") + d3.format("+.2f")(v).replace("+", isRho ? "+" : "");
+        td.style.background = `color-mix(in srgb, var(--cds-chart-status-critical) ${Math.round(mag * 45)}%, transparent)`;
+        if (Number(rec.p) < 0.05) { td.classList.add("sig"); td.style.fontWeight = "600"; }
+        td.addEventListener("mousemove", ev => {
+          tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = `${r.variable} × ${dm}`; tip.appendChild(a);
+          [`${rec.test}, n = ${rec.n}${rec.groups ? ", " + rec.groups + " groups" : ""}`, `p = ${d3.format(".3f")(rec.p)}`, `FDR q = ${d3.format(".3f")(rec.q_fdr)}`].forEach(x => { const l = document.createElement("div"); l.textContent = x; tip.appendChild(l); });
+          const box = tip.parentElement.getBoundingClientRect(); tip.style.display = "block";
+          tip.style.left = Math.min(ev.clientX - box.left + 12, box.width - tip.offsetWidth - 8) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        });
+        td.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function strip() {
+    const el = $("strip"), d = dash.data("cross"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const gk = $("x-group").value, yk = $("x-dim").value;
+    const rows = d.data.map(r => ({ ...r, y: num(r[yk]) })).filter(r => r.y != null);
+    let groups = [...new Set(rows.map(r => r[gk]))];
+    if (gk.endsWith("level")) groups = LV.filter(x => groups.includes(x));
+    else groups.sort((a, b) => d3.median(rows.filter(r => r[gk] === b), r => r.y) - d3.median(rows.filter(r => r[gk] === a), r => r.y));
+    const W = el.clientWidth || 400, rowH = 36, H = groups.length * rowH + 28;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const lab = g => `${g} (${rows.filter(r => r[gk] === g).length})`;
+    const meas = svg.append("g"); let lw = 0;
+    groups.forEach(g => { const t = meas.append("text").attr("font-size", 12).text(lab(g)); lw = Math.max(lw, t.node().getComputedTextLength()); }); meas.remove();
+    lw = Math.min(lw + 12, W * 0.5);
+    const x = d3.scaleLinear([0, 100], [lw, W - 10]);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", groups.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", H - 8).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => {
+      const cy = i * rowH + rowH / 2, rs = rows.filter(r => r[gk] === g);
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(lab(g));
+      rs.forEach((r, j) => {
+        const jit = ((j * 7919) % 13 - 6) * 1.4;
+        svg.append("circle").attr("cx", x(r.y)).attr("cy", cy + jit).attr("r", 4).attr("fill", dash.colors[0]).attr("fill-opacity", 0.55)
+          .on("mousemove", ev => { tip.textContent = `${r.mpa}: ${r.y}`; tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+            tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; })
+          .on("mouseleave", () => { tip.style.display = "none"; });
+      });
+      const md = d3.median(rs, r => r.y);
+      svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", cy - 12).attr("y2", cy + 12).attr("stroke", "var(--color-fg)").attr("stroke-width", 3).attr("stroke-linecap", "round");
+    });
+    el.style.minHeight = H + "px";
+  }
+
+  function scatter() {
+    const el = $("scatter"), d = dash.data("cross"); el.textContent = "";
+    const lg = $("sc-lg"); lg.textContent = "";
+    LV.forEach(l => { const s = document.createElement("span"); const i = document.createElement("i"); i.className = "dot"; i.style.background = LVC[l]; s.appendChild(i); s.appendChild(document.createTextNode(l)); lg.appendChild(s); });
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const xk = $("x-x").value, isA = xk === "area_km2";
+    const rows = d.data.map(r => ({ ...r, x: num(r[xk]), y: num(r.score) })).filter(r => r.y != null && r.x != null && (!isA || r.x > 0));
+    const W = el.clientWidth || 400, H = 280, m = { l: 34, r: 12, t: 10, b: 30 };
+    const x = isA ? d3.scaleLog(d3.extent(rows, r => r.x), [m.l, W - m.r]).nice() : d3.scaleLinear(d3.extent(rows, r => r.x), [m.l, W - m.r]).nice();
+    const y = d3.scaleLinear([0, 100], [H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(t)).attr("y2", y(t)).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(t) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const ticks = isA ? [0.001, 0.01, 0.1, 1, 10, 100, 1000].filter(t => t >= x.domain()[0] && t <= x.domain()[1]) : x.ticks(Math.max(3, Math.floor(W / 90)));
+    ticks.forEach(t => svg.append("text").attr("x", x(t)).attr("y", H - 10).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(isA ? d3.format("~g")(t) : String(t)));
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(r.x)).attr("cy", y(r.y)).attr("r", 5).attr("fill", LVC[r.dom_level] || "var(--cds-chart-muted)").attr("fill-opacity", 0.75).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${isA ? "Area " + d3.format(",.3~f")(r.x) + " km²" : "Established " + r.x} | composite ${r.y} | ${r.dom_level}`; tip.appendChild(b);
+        tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el); tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  ["x-group", "x-dim"].forEach(id => $(id).addEventListener("change", strip));
+  $("x-x").addEventListener("change", scatter);
+
+  dash.onData(() => {
+    const t = dash.data("tests");
+    document.querySelectorAll('#x-read [data-source="xsum"]').forEach(el => { const x = dash.data("xsum"); el.textContent = x.status === "ok" ? String(x.data[0][el.dataset.field]) : "—"; });
+    document.querySelectorAll('#x-read [data-source="tests"]').forEach(el => {
+      if (t.status !== "ok") { el.textContent = "—"; return; }
+      const id = el.dataset.where.split("=")[1], r = t.data.find(x => String(x.id) === id);
+      if (!r) { el.textContent = "—"; return; }
+      el.textContent = el.dataset.field === "p" ? d3.format(".3f")(r.p) : d3.format("+.2f")(r.effect);
+    });
+    const s = dash.data("xsum"), L = $("x-lead");
+    if (s.status === "ok") { const a = s.data[0]; L.classList.remove("dash-skeleton"); L.textContent = "";
+      const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "xsum"; e.dataset.field = f; } L.appendChild(e); };
+      add("The composite and four dimension scores were tested against MPA type, legal basis, IUCN category, protection level, area, year of establishment and establishment stage: "); add(String(a.n_tests), "n_tests"); add(" tests in all. Of the ");
+      add(String(a.n_comp), "n_comp"); add(" tests on the composite score, "); add(String(a.n_comp_sig), "n_comp_sig", true); add(" are significant; after FDR correction, "); add(String(a.n_fdr), "n_fdr", true); add(" of all "); add(String(a.n_tests), "n_tests");
+      add(" reach q<0.1. Classification and protection level largely fail to predict effectiveness; the more consistent signals are higher enforcement scores where strictly protected zones are common, and higher biodiversity scores in larger MPAs."); }
+    heat(); strip(); scatter();
+  });
+})();
+</script>
+
+<script>
+dash.calc("pheat", {
+  title: "Pressure and input correlation matrix",
+  description: "Arranges Spearman ρ between population, fishing and patrol variables and each dimension as a matrix.",
+  inputs: ["ptests"],
+  fn: (ptests) => [...new Set(ptests.map(t => t.variable))].map(v => { const o = { variable: v };
+    ptests.filter(t => t.variable === v).forEach(t => { o[t.dimension] = Number(t.rho); }); return o; })
+});
+dash.calc("pband", {
+  title: "Means by population density",
+  description: "Means of ecological, water, debris, biodiversity, enforcement and composite scores for three population-density groups of nearby townships (blanks excluded).",
+  inputs: ["pmpa"],
+  fn: (pmpa) => {
+    const bands = ["<100 per km²", "100–1,000", ">1,000"];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null && !isNaN(Number(x))).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
+    return bands.map(b => { const rs = pmpa.filter(r => r.dens_band === b);
+      return { band: b, n: rs.length, eco: avg(rs, "eco"), score_wq: avg(rs, "score_wq"), score_debris: avg(rs, "score_debris"), score_bio: avg(rs, "score_bio"), score_enf: avg(rs, "score_enf"), score: avg(rs, "score") }; });
+  }
+});
+dash.calc("plead", {
+  title: "Pressure summary figures",
+  description: "Extracts population density–debris, fishing share–ecological and patrol hours–ecological correlations, and ecological means for the low- and high-density groups.",
+  inputs: ["ptests", "pband"],
+  fn: (ptests, pband) => { const g = id => ptests.find(t => Number(t.id) === id);
+    return [{ dens_debris: Number(g(4).rho), fish_eco: Number(g(14).rho), hours_eco: Number(g(26).rho),
+      low_eco: pband[0].eco, high_eco: pband[2].eco }]; }
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const COLS = ["Composite", "Ecological score (excl. enforcement)", "Water quality", "Marine debris", "Biodiversity", "Enforcement"];
+  const tipAt = (tip, el, ev) => { tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+    tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; };
+
+  function coef() {
+    const el = $("coef"), d = dash.data("pmodels"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const rows = d.data.filter(r => r.model === $("p-model").value);
+    const W = el.clientWidth || 400, rowH = 40, H = rows.length * rowH + 44;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const meas = svg.append("text").attr("font-size", 12).text("Fishing share of debris"); const lw = meas.node().getComputedTextLength() + 14; meas.remove();
+    const lim = Math.max(10, d3.max(rows, r => Math.max(Math.abs(Number(r.ci_low)), Math.abs(Number(r.ci_high))))) * 1.05;
+    const x = d3.scaleLinear([-lim, lim], [lw, W - 56]);
+    x.ticks(5).forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", t === 0 ? "var(--cds-chart-reference)" : "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", rows.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(d3.format("+")(t).replace("+0", "0")); });
+    svg.append("text").attr("x", x(-lim)).attr("y", H - 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("← lower score");
+    svg.append("text").attr("x", x(lim)).attr("y", H - 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("higher score →");
+    rows.forEach((r, i) => { const cy = i * rowH + rowH / 2, sig = Number(r.p) < 0.05;
+      const col = sig ? (Number(r.beta) < 0 ? "var(--cds-chart-status-critical)" : dash.colors[0]) : "var(--cds-chart-muted)";
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(r.term);
+      svg.append("line").attr("x1", x(r.ci_low)).attr("x2", x(r.ci_high)).attr("y1", cy).attr("y2", cy).attr("stroke", col).attr("stroke-width", 2).attr("stroke-linecap", "round");
+      svg.append("circle").attr("cx", x(r.beta)).attr("cy", cy).attr("r", 6).attr("fill", col);
+      svg.append("text").attr("x", W - 4).attr("y", cy + 4).attr("text-anchor", "end").attr("font-size", 12).attr("font-weight", sig ? 600 : 400).attr("fill", "var(--color-fg)").text(d3.format("+.1f")(r.beta) + (sig ? " ●" : "")); });
+    el.style.minHeight = H + "px";
+    const note = rows[0] ? `n = ${rows[0].n}, R² = ${d3.format(".2f")(rows[0].r2)}; ● = p<0.05` : "";
+    let cap = el.parentElement.querySelector(".coef-cap"); if (!cap) { cap = document.createElement("p"); cap.className = "note coef-cap"; cap.style.margin = "4px 0 0"; el.after(cap); } cap.textContent = note;
+  }
+
+  function scatter() {
+    const el = $("pscatter"), d = dash.data("pmpa"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const xk = $("p-x").value, yk = $("p-y").value, logx = xk !== "fish_share";
+    const rows = d.data.map(r => ({ ...r, x: num(r[xk]), y: num(r[yk]) })).filter(r => r.x != null && r.y != null).map(r => ({ ...r, xx: logx ? r.x + 1 : r.x }));
+    const W = el.clientWidth || 400, H = 280, m = { l: 34, r: 12, t: 10, b: 30 };
+    const x = logx ? d3.scaleLog([1, d3.max(rows, r => r.xx)], [m.l, W - m.r]).nice() : d3.scaleLinear([0, 100], [m.l, W - m.r]);
+    const y = d3.scaleLinear([0, 100], [H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(t)).attr("y2", y(t)).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(t) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const ticks = logx ? [1, 10, 100, 1000, 10000, 100000].filter(t => t <= x.domain()[1]) : [0, 25, 50, 75, 100];
+    ticks.forEach(t => svg.append("text").attr("x", x(t)).attr("y", H - 10).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(logx ? d3.format("~s")(t - (t === 1 ? 1 : 0)) : t + "%"));
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(r.xx)).attr("cy", y(r.y)).attr("r", 5)
+      .attr("fill", Number(r.east) === 1 ? "var(--color-warn)" : "var(--cds-chart-muted)").attr("fill-opacity", 0.8).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${$("p-x").selectedOptions[0].text.split(" (")[0]} ${d3.format(",.0f")(r.x)} | score ${d3.format(".0f")(r.y)}`; tip.appendChild(b);
+        const c = document.createElement("div"); c.textContent = r.townships; tip.appendChild(c); tipAt(tip, el, ev); })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  function band() {
+    const el = $("pband"), d = dash.data("pband"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const dims = [["eco", "Ecological"], ["score_debris", "Marine debris"], ["score_wq", "Water quality"], ["score_bio", "Biodiversity"], ["score_enf", "Enforcement"]];
+    const W = el.clientWidth || 400, gH = 30, H = dims.length * (d.data.length * 14 + 22) + 20;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const lw = 100, x = d3.scaleLinear([0, 100], [lw, W - 40]);
+    const lg = document.createElement("div"); lg.className = "legend";
+    d.data.forEach((b, i) => { const s = document.createElement("span"); const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = dash.colors[i]; s.appendChild(dot); s.appendChild(document.createTextNode(`${b.band} (${b.n})`)); lg.appendChild(s); });
+    el.prepend(lg);
+    let yy = 0;
+    dims.forEach(([k, n]) => { svg.append("text").attr("x", 0).attr("y", yy + 14).attr("font-size", 12).attr("fill", "var(--color-fg)").text(n);
+      d.data.forEach((b, i) => { const v = b[k], yb = yy + 4 + i * 14;
+        svg.append("rect").attr("x", lw).attr("y", yb).attr("width", v == null ? 0 : x(v) - lw).attr("height", 10).attr("rx", 4).attr("fill", dash.colors[i]);
+        svg.append("text").attr("x", (v == null ? lw : x(v)) + 4).attr("y", yb + 9).attr("font-size", 10).attr("fill", "var(--color-fg-muted)").text(v == null ? "—" : d3.format(".0f")(v)); });
+      yy += d.data.length * 14 + 22; });
+    el.style.minHeight = H + 30 + "px";
+  }
+
+  function heat() {
+    const h = dash.data("pheat"), t = dash.data("ptests"), tb = document.querySelector("#pheat tbody"); tb.textContent = "";
+    if (h.status !== "ok" || t.status !== "ok") return;
+    h.data.forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = r.variable;
+      const td0 = document.createElement("td"); td0.textContent = r.variable; tr.appendChild(td0);
+      COLS.forEach(c => { const td = document.createElement("td"); const v = r[c]; const rec = t.data.find(x => x.variable === r.variable && x.dimension === c);
+        if (v == null || !rec) { td.textContent = "—"; td.className = "na"; tr.appendChild(td); return; }
+        td.textContent = d3.format("+.2f")(v) + (rec.circular === "Yes" ? "*" : "");
+        td.title = `n = ${rec.n}, p = ${d3.format(".3f")(rec.p)}, q = ${d3.format(".3f")(rec.q_fdr)}`;
+        const mag = Math.min(1, Math.abs(v) / 0.6);
+        td.style.background = rec.circular === "Yes" ? "transparent" : `color-mix(in srgb, ${v < 0 ? "var(--cds-chart-status-critical)" : "var(--color-ok)"} ${Math.round(mag * 45)}%, transparent)`;
+        if (rec.circular === "Yes") td.style.color = "var(--color-fg-muted)";
+        if (Number(rec.p) < 0.05 && rec.circular !== "Yes") { td.classList.add("sig"); td.style.fontWeight = "600"; }
+        tr.appendChild(td); });
+      tb.appendChild(tr); });
+  }
+
+  $("p-model").addEventListener("change", coef);
+  ["p-x", "p-y"].forEach(id => $(id).addEventListener("change", scatter));
+
+  dash.onData(() => {
+    const t = dash.data("ptests"), m = dash.data("pmodels");
+    document.querySelectorAll('#p-read [data-source]').forEach(el => {
+      const src = el.dataset.source === "ptests" ? t : m; if (src.status !== "ok") { el.textContent = "—"; return; }
+      const [k, v] = el.dataset.where.split("="); const r = src.data.find(x => String(x[k]) === v);
+      el.textContent = r ? d3.format("+.2f")(r[el.dataset.field]) : "—"; });
+    const L = dash.data("plead"), lead = $("p-lead");
+    if (L.status === "ok") { const a = L.data[0]; lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "plead"; e.dataset.field = f; } lead.appendChild(e); };
+      add("Sparsely populated MPAs (<100 per km²) average "); add(d3.format(".0f")(a.low_eco), "low_eco", true); add(" on the ecological score, densely populated ones (>1,000) ");
+      add(d3.format(".0f")(a.high_eco), "high_eco", true); add(", the gap lying mainly in debris (population density vs debris ρ = "); add(d3.format("+.2f")(a.dens_debris), "dens_debris");
+      add("). A stronger factor is fishing and aquaculture waste (fishing share vs ecological score ρ = "); add(d3.format("+.2f")(a.fish_eco), "fish_eco", true);
+      add("); patrol hours show no positive link with ecological outcomes (ρ = "); add(d3.format("+.2f")(a.hours_eco), "hours_eco", true); add(")."); }
+    coef(); scatter(); band(); heat();
+  });
+})();
+</script>
+
+<style>
+.mp .hb { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; }
+.mp .hb-2 { background: var(--color-fg); }
+.mp .hb-1 { border: 1.5px solid var(--color-fg); box-sizing: border-box; }
+.mp .hb-0 { background: var(--color-border-line); }
+.mp #hab td.hc { text-align: center; white-space: nowrap; }
+.mp #hab td.hc span { margin-left: 4px; color: var(--color-fg-muted); }
+.mp #hab td.note-c, .mp #reeftbl td.note-c, .mp #bctbl td.note-c { white-space: normal; min-width: 14rem; color: var(--color-fg-muted); }
+.mp #hab tbody tr, .mp #reeftbl tbody tr, .mp #bctbl tbody tr, .mp #gaptbl tbody tr { cursor: default; }
+.mp #gaptbl td.note-c { white-space: normal; min-width: 12rem; color: var(--color-fg-muted); }
+.mp details.sub { margin-top: var(--cds-gap-md); }
+.mp details.sub summary { cursor: pointer; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.mp #reef-card, .mp #bc-card { position: relative; }
+</style>
+
+<script>
+dash.calc("blead", {
+  title: "Biodiversity summary figures",
+  description: "Counts MPAs by main ecosystem, reefs in good condition, total estimable blue carbon and Dongsha's share, the grade distribution, and the OCA's national mean carbon densities.",
+  inputs: ["biohab", "bluecarbon", "reefsites", "bcsites"],
+  fn: (biohab, bluecarbon, reefsites, bcsites) => {
+    const c = (k) => biohab.filter(r => r[k] === "Main").length;
+    const reef = biohab.filter(r => r.rc2023 !== "" || r.rc2025 !== "");
+    const latest = r => Number(r.rc2025 !== "" ? r.rc2025 : r.rc2023);
+    const tot = bluecarbon.filter(r => r.in_total === "Yes").reduce((a, r) => a + (r.est_tC === "" ? 0 : Number(r.est_tC)), 0);
+    const sum = rs => rs.reduce((a, r) => a + Number(r.area_2023), 0);
+    const mg = bcsites.filter(r => r.type === "Mangrove"), sg = bcsites.filter(r => r.type === "Seagrass bed" && r.site !== "Dongsha Atoll");
+    const r1 = x => Math.round(x * 10) / 10;
+    const ds = bluecarbon.find(r => String(r.no) === "7");
+    const g = k => biohab.filter(r => r.bio_grade === k).length;
+    return [{ n_coral: c("coral"), n_mangrove: c("mangrove"), n_mud: c("mudflat"), n_reef: reef.length,
+      n_reef_good: reef.filter(r => latest(r) >= 50).length, n_sites: reefsites.length,
+      bc_total: Math.round(tot), bc_dongsha_pct: Math.round(100 * Number(ds.est_tC) / tot),
+      mg_in_pct: Math.round(100 * sum(mg.filter(r => r.mpa)) / sum(mg)), mg_out_ha: r1(sum(mg.filter(r => !r.mpa))), sg_out_ha: r1(sum(sg.filter(r => !r.mpa))),
+      g_good: g("Good"), g_ok: g("Fair"), g_warn: g("Needs improvement"), g_bad: g("Poor"), g_nodata: g("Insufficient data (no biological observations)"),
+      den_mg: Math.round(182000 / 680 * 10) / 10, den_sg: Math.round(144000 / 5456 * 10) / 10, den_sm: Math.round(16000 / 188 * 10) / 10 }];
+  }
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const fmt = d3.format(",");
+  const HAB = ["coral", "seagrass", "rocky", "mangrove", "mudflat", "saltmarsh"];
+  const shortName = n => n.replace("Northeast & Yilan Coast Scenic Area (marine reserve)", "Northeast Coast Scenic Area").replace("Taoyuan Guanxin Algal Reef Wildlife Refuge", "Guanxin Algal Reef Refuge")
+    .replace("Wanghaixiang Chaojing Bay Conservation Area (Keelung)", "Chaojing Bay CA").replace("Green Island Haishenping–Fanchuanbi Marine Reserve", "Green Island Haishenping")
+    .replace(/ Conservation Area\b/, " CA").replace(" River Estuary Wetland", " Estuary").replace("Atoll National Park", "Atoll");
+  function leftFor(names, narrow) { const w = d3.max(names, n => n.length) * 12.5 + 12; return Math.min(narrow ? 120 : 240, Math.max(80, w)); }
+  const RANK = { "Main": 2, "Present": 1, "—": 0 };
+  let habSort = ["no", 1], brSort = ["bio_score", -1];
+
+  function sortRows(rows, k, dir) {
+    return rows.slice().sort((a, b) => {
+      let x = a[k], y = b[k];
+      if (HAB.includes(k)) { x = RANK[x] ?? 0; y = RANK[y] ?? 0; }
+      const xn = x === "" || x == null, yn = y === "" || y == null;
+      if (xn && yn) return 0; if (xn) return 1; if (yn) return -1;
+      const nx = Number(x), ny = Number(y);
+      if (!isNaN(nx) && !isNaN(ny)) return (nx - ny) * dir;
+      return String(x).localeCompare(String(y), "zh-Hant") * dir;
+    });
+  }
+  function bindSort(tableId, get, set, redraw) {
+    document.querySelectorAll("#" + tableId + " th button").forEach(b => b.onclick = () => {
+      const [k, d] = get(); const nk = b.dataset.k;
+      set([nk, nk === k ? -d : (nk === "mpa" || nk === "no" ? 1 : -1)]); redraw();
+    });
+  }
+  function ariaSort(tableId, k, d) {
+    document.querySelectorAll("#" + tableId + " th").forEach(th => {
+      const b = th.querySelector("button");
+      if (b && b.dataset.k === k) th.setAttribute("aria-sort", d > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort");
+    });
+  }
+  function scoreTd(td, v) {
+    td.className = "num";
+    if (v === "" || v == null) { td.textContent = "—"; td.classList.add("na"); return; }
+    td.textContent = String(v);
+    const b = document.createElement("span"); b.className = "bar";
+    b.style.width = Math.max(2, Number(v) * 0.42) + "px";
+    b.style.background = Number(v) >= 70 ? "var(--color-ok)" : Number(v) >= 55 ? "var(--cds-chart-muted)" : Number(v) >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+    td.appendChild(b);
+  }
+  function placeholderTbody(tb, n) { tb.innerHTML = ""; const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = n; td.textContent = "—"; td.className = "na"; tr.appendChild(td); tb.appendChild(tr); }
+
+  // ---------- habitat table ----------
+  function drawHab(rows) {
+    const tb = $("hab").querySelector("tbody"); tb.innerHTML = "";
+    const q = $("hab-q").value.trim(), f = $("hab-f").value;
+    let rs = rows.filter(r => (!q || r.mpa.includes(q)) && (!f || r[f] !== "—"));
+    rs = sortRows(rs, habSort[0], habSort[1]); ariaSort("hab", habSort[0], habSort[1]);
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      const td0 = document.createElement("td"); td0.className = "num"; td0.textContent = r.no; tr.appendChild(td0);
+      const td1 = document.createElement("td"); td1.textContent = r.mpa; tr.appendChild(td1);
+      HAB.forEach(k => {
+        const td = document.createElement("td"); td.className = "hc";
+        const v = r[k]; const i = document.createElement("i"); i.className = "hb hb-" + (RANK[v] ?? 0);
+        const s = document.createElement("span"); s.textContent = v;
+        td.appendChild(i); td.appendChild(s); tr.appendChild(td);
+      });
+      const tn = document.createElement("td"); tn.className = "num"; tn.textContent = r.n_types; tr.appendChild(tn);
+      const te = document.createElement("td"); te.className = "note-c hide-sm"; te.textContent = r.eco_note; tr.appendChild(te);
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- reef dot chart ----------
+  const YEARS = [["rc2008", "2008 live coral", 0], ["rc2023", "2023 live coral", 1], ["rc2025", "2024–26 hard coral", 2]];
+  function yearColor(i) { const c = dash.colors || []; return [c[3] || "var(--cds-chart-muted)", c[1] || "var(--color-warn)", c[0] || "var(--color-fg)"][i]; }
+  function drawReef(rows) {
+    const el = $("reefchart"); el.innerHTML = "";
+    const lg = $("reef-lg"); lg.innerHTML = "";
+    YEARS.forEach(([, lab, i]) => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = yearColor(i); s.appendChild(d); s.appendChild(document.createTextNode(lab)); lg.appendChild(s); });
+    const rs = rows.filter(r => r.rc2008 !== "" || r.rc2023 !== "" || r.rc2025 !== "")
+      .sort((a, b) => Number(b.rc2025 !== "" ? b.rc2025 : b.rc2023 || 0) - Number(a.rc2025 !== "" ? a.rc2025 : a.rc2023 || 0));
+    const W = Math.max(320, el.clientWidth), narrow = W < 560;
+    const names = rs.map(r => narrow ? shortName(r.mpa).slice(0, 8) : shortName(r.mpa));
+    const left = leftFor(names, narrow), right = 16, top = 26, rowH = 26, H = top + rs.length * rowH + 30;
+    const x = d3.scaleLinear().domain([0, 80]).range([left, W - right]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "Coral cover by MPA");
+    const bands = [[0, 25, "var(--color-bad)", "Poor"], [25, 50, "var(--color-warn)", "Fair"], [50, 80, "var(--color-ok)", "Good"]];
+    bands.forEach(([a, b, c, t]) => {
+      svg.append("rect").attr("x", x(a)).attr("y", top - 6).attr("width", x(b) - x(a)).attr("height", rs.length * rowH + 6).attr("fill", c).attr("opacity", 0.08);
+      svg.append("text").attr("x", (x(a) + x(b)) / 2).attr("y", top - 12).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t);
+    });
+    [0, 25, 50, 75].forEach(v => {
+      svg.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", top - 6).attr("y2", top + rs.length * rowH).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", x(v)).attr("y", top + rs.length * rowH + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v + "%");
+    });
+    const tip = $("reef-tip");
+    rs.forEach((r, i) => {
+      const y = top + i * rowH + rowH / 2;
+      const nm = names[i];
+      svg.append("text").attr("x", left - 8).attr("y", y + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "var(--color-fg)").text(nm);
+      const vals = YEARS.map(([k, , j]) => [r[k], j, k]).filter(v => v[0] !== "");
+      if (vals.length > 1) {
+        const xs = vals.map(v => x(Number(v[0])));
+        svg.append("line").attr("x1", d3.min(xs)).attr("x2", d3.max(xs)).attr("y1", y).attr("y2", y).attr("stroke", "var(--color-fg-muted)").attr("stroke-width", 1.5).attr("opacity", 0.5);
+      }
+      vals.forEach(([v, j, k]) => {
+        svg.append("circle").attr("cx", x(Number(v))).attr("cy", y).attr("r", 5.5)
+          .attr("fill", j === 0 ? "var(--color-panel)" : yearColor(j)).attr("stroke", yearColor(j)).attr("stroke-width", 2)
+          .on("mousemove", (ev) => {
+            tip.textContent = `${r.mpa} | ${YEARS[j][1]} ${v}%` + (k === "rc2025" && r.rc_trend ? ` (${r.rc_trend})` : "");
+            tip.style.display = "block";
+            const box = $("reef-card").getBoundingClientRect();
+            let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+            if (lx + tw > box.width - 8) lx = ev.clientX - box.left - tw - 12;
+            tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+          })
+          .on("mouseleave", () => { tip.style.display = "none"; });
+      });
+      if (r.rc_trend === "Declining") svg.append("text").attr("x", W - right).attr("y", y + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-bad)").text("↓");
+    });
+  }
+  function drawReefTbl(rows) {
+    const tb = $("reeftbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      [["key", ""], ["mpa", ""], ["metric", ""], ["shallow", "num"], ["deep", "num"], ["avg", "num"], ["grade", ""], ["note", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = r[k] === "" ? "—" : r[k]; if (r[k] === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- blue carbon ----------
+  function drawBC(rows) {
+    const el = $("bcchart"); el.innerHTML = "";
+    const rs = rows.filter(r => r.est_tC !== "" && Number(r.est_tC) >= 1000).sort((a, b) => Number(b.est_tC) - Number(a.est_tC));
+    const W = Math.max(320, el.clientWidth), narrow = W < 560;
+    const names = rs.map(r => narrow ? shortName(r.mpa).slice(0, 8) : shortName(r.mpa));
+    const left = leftFor(names, narrow), right = 70, rowH = 26, top = 6, H = top + rs.length * rowH + 22;
+    const x = d3.scaleLinear().domain([0, d3.max(rs, r => Number(r.est_tC))]).nice().range([left, W - right]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "Estimated blue carbon");
+    x.ticks(4).forEach(v => {
+      svg.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", top).attr("y2", top + rs.length * rowH).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", x(v)).attr("y", H - 4).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(d3.format("~s")(v));
+    });
+    const tip = $("bc-tip"); const col = (dash.colors || [])[2] || "var(--color-ok)";
+    rs.forEach((r, i) => {
+      const y = top + i * rowH;
+      const nm = names[i];
+      svg.append("text").attr("x", left - 8).attr("y", y + rowH / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "var(--color-fg)").text(nm);
+      svg.append("rect").attr("x", x(0)).attr("y", y + 5).attr("height", rowH - 10).attr("width", Math.max(1, x(Number(r.est_tC)) - x(0))).attr("rx", 2)
+        .attr("fill", Number(r.seagrass_ha || 0) > Number(r.mangrove_ha || 0) ? ((dash.colors || [])[4] || "var(--cds-chart-muted)") : col)
+        .on("mousemove", (ev) => {
+          tip.textContent = `${r.mpa} | mangrove ${r.mangrove_ha || 0} ha, seagrass ${r.seagrass_ha || 0} ha | about ${fmt(r.est_tC)} t C`;
+          tip.style.display = "block";
+          const box = $("bc-card").getBoundingClientRect();
+          let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+          if (lx + tw > box.width - 8) lx = ev.clientX - box.left - tw - 12;
+          tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        })
+        .on("mouseleave", () => { tip.style.display = "none"; });
+      svg.append("text").attr("x", x(Number(r.est_tC)) + 6).attr("y", y + rowH / 2 + 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(fmt(r.est_tC));
+    });
+  }
+  function drawBCTbl(rows) {
+    const tb = $("bctbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr"); tr.dataset.key = r.no;
+      [["mpa", ""], ["bc_type", ""], ["mangrove_ha", "num"], ["seagrass_ha", "num"], ["est_tC", "num"], ["est_tCO2e", "num"], ["tier_label", ""], ["basis", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c;
+        const v = r[k]; td.textContent = v === "" ? "—" : ((k === "est_tC" || k === "est_tCO2e") ? fmt(v) : v);
+        if (v === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function drawGap(rows) {
+    const tb = $("gaptbl").querySelector("tbody"); tb.innerHTML = "";
+    rows.filter(r => !r.mpa).sort((a, b) => Number(b.area_2023) - Number(a.area_2023)).forEach(r => {
+      const tr = document.createElement("tr");
+      [["key", ""], ["county", ""], ["area_2023", "num"], ["area_2019", "num"], ["listed_belong", "note-c hide-sm"]].forEach(([k, c]) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = r[k] === "" ? "—" : r[k]; if (r[k] === "") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---------- rating ----------
+  function drawRank(rows) {
+    const tb = $("biorank").querySelector("tbody"); tb.innerHTML = "";
+    const g = $("br-g").value;
+    let rs = rows.filter(r => !g || r.bio_grade === g);
+    rs = sortRows(rs, brSort[0], brSort[1]); ariaSort("biorank", brSort[0], brSort[1]);
+    rs.forEach(r => {
+      const tr = document.createElement("tr");
+      const a = document.createElement("td"); a.className = "num"; a.textContent = r.no; tr.appendChild(a);
+      const b = document.createElement("td"); b.textContent = r.mpa; tr.appendChild(b);
+      ["s_habitat", "s_coral", "s_bluecarbon", "s_species", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
+      { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.conf_sp; tr.appendChild(td); }
+      const s = document.createElement("td"); scoreTd(s, r.bio_score); s.classList.add("comp"); tr.appendChild(s);
+      const gd = document.createElement("td"); const p = document.createElement("span"); p.className = "pill";
+      const d = document.createElement("i"); d.className = "dot " + (window.mpGradeClass ? window.mpGradeClass(r.bio_grade) : "");
+      if (r.bio_grade.startsWith("Insufficient data")) d.style.background = "var(--color-border-line)";
+      p.appendChild(d); p.appendChild(document.createTextNode(r.bio_grade)); gd.appendChild(p); tr.appendChild(gd);
+      const rc = document.createElement("td"); rc.className = "hide-sm"; rc.textContent = r.rc_grade || "—"; if (!r.rc_grade) rc.classList.add("na"); tr.appendChild(rc);
+      const bc = document.createElement("td"); bc.className = "hide-sm"; bc.textContent = r.bc_tier || "—"; if (!r.bc_tier) bc.classList.add("na"); tr.appendChild(bc);
+      tb.appendChild(tr);
+    });
+  }
+
+  let H = [];
+  bindSort("hab", () => habSort, v => habSort = v, () => drawHab(H));
+  bindSort("biorank", () => brSort, v => brSort = v, () => drawRank(H));
+  $("hab-q").addEventListener("input", () => drawHab(H));
+  $("hab-f").addEventListener("change", () => drawHab(H));
+  $("br-g").addEventListener("change", () => drawRank(H));
+
+  dash.onData(() => {
+    const b = dash.data("biohab"), rf = dash.data("reefsites"), bc = dash.data("bluecarbon");
+    if (b.status === "ok") {
+      H = b.data; drawHab(H); drawReef(H); drawRank(H);
+    } else {
+      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 12); $("reefchart").innerHTML = "";
+    }
+    if (rf.status === "ok") drawReefTbl(rf.data); else placeholderTbody($("reeftbl").querySelector("tbody"), 8);
+    if (bc.status === "ok") { drawBC(bc.data); drawBCTbl(bc.data); } else { $("bcchart").innerHTML = ""; placeholderTbody($("bctbl").querySelector("tbody"), 8); }
+    const bs = dash.data("bcsites");
+    if (bs.status === "ok") drawGap(bs.data); else placeholderTbody($("gaptbl").querySelector("tbody"), 5);
+  });
+})();
+</script>
+
+<style>
+.mp .cl-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-md); }
+.mp .cl-card { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: 6px; align-content: start; }
+.mp .cl-card .hd { display: flex; align-items: center; gap: 8px; }
+.mp .cl-card .nm { font-weight: 700; font-size: 15px; }
+.mp .cl-card .n { margin-left: auto; font-family: var(--font-anthropic-serif); font-size: 22px; }
+.mp .cl-card .ds { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.mp .cl-card .br { display: grid; grid-template-columns: 5.5em 1fr 2.2em; gap: 6px; align-items: center; font-size: var(--cds-font-size-caption); }
+.mp .cl-card .br i { display: block; height: 8px; border-radius: 4px; }
+.mp .cl-card .br .tr { background: var(--cds-chart-grid); border-radius: 4px; }
+.mp .cl-card .ex { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+.mp .cl-card .ex b { color: var(--color-fg); font-weight: 600; }
+.mp #cat-tbl td, .mp #cl-tbl td { text-align: center; }
+.mp #cat-tbl td:first-child, .mp #cl-tbl td:first-child, .mp #cl-tbl td:nth-child(2), .mp #cl-tbl td:nth-child(3) { text-align: left; }
+.mp #cat-kw td { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-align: center; border-top: 2px solid var(--color-border-line); }
+.mp #cat-tbl tbody tr, .mp #cl-tbl tbody tr { cursor: default; }
+</style>
+
+<script>
+window.CL_COLORS = ["#1a7f5a", "#2e86ab", "#e0a84a", "#d03b3b"];
+dash.calc("catprof8", {
+  title: "Mean scores for eight MPA types",
+  description: "Mean water, debris, enforcement, biodiversity and composite scores for the 8 legal categories (blanks excluded).",
+  inputs: ["cmpa"],
+  fn: (cmpa) => {
+    const order = ["National park", "Fisheries resource conservation area", "Important wetland", "Wildlife refuge", "Major wildlife habitat", "Nature reserve", "Natural monument", "Scenic-area marine reserve"];
+    const avg = (rs, k) => { const v = rs.map(r => r[k]).filter(x => x !== "" && x != null).map(Number); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
+    return order.map(c => { const rs = cmpa.filter(r => r.cat === c);
+      return { cat: c, n: rs.length, score_wq: avg(rs, "score_wq"), score_debris: avg(rs, "score_debris"), score_enf: avg(rs, "score_enf"), bio_score: avg(rs, "bio_score"), score: avg(rs, "score") }; })
+      .filter(r => r.n > 0);
+  }
+});
+dash.calc("cllead", {
+  title: "Cluster summary figures",
+  description: "Extracts the number of clusters, MPAs included, the category–cluster association (Cramér's V, permutation p), and the name and size of the largest cluster.",
+  inputs: ["cstats", "cprof"],
+  fn: (cstats, cprof) => { const g = k => Number(cstats.find(r => r.key === k).value);
+    const big = cprof.slice().sort((a, b) => Number(b.n) - Number(a.n))[0];
+    return [{ k: g("k"), n_used: g("n_used"), v: g("cramers_v"), p: g("p_perm"), kw_p: g("kw_score_p"), big_name: big.name, big_n: Number(big.n) }]; }
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const DIMS = [["score_wq", "Water quality"], ["score_debris", "Marine debris"], ["score_enf", "Enforcement"], ["bio_score", "Biodiversity"]];
+  const CATG = ["National park", "Fisheries resource conservation area", "Important wetland", "Wildlife refuge / major habitat", "Nature reserve / monument", "Scenic-area marine reserve"];
+  const CATC = ["#1c5cab", "#3fa796", "#c97a2b", "#6250d6", "#8aa29e", "#d03b3b"];
+  const short = n => n.replace("Northeast & Yilan Coast Scenic Area (marine reserve)", "Northeast Coast Scenic Area").replace("Green Island Haishenping–Fanchuanbi Marine Reserve", "Green Island Haishenping")
+    .replace("Wanghaixiang Chaojing Bay Conservation Area (Keelung)", "Chaojing Bay CA").replace("Taoyuan Guanxin Algal Reef Wildlife Refuge", "Guanxin Algal Reef Refuge")
+    .replace(/ Conservation Area\b/, " CA").replace(" River Estuary Wetland", " Estuary");
+  const cellBg = v => v == null ? "transparent" : `color-mix(in srgb, #1c5cab ${Math.round(Math.max(0, Math.min(1, (v - 30) / 60)) * 42)}%, transparent)`;
+  const tipAt = (tip, el, ev) => { tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+    tip.style.left = Math.max(0, Math.min(mx + 10, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 10) + "px"; };
+  let built = false;
+
+  function catTable() {
+    const d = dash.data("catprof8"), st = dash.data("cstats"), tb = document.querySelector("#cat-tbl tbody"), kw = $("cat-kw");
+    tb.textContent = ""; kw.textContent = "";
+    if (d.status !== "ok") return;
+    d.data.forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = r.cat;
+      [["cat"], ["n"], ["score_wq"], ["score_debris"], ["score_enf"], ["bio_score"], ["score"]].forEach(([k]) => {
+        const td = document.createElement("td"); const v = r[k];
+        td.textContent = v == null ? "—" : String(v);
+        if (!["cat", "n"].includes(k)) { td.style.background = cellBg(v); if (k === "score") td.style.fontWeight = "600"; }
+        tr.appendChild(td); });
+      tb.appendChild(tr); });
+    if (st.status === "ok") {
+      const g = k => st.data.find(r => r.key === k);
+      const cells = ["Between-category test", "", ...["score_wq", "score_debris", "score_enf", "bio_score", "score"].map(f => "p = " + d3.format(".2f")(Number(g("kw_" + f + "_p").value)))];
+      cells.forEach((t, i) => { const td = document.createElement("td"); td.textContent = t; if (i === 0) td.style.textAlign = "left"; kw.appendChild(td); });
+    }
+  }
+
+  function strip() {
+    const el = $("cat-strip"), d = dash.data("cmpa"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const yk = $("cat-dim").value;
+    const rows = d.data.map(r => ({ ...r, y: num(r[yk]) })).filter(r => r.y != null);
+    const groups = CATG.filter(g => rows.some(r => r.cat_group === g));
+    const W = el.clientWidth || 400, rowH = 38, H = groups.length * rowH + 28, lw = Math.min(W * 0.42, 170);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, 100], [lw, W - 10]);
+    [0, 25, 50, 75, 100].forEach(t => { svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", groups.length * rowH).attr("stroke", "var(--cds-chart-grid)");
+      svg.append("text").attr("x", x(t)).attr("y", H - 8).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(t); });
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => { const cy = i * rowH + rowH / 2, rs = rows.filter(r => r.cat_group === g);
+      svg.append("text").attr("x", 0).attr("y", cy + 4).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${g} (${rs.length})`);
+      rs.forEach((r, j) => { const jit = ((j * 7919) % 13 - 6) * 1.5;
+        svg.append("circle").attr("cx", x(r.y)).attr("cy", cy + jit).attr("r", 4.5).attr("fill", CL_COLORS[(Number(r.cluster) || 1) - 1]).attr("fill-opacity", r.cluster === "" ? 0.25 : 0.8)
+          .on("mousemove", ev => { tip.textContent = `${r.mpa}: ${r.y} | ${r.cluster_name || "not clustered"}`; tipAt(tip, el, ev); }).on("mouseleave", () => { tip.style.display = "none"; }); });
+      const md = d3.median(rs, r => r.y);
+      svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", cy - 13).attr("y2", cy + 13).attr("stroke", "var(--color-fg)").attr("stroke-width", 3).attr("stroke-linecap", "round"); });
+    el.style.minHeight = H + "px";
+  }
+
+  function cards() {
+    const el = $("cl-cards"), d = dash.data("cprof"); el.textContent = "";
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    d.data.forEach(r => { const i = Number(r.cluster) - 1;
+      const c = document.createElement("div"); c.className = "cl-card";
+      const hd = document.createElement("div"); hd.className = "hd";
+      const dot = document.createElement("i"); dot.className = "dot"; dot.style.background = CL_COLORS[i]; dot.style.width = dot.style.height = "12px";
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = r.name;
+      const n = document.createElement("span"); n.className = "n"; n.textContent = r.n; hd.append(dot, nm, n); c.appendChild(hd);
+      const ds = document.createElement("div"); ds.className = "ds"; ds.textContent = r.desc; c.appendChild(ds);
+      DIMS.forEach(([k, l]) => { const br = document.createElement("div"); br.className = "br";
+        const lb = document.createElement("span"); lb.textContent = l; const trk = document.createElement("span"); trk.className = "tr";
+        const bar = document.createElement("i"); bar.style.width = Math.max(1, Number(r[k])) + "%"; bar.style.background = CL_COLORS[i]; trk.appendChild(bar);
+        const v = document.createElement("span"); v.textContent = Math.round(Number(r[k])); br.append(lb, trk, v); c.appendChild(br); });
+      const ex = document.createElement("div"); ex.className = "ex";
+      const b1 = document.createElement("b"); b1.textContent = "Categories: "; ex.append(b1, document.createTextNode(r.main_cats)); ex.appendChild(document.createElement("br"));
+      const b2 = document.createElement("b"); b2.textContent = "Examples: "; ex.append(b2, document.createTextNode(r.examples.split("; ").map(short).join("; ")));
+      c.appendChild(ex); el.appendChild(c); });
+  }
+
+  function pca() {
+    const el = $("cl-pca"), d = dash.data("cmpa"), st = dash.data("cstats"); el.textContent = "";
+    const lg = $("cl-lg"); lg.textContent = "";
+    const by = $("cl-color").value, pr = dash.data("cprof");
+    const keys = by === "cluster" ? (pr.status === "ok" ? pr.data.map(r => [r.cluster, r.name]) : []) : CATG.map(g => [g, g]);
+    const colOf = v => by === "cluster" ? CL_COLORS[Number(v) - 1] : CATC[CATG.indexOf(v)];
+    keys.forEach(([k, l]) => { const s = document.createElement("span"); const i = document.createElement("i"); i.className = "dot"; i.style.background = colOf(k); s.append(i, document.createTextNode(l)); lg.appendChild(s); });
+    if (st.status === "ok") { const g = k => st.data.find(r => r.key === k).value;
+      const n = $("cl-pca-note"); n.classList.remove("dash-skeleton");
+      n.textContent = `The two principal components together explain ${d3.format(".0f")(Number(g("pc1_var")) + Number(g("pc2_var")))}% of the variance. Rightward: higher debris score (cleaner), lower enforcement and biodiversity scores; upward: better water quality, lower biodiversity.`; }
+    if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const rows = d.data.filter(r => r.pc1 !== "" && r.pc2 !== "");
+    const W = el.clientWidth || 400, H = 320, m = 24;
+    const x = d3.scaleLinear(d3.extent(rows, r => Number(r.pc1)), [m, W - m]).nice(), y = d3.scaleLinear(d3.extent(rows, r => Number(r.pc2)), [H - m, m]).nice();
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m).attr("y2", H - m).attr("stroke", "var(--cds-chart-grid)");
+    svg.append("line").attr("x1", m).attr("x2", W - m).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--cds-chart-grid)");
+    svg.append("text").attr("x", W - m).attr("y", y(0) - 6).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("less debris, weaker enforcement →");
+    svg.append("text").attr("x", x(0) + 6).attr("y", m + 4).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("↑ better biodiversity and water");
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    rows.forEach(r => svg.append("circle").attr("cx", x(Number(r.pc1))).attr("cy", y(Number(r.pc2))).attr("r", 5.5)
+      .attr("fill", colOf(by === "cluster" ? r.cluster : r.cat_group)).attr("fill-opacity", 0.8).attr("stroke", "var(--color-panel)")
+      .on("mousemove", ev => { tip.textContent = ""; const a = document.createElement("div"); a.style.color = "var(--cds-text-secondary)"; a.textContent = r.mpa; tip.appendChild(a);
+        const b = document.createElement("div"); b.textContent = `${r.cat} | ${r.cluster_name} | composite ${r.score}`; tip.appendChild(b); tipAt(tip, el, ev); })
+      .on("mouseleave", () => { tip.style.display = "none"; }));
+    el.style.minHeight = H + "px";
+  }
+
+  function xtab() {
+    const el = $("cl-xtab"), d = dash.data("cxtab"), pr = dash.data("cprof"); el.textContent = "";
+    if (d.status !== "ok" || pr.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
+    const cls = pr.data.map(r => String(r.cluster));
+    const groups = CATG.filter(g => d.data.some(r => r.cat_group === g));
+    const W = el.clientWidth || 400, rowH = 40, H = groups.length * rowH + 50, lw = Math.min(W * 0.42, 170);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, 1], [lw, W - 10]);
+    const tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip);
+    groups.forEach((g, i) => { const rs = d.data.filter(r => r.cat_group === g); const tot = d3.sum(rs, r => Number(r.n)); let acc = 0; const y0 = i * rowH + 8;
+      svg.append("text").attr("x", 0).attr("y", y0 + 16).attr("font-size", 12).attr("fill", "var(--color-fg)").text(`${g} (${tot})`);
+      cls.forEach((c, j) => { const r = rs.find(z => String(Number(z.cluster)) === c); const v = r ? Number(r.n) : 0; if (!v) return;
+        const w = x(acc + v / tot) - x(acc);
+        svg.append("rect").attr("x", x(acc)).attr("y", y0).attr("width", Math.max(0, w - 1)).attr("height", 24).attr("fill", CL_COLORS[j])
+          .on("mousemove", ev => { tip.textContent = `${g}: ${pr.data[j].name} ${v} (${d3.format(".0%")(v / tot)})`; tipAt(tip, el, ev); }).on("mouseleave", () => { tip.style.display = "none"; });
+        if (w > 18) svg.append("text").attr("x", x(acc) + w / 2).attr("y", y0 + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "#fff").attr("pointer-events", "none").text(v);
+        acc += v / tot; }); });
+    let lx = lw; const ly = groups.length * rowH + 30;
+    pr.data.forEach((r, j) => { svg.append("rect").attr("x", lx).attr("y", ly - 9).attr("width", 10).attr("height", 10).attr("rx", 2).attr("fill", CL_COLORS[j]);
+      const t = svg.append("text").attr("x", lx + 14).attr("y", ly).attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(r.name); lx += t.node().getComputedTextLength() + 28; });
+    el.style.minHeight = H + "px";
+  }
+
+  function table() {
+    const d = dash.data("cmpa"), tb = document.querySelector("#cl-tbl tbody"); tb.textContent = "";
+    if (d.status !== "ok") return;
+    const f = $("cl-f").value, c = $("cl-c").value;
+    d.data.filter(r => r.cluster !== "" && (!f || String(r.cluster) === f) && (!c || r.cat_group === c))
+      .sort((a, b) => Number(a.cluster) - Number(b.cluster) || Number(b.score) - Number(a.score))
+      .forEach(r => { const tr = document.createElement("tr"); tr.dataset.key = String(r.no);
+        ["mpa", "cat", "cluster_name", "score_wq", "score_debris", "score_enf", "bio_score", "score"].forEach(k => { const td = document.createElement("td");
+          if (k === "cluster_name") { const s = document.createElement("span"); s.className = "pill"; const i = document.createElement("i"); i.className = "dot"; i.style.background = CL_COLORS[Number(r.cluster) - 1]; s.append(i, document.createTextNode(r.cluster_name)); td.appendChild(s); }
+          else { const nv = num(r[k]); td.textContent = r[k] === "" ? "—" : (nv != null && !["mpa", "cat"].includes(k) ? String(Math.round(nv)) : String(r[k])); if (k.startsWith("score") || k === "bio_score") td.style.background = cellBg(nv); }
+          tr.appendChild(td); });
+        tb.appendChild(tr); });
+  }
+
+  $("cat-dim").addEventListener("change", strip);
+  $("cl-color").addEventListener("change", pca);
+  ["cl-f", "cl-c"].forEach(id => $(id).addEventListener("change", table));
+
+  dash.onData(() => {
+    const pr = dash.data("cprof");
+    if (!built && pr.status === "ok") { built = true;
+      pr.data.forEach(r => { const o = document.createElement("option"); o.value = String(r.cluster); o.textContent = r.name; $("cl-f").appendChild(o); });
+      CATG.forEach(g => { const o = document.createElement("option"); o.value = g; o.textContent = g; $("cl-c").appendChild(o); }); }
+    const L = dash.data("cllead"), lead = $("cl-lead");
+    if (L.status === "ok") { const a = L.data[0]; lead.classList.remove("dash-skeleton"); lead.textContent = "";
+      const add = (t, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = t; if (f) { e.dataset.source = "cllead"; e.dataset.field = f; } lead.appendChild(e); };
+      add("Compared by legal category, composite scores do not differ significantly (p = "); add(d3.format(".2f")(a.kw_p), "kw_p"); add("). Clustering ");
+      add(String(a.n_used), "n_used"); add(" MPAs on four scores gives "); add(String(a.k), "k", true); add(" effectiveness types, but type and category are almost unrelated (Cramér's V = ");
+      add(d3.format(".2f")(a.v), "v"); add(", p = "); add(d3.format(".2f")(a.p), "p"); add("): MPAs of the same category are spread across different types. What determines effectiveness is the type of problem, not the legal basis."); }
+    catTable(); strip(); cards(); pca(); xtab(); table();
+  });
+})();
+</script>
+
+<style>
+.mp .sub-h { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.mp #tbnpark tbody tr, .mp #tbnjac tbody tr, .mp #tbncross tbody tr, .mp #tbnthreat tbody tr { cursor: default; }
+.mp #tbn-card .grid2 > div { position: relative; }
+</style>
+
+<script>
+dash.calc("tbnlead", {
+  title: "Long-term survey summary figures",
+  description: "Counts the IUCN threatened-species records.",
+  inputs: ["tbn_threat"],
+  fn: (tbn_threat) => [{ n_threat: tbn_threat.length }]
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const ORDER = ["Dongsha", "South Penghu", "Kenting", "Taijiang"];
+  const pc = n => { const c = dash.colors || []; return c[ORDER.indexOf(n)] || "var(--color-fg)"; };
+  function rowsInto(tb, rows, cols) {
+    tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      cols.forEach(([k, c]) => { const td = document.createElement("td"); if (c) td.className = c; const v = r[k]; td.textContent = v === "" || v == null ? "—" : v; if (v === "" || v == null) td.classList.add("na"); tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+  function ph(tb, n) { tb.innerHTML = ""; const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = n; td.className = "na"; td.textContent = "—"; tr.appendChild(td); tb.appendChild(tr); }
+
+  function drawCurve(rows) {
+    const el = $("tbncurve"); el.innerHTML = ""; const lg = $("tbn-lg"); lg.innerHTML = "";
+    ORDER.forEach(n => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = pc(n); s.appendChild(d); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+    const W = Math.max(300, el.clientWidth), H = 260, m = { l: 44, r: 14, t: 10, b: 32 };
+    const x = d3.scaleLinear().domain([0, d3.max(rows, r => Number(r.events))]).nice().range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, d3.max(rows, r => Number(r.richness))]).nice().range([H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "Species accumulation curves for marine fish");
+    y.ticks(5).forEach(v => {
+      svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(v)).attr("y2", y(v)).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(v) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v);
+    });
+    x.ticks(5).forEach(v => svg.append("text").attr("x", x(v)).attr("y", H - m.b + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v));
+    svg.append("text").attr("x", W - m.r).attr("y", H - 2).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("Surveys");
+    const tip = $("tbn-tip");
+    ORDER.forEach(n => {
+      const rs = rows.filter(r => r.park === n).sort((a, b) => a.events - b.events);
+      if (!rs.length) return;
+      svg.append("path").attr("d", d3.line().x(r => x(Number(r.events))).y(r => y(Number(r.richness)))(rs)).attr("fill", "none").attr("stroke", pc(n)).attr("stroke-width", 2);
+      const last = rs[rs.length - 1];
+      svg.append("circle").attr("cx", x(Number(last.events))).attr("cy", y(Number(last.richness))).attr("r", 4).attr("fill", pc(n));
+      rs.forEach(r => svg.append("circle").attr("cx", x(Number(r.events))).attr("cy", y(Number(r.richness))).attr("r", 8).attr("fill", "transparent")
+        .on("mousemove", ev => {
+          tip.textContent = `${n} | about ${r.richness} species in ${r.events} surveys`; tip.style.display = "block";
+          const box = el.parentElement.getBoundingClientRect(); let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+          if (lx + tw > box.width - 4) lx = ev.clientX - box.left - tw - 12;
+          tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        }).on("mouseleave", () => { tip.style.display = "none"; }));
+    });
+  }
+
+  dash.onData(() => {
+    const p = dash.data("tbn_park"), c = dash.data("tbn_curve"), j = dash.data("tbn_jaccard"), x = dash.data("tbn_cross"), t = dash.data("tbn_threat");
+    if (p.status === "ok") rowsInto($("tbnpark").querySelector("tbody"), p.data.slice().sort((a, b) => Number(b.fish_species) - Number(a.fish_species)),
+      [["park", ""], ["years", "num"], ["events", "num"], ["fish_species", "num comp"], ["fish_chao2", "num"], ["completeness", "num"], ["fish_families", "num"], ["crust_species", "num"], ["butterfly", "num"], ["parrot", "num"], ["grouper", "num"], ["threatened", "num"], ["exotic_fish", "num"]]);
+    else ph($("tbnpark").querySelector("tbody"), 13);
+    if (c.status === "ok") drawCurve(c.data); else $("tbncurve").innerHTML = "";
+    if (j.status === "ok") {
+      const seen = new Set();
+      const rs = j.data.filter(r => r.a !== r.b && !seen.has([r.a, r.b].sort().join()) && seen.add([r.a, r.b].sort().join())).sort((a, b) => Number(b.jaccard) - Number(a.jaccard));
+      rowsInto($("tbnjac").querySelector("tbody"), rs, [["key", ""], ["shared", "num"], ["jaccard", "num"]]);
+    } else ph($("tbnjac").querySelector("tbody"), 3);
+    if (x.status === "ok") rowsInto($("tbncross").querySelector("tbody"), x.data, [["park", ""], ["tbn", "num"], ["edna", "num"], ["both", "num"], ["edna_only", "num"], ["union", "num comp"]]);
+    else ph($("tbncross").querySelector("tbody"), 6);
+    if (t.status === "ok") rowsInto($("tbnthreat").querySelector("tbody"), t.data, [["key", ""], ["name", ""], ["family", ""], ["iucn", ""], ["protected", ""], ["group", ""]]);
+    else ph($("tbnthreat").querySelector("tbody"), 6);
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const CATG = ["National park", "Fisheries resource conservation area", "Important wetland", "Wildlife refuge / major habitat", "Nature reserve / monument", "Scenic-area marine reserve"];
+  const CATC = ["#1c5cab", "#3fa796", "#c97a2b", "#6250d6", "#8aa29e", "#d03b3b"];
+  const CATD = {
+    "National park": "Designated under the National Park Act and administered by the National Park Service (Ministry of the Interior). Zoned into marine ecological protection, special landscape and general control zones; the largest category with the most complete protection levels — Dongsha Atoll alone is about two-thirds of Taiwan's MPA area.",
+    "Fisheries resource conservation area": "Announced by county and city governments under Articles 44–45 of the Fisheries Act, with the Fisheries Agency as the competent authority. Mostly coastal strips extending about 200 m beyond the low-tide line, protecting specific species such as small abalone, lobster, sea urchins and mud shrimp; some have recently added no-take core zones.",
+    "Important wetland": "Designated under the Wetland Conservation Act and administered by the National Park Service, zoned through wise-use plans. Mostly west-coast estuaries, tidal flats and lagoons that are key habitat for waterbirds and benthic life; only their marine part is counted here.",
+    "Wildlife refuge / major habitat": "Designated under the Wildlife Conservation Act to protect seabird islands, green-turtle nesting beaches, the algal-reef ecosystem and humpback-dolphin habitat; administered by the Forestry and Nature Conservation Agency and the Ocean Conservation Administration.",
+    "Nature reserve / monument": "Designated under the Cultural Heritage Preservation Act to protect basalt columnar joints, volcanic landforms and unusual wave-cut landscapes. Very small, but in principle the natural state may not be altered and entry requires a permit.",
+    "Scenic-area marine reserve": "Marine resource reserves inside national scenic areas, managed by Tourism Administration offices; zoned for multiple use, balancing recreation and resource protection.",
+  };
+  const GRC = { "Good": "var(--color-ok)", "Fair": "var(--cds-chart-muted)", "Needs improvement": "var(--color-warn)", "Poor": "var(--color-bad)" };
+  const gradeCol = g => { const k = Object.keys(GRC).find(x => (g || "").startsWith(x)); return k ? GRC[k] : "var(--color-panel)"; };
+  const valCol = v => v >= 70 ? "var(--color-ok)" : v >= 55 ? "var(--cds-chart-muted)" : v >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+  const catCol = c => CATC[Math.max(0, CATG.indexOf(c))];
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const fmtArea = v => { const n = num(v); if (!n) return "—"; return n >= 100 ? d3.format(",.0f")(n) : n >= 1 ? d3.format(",.2~f")(n) : d3.format(".3~r")(n); };
+
+  let rows = [], topo = null, topoState = "loading", selNo = null, catF = "", built = false;
+  const tip = document.createElement("div"); tip.className = "tip";
+
+  // ---- minimal TopoJSON decoder (quantized, delta-encoded arcs) ----
+  function decode(t) {
+    const [sx, sy] = t.transform.scale, [tx, ty] = t.transform.translate;
+    const arcs = t.arcs.map(a => { let x = 0, y = 0; return a.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; }); });
+    const arc = i => i >= 0 ? arcs[i] : arcs[~i].slice().reverse();
+    const ring = ids => { const out = []; ids.forEach((i, k) => { const a = arc(i); (k ? a.slice(1) : a).forEach(p => out.push(p)); }); return out; };
+    return t.objects.counties.geometries.map(g => ({
+      name: g.properties.COUNTYNAME,
+      polys: g.type === "Polygon" ? [g.arcs.map(ring)] : g.type === "MultiPolygon" ? g.arcs.map(p => p.map(ring)) : [],
+    }));
+  }
+  const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) * 180 / Math.PI;
+  function proj(ext, box) {   // ext [lon0,lon1,lat0,lat1] -> box [x,y,w,h]; returns f(lon,lat)
+    const [x0, x1, y0, y1] = [ext[0], ext[1], merc(ext[2]), merc(ext[3])];
+    const k = Math.min(box[2] / (x1 - x0), box[3] / (y1 - y0));
+    const ox = box[0] + (box[2] - (x1 - x0) * k) / 2, oy = box[1] + (box[3] - (y1 - y0) * k) / 2;
+    const f = (lon, lat) => [ox + (lon - x0) * k, oy + (y1 - merc(lat)) * k];
+    f.k = k; return f;
+  }
+  const pathOf = (polys, f) => polys.map(p => p.map(r => "M" + r.map(c => f(c[0], c[1]).map(v => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("");
+
+  const MAIN = [119.25, 122.15, 21.85, 25.55];
+  const INSETS = [
+    { key: "matsu", name: "Matsu", ext: [119.86, 120.52, 26.12, 26.42], frame: [119.30, 120.38, 24.95, 25.50], counties: ["連江縣"], test: r => +r.lat > 25.9 },
+    { key: "kinmen", name: "Kinmen", ext: [118.20, 118.50, 24.37, 24.54], frame: [119.30, 120.28, 24.15, 24.72], counties: ["金門縣"], test: r => +r.lon < 118.8 && +r.lat > 24 },
+    { key: "dongsha", name: "Dongsha Atoll", ext: [116.62, 116.98, 20.56, 20.84], frame: [119.30, 120.10, 21.90, 22.55], counties: [], test: r => +r.lon < 117.5 },
+  ];
+
+  function visible(r) {
+    const q = $("st-q").value.trim();
+    return (!catF || r.cat_group === catF) && (!q || r.mpa.includes(q) || r.official_name.includes(q) || (r.county || "").includes(q));
+  }
+
+  function drawMap() {
+    const el = $("st-map");
+    el.textContent = "";
+    if (!rows.length || topoState !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const W = el.clientWidth || 600, H = Math.round(Math.min(W * 1.3, 720));
+    const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "Map of Taiwan's marine protected areas");
+    const f = proj(MAIN, [6, 6, W - 12, H - 12]);
+    const by = $("st-color").value;
+    const fill = r => by === "grade" ? gradeCol(r.grade) : catCol(r.cat_group);
+    const defs = svg.append("defs");
+    svg.append("g").selectAll("path").data(topo.filter(c => c.name !== "連江縣" && c.name !== "金門縣")).join("path")
+      .attr("class", "land").attr("d", c => pathOf(c.polys, f));
+
+    const groups = { main: svg.append("g") };
+    INSETS.forEach(ins => {
+      const [a, b] = [f(ins.frame[0], ins.frame[3]), f(ins.frame[1], ins.frame[2])];
+      const box = [a[0], a[1], b[0] - a[0], b[1] - a[1]];
+      const g = svg.append("g");
+      g.append("rect").attr("class", "inset").attr("x", box[0]).attr("y", box[1]).attr("width", box[2]).attr("height", box[3]).attr("rx", 3);
+      g.append("text").attr("class", "ilab").attr("x", box[0] + 5).attr("y", box[1] + 13).text(ins.name);
+      const cid = "st-clip-" + ins.key;
+      defs.append("clipPath").attr("id", cid).append("rect").attr("x", box[0]).attr("y", box[1]).attr("width", box[2]).attr("height", box[3]);
+      const inner = g.append("g").attr("clip-path", `url(#${cid})`);
+      const fi = proj(ins.ext, [box[0] + 4, box[1] + 16, box[2] - 8, box[3] - 20]);
+      topo.filter(c => ins.counties.includes(c.name)).forEach(c => inner.append("path").attr("class", "land").attr("d", pathOf(c.polys, fi)));
+      if (ins.key === "dongsha") {   // atoll ring and Dongsha Island (no land polygon in the basemap)
+        const c = fi(116.80, 20.70), r = 0.115 * fi.k;
+        inner.append("ellipse").attr("cx", c[0]).attr("cy", c[1]).attr("rx", r).attr("ry", r * 0.95).attr("fill", "none").style("stroke", "var(--cds-chart-axis)").attr("stroke-width", 3);
+        const is = fi(116.72, 20.70); inner.append("circle").attr("cx", is[0]).attr("cy", is[1]).attr("r", 2.5).style("fill", "var(--cds-chart-axis)");
+      }
+      groups[ins.key] = { g: inner, f: fi };
+    });
+
+    const place = r => { const ins = INSETS.find(i => i.test(r)); return ins ? groups[ins.key] : { g: groups.main, f }; };
+    const order = rows.slice().sort((a, b) => (String(a.no) === String(selNo)) - (String(b.no) === String(selNo)) || (+b.area_km2 || 0) - (+a.area_km2 || 0));
+    order.forEach(r => {
+      const p = place(r), [x, y] = p.f(+r.lon, +r.lat);
+      const sel = String(r.no) === String(selNo);
+      p.g.append("circle").attr("class", "pt" + (visible(r) ? "" : " dim") + (sel ? " sel" : ""))
+        .attr("cx", x).attr("cy", y).attr("r", sel ? 8 : W < 500 ? 4.5 : 5.5).style("fill", fill(r))
+        .attr("tabindex", visible(r) ? 0 : -1).attr("role", "button").attr("aria-label", r.mpa)
+        .on("click", () => select(r.no, true))
+        .on("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(r.no, true); } })
+        .on("mousemove", ev => {
+          tip.textContent = "";
+          const h = document.createElement("div"); h.style.fontWeight = "600"; h.textContent = r.mpa; tip.appendChild(h);
+          const s = document.createElement("div"); s.style.color = "var(--cds-text-secondary)";
+          s.textContent = `${r.cat_group} | ${r.county || "—"} | ${r.grade}${r.score ? " " + r.score : ""}`; tip.appendChild(s);
+          tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+          tip.style.left = Math.max(4, Math.min(mx + 12, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 14) + "px";
+        })
+        .on("mouseleave", () => { tip.style.display = "none"; });
+    });
+    el.appendChild(tip);
+
+    const lg = $("st-lg"); lg.textContent = "";
+    const items = by === "grade" ? ["Good", "Fair", "Needs improvement", "Poor", "Insufficient data"].map(g => [g, gradeCol(g)]) : CATG.map((c, i) => [c, CATC[i]]);
+    items.forEach(([n, c]) => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = c; if (n === "Insufficient data") d.style.boxShadow = "inset 0 0 0 1px var(--cds-chart-axis)"; s.appendChild(d); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+  }
+
+  function addDl(dl, k, v) {
+    if (v == null || v === "") v = "—";
+    const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v;
+    dl.appendChild(dt); dl.appendChild(dd);
+  }
+
+  function showDetail() {
+    const r = rows.find(x => String(x.no) === String(selNo));
+    if (!r) return;
+    $("st-d-dot").style.background = catCol(r.cat_group);
+    $("st-d-cat").textContent = r.type && r.type !== r.cat_group ? `${r.cat_group} | ${r.type}` : r.cat_group;
+    $("st-d-name").textContent = r.mpa;
+    $("st-d-off").textContent = r.official_name !== r.mpa ? `Official name: ${r.official_name}` : "";
+    const dl = $("st-d-dl"); dl.textContent = "";
+    addDl(dl, "Established", r.year);
+    addDl(dl, "County", r.county);
+    addDl(dl, "Location", r.location);
+    addDl(dl, "Marine area", !num(r.area_km2) ? (r.area_note ? `No marine area listed (${r.area_note})` : "—") : `${fmtArea(r.area_km2)} km²` + (r.area_note && !/not stated/.test(r.area_note) ? ` (${r.area_note})` : ""));
+    addDl(dl, "Legal basis", r.law);
+    addDl(dl, "Authority", r.authority);
+    addDl(dl, "Managed by", r.manager);
+    addDl(dl, "Latest notice", [r.latest_notice, r.notice_no].filter(Boolean).join(" | "));
+    addDl(dl, "IUCN category", r.iucn);
+    addDl(dl, "Protection level", r.best_level === r.dom_level ? r.best_level : `highest ${r.best_level}; largest zone ${r.dom_level}`);
+    $("st-d-tg").textContent = r.targets || "—";
+    $("st-d-rs").textContent = r.restrictions || "—";
+    const zl = $("st-d-zones"); zl.textContent = "";
+    if (r.zones) { r.zones.split("; ").forEach(z => { const li = document.createElement("li"); li.textContent = z.replace(/ \| /g, ", "); zl.appendChild(li); }); $("st-d-zwrap").hidden = false; }
+    else $("st-d-zwrap").hidden = true;
+    $("st-d-score").textContent = r.score || "—";
+    const gd = $("st-d-grade"); gd.textContent = ""; const dot = document.createElement("i"); dot.className = "dot " + (window.mpGradeClass ? mpGradeClass(r.grade) : ""); gd.className = "pill"; gd.appendChild(dot); gd.appendChild(document.createTextNode(r.grade + (r.dims ? ` (data on ${r.dims} dimensions)` : "")));
+    const bars = $("st-d-bars"); bars.textContent = "";
+    [["score_wq", "Water quality"], ["score_debris", "Marine debris"], ["score_bio", "Biodiversity"], ["score_enf", "Enforcement"]].forEach(([k, n]) => {
+      const v = num(r[k]); const row = document.createElement("div"); row.className = "st-row";
+      const a = document.createElement("span"); a.textContent = n;
+      const t = document.createElement("span"); t.className = "trk"; if (v != null) { const i = document.createElement("i"); i.style.width = v + "%"; i.style.background = valCol(v); t.appendChild(i); }
+      const b = document.createElement("span"); b.className = "v" + (v == null ? " na" : ""); b.textContent = v == null ? "—" : d3.format(".0f")(v);
+      row.append(a, t, b); bars.appendChild(row);
+    });
+    $("st-d-cl").textContent = [r.weakest ? `Weakest: ${r.weakest}` : "", r.cluster_name ? `Type: ${r.cluster_name}` : ""].filter(Boolean).join(" | ");
+    const L = $("st-d-links"); L.textContent = "";
+    [[`#ranking/${r.no}`, "Raw indicators"], ["#bio", "Biodiversity"], ["#clusters", "Categories & clusters"], ["#cross", "Classification analysis"], ["#pressure", "Population & fishing pressure"]].forEach(([h, t]) => {
+      const a = document.createElement("a"); a.href = h; a.textContent = t + " →"; L.appendChild(a);
+    });
+    $("st-d-oca").href = r.oca_url;
+    document.querySelectorAll("#st-groups .st-card").forEach(c => c.classList.toggle("sel", c.dataset.no === String(r.no)));
+  }
+
+  function select(no, fromUser) {
+    selNo = no; showDetail(); drawMap();
+    if (fromUser) {
+      try { history.replaceState(null, "", "#sites/" + no); } catch (e) {}
+      const d = $("st-detail"); const top = d.getBoundingClientRect().top;
+      if (top < 40 || top > window.innerHeight * 0.6) d.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function buildChips() {
+    const bar = $("st-chips"); bar.textContent = "";
+    [["", "All", rows.length, null]].concat(CATG.map((c, i) => [c, c, rows.filter(r => r.cat_group === c).length, CATC[i]])).forEach(([v, n, k, col]) => {
+      const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-pressed", String(v === catF));
+      if (col) { const d = document.createElement("i"); d.className = "dot"; d.style.background = col; b.appendChild(d); }
+      b.appendChild(document.createTextNode(`${n} ${k}`));
+      b.addEventListener("click", () => { catF = v; buildChips(); renderGroups(); drawMap(); });
+      bar.appendChild(b);
+    });
+  }
+
+  function renderGroups() {
+    const host = $("st-groups"); host.textContent = "";
+    CATG.forEach((c, i) => {
+      const rs = rows.filter(r => r.cat_group === c && visible(r)).sort((a, b) => (+a.year || 9999) - (+b.year || 9999) || a.mpa.localeCompare(b.mpa, "zh-Hant"));
+      if (!rs.length) return;
+      const sec = document.createElement("section"); sec.className = "st-group";
+      const h = document.createElement("h3"); const d = document.createElement("i"); d.className = "dot"; d.style.background = CATC[i]; d.style.width = d.style.height = "12px";
+      h.append(d, document.createTextNode(`${c} (${rs.length})`)); sec.appendChild(h);
+      const p = document.createElement("p"); p.textContent = CATD[c]; sec.appendChild(p);
+      const grid = document.createElement("div"); grid.className = "st-cards";
+      rs.forEach(r => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "st-card" + (String(r.no) === String(selNo) ? " sel" : ""); b.dataset.no = r.no; b.style.setProperty("--c", CATC[i]);
+        const t = document.createElement("b"); t.textContent = r.mpa;
+        const m = document.createElement("span"); m.textContent = [r.county ? r.county.replace(/ \(.*\)/, "") : "", r.year ? String(r.year) : "", num(r.area_km2) ? fmtArea(r.area_km2) + " km²" : ""].filter(Boolean).join(" | ");
+        const g = document.createElement("span"); g.className = "pill"; const gd = document.createElement("i"); gd.className = "dot " + (window.mpGradeClass ? mpGradeClass(r.grade) : ""); g.append(gd, document.createTextNode(`${r.grade}${r.score ? " " + r.score : ""}`));
+        b.append(t, m, g); b.addEventListener("click", () => select(r.no, true)); grid.appendChild(b);
+      });
+      sec.appendChild(grid); host.appendChild(sec);
+    });
+    if (!host.children.length) { const p = document.createElement("p"); p.className = "note"; p.textContent = "No matching MPAs."; host.appendChild(p); }
+  }
+
+  $("st-q").addEventListener("input", () => { renderGroups(); drawMap(); });
+  $("st-color").addEventListener("change", drawMap);
+  window.addEventListener("mp:route", ev => { if (ev.detail.tab === "sites" && ev.detail.arg && rows.length) { selNo = ev.detail.arg; showDetail(); } });
+
+  d3.json("data/taiwan_counties.json").then(t => { topo = decode(t); topoState = "ok"; drawMap(); }).catch(e => { console.error(e); topoState = "error"; $("st-map").textContent = "Basemap failed to load"; });
+
+  dash.onData(() => {
+    const d = dash.data("dir");
+    if (d.status !== "ok") return;
+    rows = d.data;
+    if (!built) {
+      const m = location.hash.match(/^#sites\/(\d+)/);
+      selNo = m ? m[1] : (rows.find(r => r.mpa === "Kenting National Park") || rows[0]).no;
+      buildChips(); built = true;
+    }
+    renderGroups(); showDetail(); drawMap();
+  });
+})();
+</script>
+<script>
+(function () {
+  const TABS = [["overview", "Overview"], ["sites", "MPA directory"], ["ranking", "Ranking"], ["bio", "Biodiversity"], ["clusters", "Categories & clusters"], ["cross", "Classification"], ["pressure", "Pressure"], ["method", "Methods"]];
+  const bar = document.getElementById("tabbar");
+  TABS.forEach(([k, l]) => { const a = document.createElement("a"); a.href = "#" + k; a.dataset.k = k; a.textContent = l; bar.appendChild(a); });
+  function show(h) {
+    let [k, arg] = (h || "").split("/");
+    if (!TABS.some(t => t[0] === k)) k = "overview";
+    document.querySelectorAll("section[data-tab]").forEach(s => { s.hidden = s.dataset.tab !== k; });
+    bar.querySelectorAll("a").forEach(a => { if (a.dataset.k === k) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    const cur = bar.querySelector('[aria-current="page"]'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: "nearest", inline: "nearest" });
+    requestAnimationFrame(() => { dash._rerun(); window.dispatchEvent(new CustomEvent("mp:route", { detail: { tab: k, arg } })); });   // charts measure their width, so redraw once visible
+  }
+  window.addEventListener("hashchange", () => { show(location.hash.slice(1)); if (!location.hash.includes("/")) window.scrollTo({ top: 0 }); });
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  show(location.hash.slice(1));
+  if (!location.hash.includes("/")) {
+    window.scrollTo({ top: 0 });
+    window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0 }), 0));
+  }
+  dash._start();
+})();
+</script>
+<script>document.querySelectorAll("a.lang").forEach(a => a.addEventListener("click", () => { a.href = a.getAttribute("href").split("#")[0] + location.hash; }));</script>
+</body>
+</html>

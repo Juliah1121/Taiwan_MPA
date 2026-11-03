@@ -12,6 +12,8 @@
 
 ## 線上瀏覽
 
+**English version:** open `en/index.html` (GitHub Pages: `/en/`). Both versions share the same structure and tabs; the language button at the top right switches between them and keeps the current tab.
+
 在 GitHub Pages 啟用後，可直接開啟 `index.html`。設定方式：**Settings → Pages → Branch: `main` / root**。
 
 本機瀏覽需透過本機伺服器（瀏覽器不允許直接用 `file://` 讀取 CSV）：
@@ -58,6 +60,12 @@ python3 -m http.server 8000
 - 綜合分為有資料面向的平均。
 - 等級：≥70 良好、55–69 尚可、40–54 待加強、<40 不佳；只有兩面向有資料標「暫評」，少於兩面向標「資料不足」。
 - 成效排名不再列出海保署 2022 年分級。
+
+## 英文版（`en/`）
+
+- `en/index.html`：英文網頁，分頁與中文版相同，網址錨點也相同（例如 `en/#sites/10`）。
+- `en/data/`：英文資料檔，欄位與 `data/` 相同，只把中文內容（保護區名稱、類別、等級、位置、保護標的、限制事項等）翻成英文；保護區英文名稱為作者自譯。
+- 中文版資料更新後，英文版需重新產生翻譯檔。
 
 ## 資料檔（`data/`）
 

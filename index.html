@@ -231,11 +231,16 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mp .st-links a, :root:not([data-theme="light"]) .mp .st-src a { color: #6da7ec; } }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.band-inner { position: relative; }
+.band .lang { position: absolute; top: 18px; right: max(16px, env(safe-area-inset-right, 0px)); color: var(--band-ink); font-size: 13px; text-decoration: none; border: 1px solid #3a5568; border-radius: 999px; padding: 3px 12px; }
+.band .lang:hover { border-color: var(--band-accent); }
+@media (max-width: 560px) { .band .lang { position: static; justify-self: start; } }
 </style>
 
 </head>
 <body>
 <header class="band"><div class="band-inner">
+  <a class="lang" href="en/" hreflang="en" lang="en">English</a>
   <h1>台灣海洋保護區成效儀表板</h1>
   <p class="tagline">從「劃了多少」到「保護得好不好」</p>
   <p>整合水質、海洋廢棄物、生物多樣性與執法強度四項成果指標，評估臺灣海洋保護區的實際成效。生物多樣性結合生態系類型、珊瑚礁體檢、藍碳、TBN 實地調查紀錄（含四國家公園長期調查）與魚類環境 DNA 先期試驗；並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
@@ -2059,5 +2064,6 @@ dash.calc("tbnlead", {
   dash._start();
 })();
 </script>
+<script>document.querySelectorAll("a.lang").forEach(a => a.addEventListener("click", () => { a.href = a.getAttribute("href").split("#")[0] + location.hash; }));</script>
 </body>
 </html>

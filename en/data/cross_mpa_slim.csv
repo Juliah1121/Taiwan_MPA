@@ -1,0 +1,72 @@
+no,mpa,type,law,iucn,best_level,dom_level,fh_share,area_km2,year,age,stage,grade_2022,score,grade,score_wq,score_debris,score_bio,score_enf,dims
+1,Taoyuan Guanxin Algal Reef Wildlife Refuge,Wildlife refuge,Wildlife Conservation Act,IV,Fully protected,Fully protected,1.0,3.96,2014,12,Actively managed,Not available,73,Good,85.0,70.0,74.0,62.0,4
+2,Mianhua & Huaping Islets Wildlife Refuge,Wildlife refuge,Wildlife Conservation Act,IV,Highly protected,Highly protected,1.0,2.1,1996,30,Actively managed,Not available,61,Fair,85.0,,38.0,61.0,3
+3,Matsu Islands Tern Refuge,Wildlife refuge,Wildlife Conservation Act,IV,Fully protected,Fully protected,1.0,0.6,2000,26,Actively managed,High,53,Needs improvement,100.0,6.0,,52.0,3
+4,Penghu Maoyu Seabird Refuge,Wildlife refuge,Wildlife Conservation Act,IV,Highly protected,Highly protected,1.0,0.26,1991,35,Actively managed,Not available,38,Insufficient data,,,,38.0,1
+5,Wang-an Green Turtle Nesting Refuge,Wildlife refuge,Wildlife Conservation Act,IV,Fully protected,Fully protected,1.0,0.0,1995,31,Actively managed,Not available,56,Fair,80.0,40.0,,48.0,3
+6,Humpback Dolphin Major Wildlife Habitat,Major wildlife habitat,Wildlife Conservation Act,IV,Minimally protected,Minimally protected,0.0,763.0,2020,6,Implemented,Full,47,Needs improvement,55.0,24.0,66.0,42.0,4
+7,Dongsha Atoll National Park,National park,National Park Act,II,Fully protected,Fully protected,1.0,3534.89,2007,19,Actively managed,Full,69,Fair (provisional),,,94.0,44.0,2
+8,Taijiang National Park,National park,National Park Act,II,Minimally protected,Minimally protected,0.0,344.05,2009,17,Actively managed,High,54,Needs improvement,85.0,37.0,93.0,0.0,4
+9,South Penghu Marine National Park,National park,National Park Act,II,Fully protected,Lightly protected,0.47,354.73,2014,12,Actively managed,Full,59,Fair,85.0,21.0,68.0,63.0,4
+10,Kenting National Park,National park,National Park Act,II,Fully protected,Minimally protected,0.064,152.0609,1982,44,Actively managed,Full,74,Good,70.0,62.0,82.0,80.0,4
+11,Green Island Haishenping–Fanchuanbi Marine Reserve,Scenic-area marine resource reserve,Urban Planning Act,VI,Lightly protected,Lightly protected,0.0,45.58,1984,42,Actively managed,Not available,72,Good,70.0,99.0,,47.0,3
+12,Northeast & Yilan Coast Scenic Area (marine reserve),Scenic-area marine resource reserve,Urban Planning Act,VI,Lightly protected,Lightly protected,0.0,0.12,1984,42,Actively managed,High,39,Poor,,8.0,61.0,47.0,3
+13,Keelung Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,13.56,1999,27,Implemented,Low,58,Fair,85.0,25.0,78.0,46.0,4
+14,Kinmen Guningtou Horseshoe Crab Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,7.86,1999,27,Actively managed,Medium,44,Needs improvement,70.0,20.0,45.0,41.0,4
+15,Marine Museum Resource Cultivation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,6.77,2000,26,Implemented,Low,60,Fair,85.0,66.0,88.0,0.0,4
+16,Green Island Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,5.77,1978,48,Actively managed,Medium,69,Fair,70.0,,87.0,51.0,3
+17,Liuqiu Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Fully protected,Lightly protected,0.006,3.67,2000,26,Actively managed,Not available,69,Fair,85.0,,65.0,57.0,3
+18,Wanli Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,2.83,1999,27,Implemented,Medium,71,Good,85.0,65.0,63.0,72.0,4
+19,Fengbin Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,1.67,1983,43,Actively managed,Low,62,Fair,100.0,97.0,50.0,0.0,4
+20,Ruifang Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,1.24,2020,6,Implemented,Medium,55,Fair,100.0,6.0,53.0,60.0,4
+21,Sanxianjiao Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Highly protected,Highly protected,1.0,1.23,2025,1,Actively managed,Not available,49,Needs improvement,25.0,81.0,,42.0,3
+22,Checheng Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,0.95,2000,26,Actively managed,Low,49,Needs improvement,85.0,70.0,40.0,0.0,4
+23,Xiaoma Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.78,2000,26,Implemented,Low,58,Fair,85.0,93.0,54.0,0.0,4
+24,Gongliao Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.73,1999,27,Implemented,Not available,68,Fair,85.0,63.0,59.0,64.0,4
+25,Fushan Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Fully protected,Lightly protected,0.125,2.35,2005,21,Actively managed,Full,69,Fair,55.0,81.0,57.0,83.0,4
+26,Yanliao Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.68,1979,47,Implemented,Medium,73,Good,85.0,83.0,41.0,84.0,4
+27,Yiwan Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.51,2000,26,Implemented,Low,65,Fair,,100.0,59.0,35.0,3
+28,Xiaogang Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.45,2000,26,Actively managed,Low,56,Fair,70.0,100.0,54.0,0.0,4
+29,Xiaohu Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.42,1979,47,Implemented,Medium,48,Needs improvement,,82.0,61.0,0.0,3
+30,Wanggong Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.41,2013,13,Actively managed,Not available,47,Needs improvement,85.0,5.0,,50.0,3
+31,Shengang Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.36,2006,20,Actively managed,Not available,51,Needs improvement,85.0,43.0,26.0,50.0,4
+32,Yeliu Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Highly protected,Highly protected,1.0,0.28,2019,7,Actively managed,Not available,70,Good,85.0,73.0,60.0,61.0,4
+33,Shuilian Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.27,1979,47,Implemented,Low,38,Poor,,78.0,37.0,0.0,3
+34,Su'ao Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.25,1997,29,Actively managed,Medium,51,Needs improvement,25.0,89.0,46.0,44.0,4
+35,Toucheng Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Highly protected,Lightly protected,0.103,3.63,1997,29,Actively managed,Medium,56,Fair,85.0,44.0,49.0,45.0,4
+36,Gaoshan Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,0.24,1979,47,Implemented,Low,41,Needs improvement (provisional),,82.0,,0.0,2
+37,Dong'ao Conservation Area (Yilan),Aquatic species breeding conservation area,Fisheries Act,IV,Fully protected,Lightly protected,0.137,0.175,2021,5,Actively managed,Not available,69,Fair,85.0,84.0,58.0,49.0,4
+38,Shitiping Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,0.17,1983,43,Actively managed,Low,81,Good,100.0,92.0,50.0,81.0,4
+39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Aquatic species breeding conservation area,Fisheries Act,IV,Fully protected,Fully protected,0.806,0.186,2016,10,Actively managed,Full,64,Fair,100.0,12.0,81.0,65.0,4
+40,Xiaomen Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Minimally protected,Minimally protected,0.0,0.06,1988,38,Implemented,Not available,51,Needs improvement,85.0,29.0,,38.0,3
+41,Qimei Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Fully protected,Fully protected,0.717,0.06,1988,38,Actively managed,Not available,65,Fair,70.0,72.0,,52.0,3
+42,Wanwa Clam Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Lightly protected,Lightly protected,0.0,0.02,2010,16,Designated,Low,40,Needs improvement,85.0,24.0,49.0,0.0,4
+43,Shengang II Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Fisheries Act,IV,Highly protected,Highly protected,1.0,0.02,2006,20,Actively managed,Not available,59,Fair,85.0,43.0,,50.0,3
+44,Xuhai–Guanyinbi Nature Reserve,Nature reserve,Cultural Heritage Preservation Act,Ia,Fully protected,Fully protected,1.0,1.32,2012,14,Actively managed,Not available,60,Fair,,62.0,50.0,67.0,3
+45,South Penghu Basalt Nature Reserve,Nature reserve,Cultural Heritage Preservation Act,Ia,Fully protected,Fully protected,1.0,1.05,2008,18,Implemented,Full,68,Fair,85.0,,70.0,49.0,3
+46,Penghu Basalt Nature Reserve,Nature reserve,Cultural Heritage Preservation Act,Ia,Fully protected,Fully protected,1.0,0.12,1992,34,Implemented,Not available,51,Needs improvement,70.0,48.0,,36.0,3
+47,Fanzaishi Natural Monument,Natural monument,Cultural Heritage Preservation Act,III,Fully protected,Fully protected,1.0,0.0136,2020,6,Implemented,Not available,40,Insufficient data,,,,40.0,1
+48,Xiwei Lava Pools & Volcanic Neck (Magong),Natural monument,Cultural Heritage Preservation Act,III,Fully protected,Fully protected,1.0,0.000436,2022,4,Implemented,Not available,58,Fair,85.0,51.0,,37.0,3
+49,Beigan Confucius Sea Rock,Natural monument,Cultural Heritage Preservation Act,III,Fully protected,Fully protected,1.0,0.00030583,2022,4,Implemented,Not available,47,Needs improvement,100.0,6.0,,35.0,3
+50,Puzi River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,38.52,2015,11,Actively managed,Not available,47,Needs improvement,50.0,16.0,83.0,40.0,4
+51,Lanyang River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,17.3,2015,11,Actively managed,Not available,61,Fair,80.0,95.0,69.0,0.0,4
+52,Xiangshan Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,15.62,2015,11,Actively managed,Not available,65,Fair,85.0,53.0,56.0,,3
+53,Beimen Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,13.45,2015,11,Actively managed,Not available,62,Fair,85.0,46.0,82.0,37.0,4
+54,Qigu Salt Pan Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,12.91,2015,11,Actively managed,Not available,67,Fair,85.0,44.0,66.0,72.0,4
+55,Haomeiliao Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,8.2,2015,11,Actively managed,Not available,45,Needs improvement,70.0,0.0,70.0,40.0,4
+56,Xucuogang Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,6.33,2015,11,Actively managed,Not available,62,Fair,70.0,60.0,55.0,62.0,4
+57,Wuweigang Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,4.74,2015,11,Actively managed,Not available,53,Needs improvement,100.0,89.0,22.0,0.0,4
+58,Bazhang River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,4.34,2015,11,Actively managed,Not available,43,Needs improvement,70.0,0.0,64.0,39.0,4
+59,Yiwu Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,3.86,2019,7,Actively managed,Not available,27,Poor,40.0,3.0,26.0,38.0,4
+60,Tamsui River Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,3.36,2015,11,Actively managed,Not available,69,Fair,85.0,54.0,83.0,55.0,4
+61,Zengwen River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,2.37,2015,11,Actively managed,Not available,68,Fair,85.0,38.0,68.0,79.0,4
+62,Qingluo Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,1.57,2015,11,Actively managed,Not available,48,Needs improvement,85.0,16.0,43.0,48.0,4
+63,Xinfeng Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,1.19,2015,11,Actively managed,Not available,58,Fair,55.0,70.0,63.0,42.0,4
+64,Beinan River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,1.07,2015,11,Actively managed,Not available,56,Fair,70.0,93.0,26.0,35.0,4
+65,Dadu River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.94,2015,11,Actively managed,Not available,56,Fair,85.0,22.0,54.0,61.0,4
+66,Hualien River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.59,2015,11,Actively managed,Not available,47,Needs improvement,80.0,76.0,32.0,0.0,4
+67,Caiyuan Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.2,2019,7,Actively managed,Not available,66,Fair,70.0,72.0,78.0,43.0,4
+68,Gaomei Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.13,2015,11,Actively managed,Not available,37,Poor,25.0,56.0,67.0,0.0,4
+69,Xihu Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.09,2015,11,Actively managed,Not available,52,Needs improvement,85.0,24.0,53.0,46.0,4
+70,Qingshui Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.09,2015,11,Actively managed,Not available,54,Needs improvement,100.0,32.0,48.0,36.0,4
+71,Yanshui River Estuary Wetland,Important wetland,Wetland Conservation Act,VI,Minimally protected,Minimally protected,0.0,0.04,2015,11,Actively managed,Not available,64,Fair,85.0,35.0,66.0,72.0,4

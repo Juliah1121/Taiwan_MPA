@@ -1,0 +1,72 @@
+no,mpa,type,townships,pop,density,dens_band,fish_share,fish_kg,patrol_hours,members,hours_per_km2,east,score,eco,score_wq,score_debris,score_bio,score_enf,grade,dims
+1,Taoyuan Guanxin Algal Reef Wildlife Refuge,Wildlife refuge,"Guanyin, Xinwu",117324.0,678.0,"100–1,000",34.6,0.58,32020.0,117.0,8085.9,0,73,76.3,85.0,70.0,74.0,62.0,Good,4
+2,Mianhua & Huaping Islets Wildlife Refuge,Wildlife refuge,No resident population (offshore),0.0,0.0,<100 per km²,,,144.0,31.0,68.6,0,61,61.5,85.0,,38.0,61.0,Fair,3
+3,Matsu Islands Tern Refuge,Wildlife refuge,"Nangan, Beigan, Juguang, Dongyin",13080.0,454.0,"100–1,000",70.9,25.73,453.0,22.0,755.0,0,53,53.0,100.0,6.0,,52.0,Needs improvement,3
+4,Penghu Maoyu Seabird Refuge,Wildlife refuge,Wang-an,5258.0,382.0,"100–1,000",,,94.0,6.0,361.5,0,38,,,,,38.0,Insufficient data,1
+5,Wang-an Green Turtle Nesting Refuge,Wildlife refuge,Wang-an,5258.0,382.0,"100–1,000",67.7,5.09,1650.0,6.0,,0,56,60.0,80.0,40.0,,48.0,Fair,3
+6,Humpback Dolphin Major Wildlife Habitat,Major wildlife habitat,"Zhunan, Houlong, Tongxiao, Yuanli, Dajia, Da'an, Qingshui, Wuqi, Longjing, Shengang, Xianxi, Lukang, Fuxing, Fangyuan, Dacheng, Mailiao, Taixi",828679.0,907.0,"100–1,000",72.2,11.0,428.0,0.0,0.6,0,47,48.3,55.0,24.0,66.0,42.0,Needs improvement,4
+7,Dongsha Atoll National Park,National park,No resident population (offshore),0.0,0.0,<100 per km²,,,0.0,0.0,0.0,0,69,,,,94.0,44.0,Fair (provisional),2
+8,Taijiang National Park,National park,"Annan, Qigu",216497.0,996.0,"100–1,000",86.7,7.24,0.0,0.0,0.0,0,54,71.7,85.0,37.0,93.0,0.0,Needs improvement,4
+9,South Penghu Marine National Park,National park,Wang-an,5258.0,382.0,"100–1,000",71.6,9.27,1408.0,11.0,4.0,0,59,58.0,85.0,21.0,68.0,63.0,Fair,4
+10,Kenting National Park,National park,"Hengchun, Manzhou, Checheng",46699.0,142.0,"100–1,000",43.2,1.47,248.0,11.0,1.6,0,74,71.3,70.0,62.0,82.0,80.0,Good,4
+11,Green Island Haishenping–Fanchuanbi Marine Reserve,Scenic-area marine resource reserve,Green Island (Lüdao),4042.0,268.0,"100–1,000",30.4,0.18,1095.0,2.0,24.0,1,72,84.5,70.0,99.0,,47.0,Good,3
+12,Northeast & Yilan Coast Scenic Area (marine reserve),Scenic-area marine resource reserve,"Ruifang, Gongliao",51501.0,302.0,"100–1,000",75.2,11.58,1095.0,2.0,9125.0,0,39,34.5,,8.0,61.0,47.0,Poor,3
+13,Keelung Conservation Area,Aquatic species breeding conservation area,"Zhongzheng, Qidu, Nuannuan, Ren'ai, Zhongshan, Anle, Xinyi",368932.0,2779.0,">1,000",76.6,7.48,837.0,36.0,61.7,0,58,62.7,85.0,25.0,78.0,46.0,Fair,4
+14,Kinmen Guningtou Horseshoe Crab Conservation Area,Aquatic species breeding conservation area,Jinning,32530.0,1090.0,">1,000",83.6,9.02,208.0,8.0,26.5,0,44,45.0,70.0,20.0,45.0,41.0,Needs improvement,4
+15,Marine Museum Resource Cultivation Area,Aquatic species breeding conservation area,Checheng Township,8381.0,168.0,"100–1,000",34.6,1.27,0.0,0.0,0.0,0,60,79.7,85.0,66.0,88.0,0.0,Fair,4
+16,Green Island Conservation Area,Aquatic species breeding conservation area,Green Island (Lüdao),4042.0,268.0,"100–1,000",,,4800.0,10.0,831.9,1,69,78.5,70.0,,87.0,51.0,Fair,3
+17,Liuqiu Conservation Area,Aquatic species breeding conservation area,Liuqiu,12214.0,1796.0,">1,000",,,5400.0,10.0,1471.4,0,69,75.0,85.0,,65.0,57.0,Fair,3
+18,Wanli Conservation Area,Aquatic species breeding conservation area,Wanli,21840.0,345.0,"100–1,000",69.5,2.34,720.0,15.0,254.4,0,71,71.0,85.0,65.0,63.0,72.0,Good,4
+19,Fengbin Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,9.9,0.06,0.0,0.0,0.0,1,62,82.3,100.0,97.0,50.0,0.0,Fair,4
+20,Ruifang Conservation Area,Aquatic species breeding conservation area,Ruifang,39495.0,558.0,"100–1,000",80.6,14.2,0.0,0.0,0.0,0,55,53.0,100.0,6.0,53.0,60.0,Fair,4
+21,Sanxianjiao Conservation Area,Aquatic species breeding conservation area,Su'ao,39132.0,440.0,"100–1,000",69.7,1.09,250.0,60.0,203.3,0,49,53.0,25.0,81.0,,42.0,Needs improvement,3
+22,Checheng Conservation Area,Aquatic species breeding conservation area,Checheng Township,8381.0,168.0,"100–1,000",44.3,1.49,0.0,0.0,0.0,0,49,65.0,85.0,70.0,40.0,0.0,Needs improvement,4
+23,Xiaoma Conservation Area,Aquatic species breeding conservation area,Chenggong,13729.0,95.0,<100 per km²,71.9,0.32,0.0,0.0,0.0,1,58,77.3,85.0,93.0,54.0,0.0,Fair,4
+24,Gongliao Conservation Area,Aquatic species breeding conservation area,Gongliao,12006.0,120.0,"100–1,000",24.7,0.49,0.0,0.0,0.0,0,68,69.0,85.0,63.0,59.0,64.0,Fair,4
+25,Fushan Conservation Area,Aquatic species breeding conservation area,Beinan,17117.0,41.0,<100 per km²,50.8,0.51,44370.0,10.0,18880.9,1,69,64.3,55.0,81.0,57.0,83.0,Fair,4
+26,Yanliao Conservation Area,Aquatic species breeding conservation area,Shoufeng,17790.0,81.0,<100 per km²,4.7,0.06,15432.0,6.0,22694.1,1,73,69.7,85.0,83.0,41.0,84.0,Good,4
+27,Yiwan Conservation Area,Aquatic species breeding conservation area,Chenggong,13729.0,95.0,<100 per km²,62.2,0.29,0.0,0.0,0.0,1,65,79.5,,100.0,59.0,35.0,Fair,3
+28,Xiaogang Conservation Area,Aquatic species breeding conservation area,Chenggong,13729.0,95.0,<100 per km²,40.4,0.08,0.0,0.0,0.0,1,56,74.7,70.0,100.0,54.0,0.0,Fair,4
+29,Xiaohu Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,21.8,0.24,0.0,0.0,0.0,1,48,71.5,,82.0,61.0,0.0,Needs improvement,3
+30,Wanggong Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Fangyuan Township,33046.0,362.0,"100–1,000",88.2,15.85,3552.0,1.0,8663.4,0,47,45.0,85.0,5.0,,50.0,Needs improvement,3
+31,Shengang Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Shengang,37501.0,1679.0,">1,000",49.7,4.81,3552.0,1.0,9866.7,0,51,51.3,85.0,43.0,26.0,50.0,Needs improvement,4
+32,Yeliu Conservation Area,Aquatic species breeding conservation area,Wanli,21840.0,345.0,"100–1,000",57.0,1.7,720.0,15.0,2571.4,0,70,72.7,85.0,73.0,60.0,61.0,Good,4
+33,Shuilian Conservation Area,Aquatic species breeding conservation area,Shoufeng,17790.0,81.0,<100 per km²,63.7,0.98,0.0,0.0,0.0,1,38,57.5,,78.0,37.0,0.0,Poor,3
+34,Su'ao Conservation Area,Aquatic species breeding conservation area,Su'ao,39132.0,440.0,"100–1,000",63.0,0.64,535.0,60.0,2140.0,0,51,53.3,25.0,89.0,46.0,44.0,Needs improvement,4
+35,Toucheng Conservation Area,Aquatic species breeding conservation area,Toucheng,28951.0,287.0,"100–1,000",80.3,4.13,742.0,19.0,204.4,0,56,59.3,85.0,44.0,49.0,45.0,Fair,4
+36,Gaoshan Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,21.8,0.24,0.0,0.0,0.0,1,41,,,82.0,,0.0,Needs improvement (provisional),2
+37,Dong'ao Conservation Area (Yilan),Aquatic species breeding conservation area,Nan'ao,5964.0,8.0,<100 per km²,45.8,0.33,1825.0,25.0,10428.6,0,69,75.7,85.0,84.0,58.0,49.0,Fair,4
+38,Shitiping Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,27.3,0.27,15312.0,5.0,90070.6,1,81,80.7,100.0,92.0,50.0,81.0,Good,4
+39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Aquatic species breeding conservation area,Zhongzheng,51484.0,5043.0,">1,000",76.1,9.81,14847.0,41.0,79822.6,0,64,64.3,100.0,12.0,81.0,65.0,Fair,4
+40,Xiaomen Conservation Area,Aquatic species breeding conservation area,Xiyu,8316.0,444.0,"100–1,000",86.6,9.77,117.0,3.0,1950.0,0,51,57.0,85.0,29.0,,38.0,Needs improvement,3
+41,Qimei Conservation Area,Aquatic species breeding conservation area,Qimei,3801.0,544.0,"100–1,000",52.0,1.09,9137.0,24.0,152283.3,0,65,71.0,70.0,72.0,,52.0,Fair,3
+42,Wanwa Clam Conservation Area,Aquatic species breeding conservation area,Houlong,35665.0,470.0,"100–1,000",81.0,8.04,0.0,0.0,0.0,0,40,52.7,85.0,24.0,49.0,0.0,Needs improvement,4
+43,Shengang II Mud Shrimp Conservation Area,Aquatic species breeding conservation area,Shengang,37501.0,1679.0,">1,000",49.7,4.81,3552.0,1.0,177600.0,0,59,64.0,85.0,43.0,,50.0,Fair,3
+44,Xuhai–Guanyinbi Nature Reserve,Nature reserve,Mudan,4857.0,27.0,<100 per km²,64.4,2.58,779.5,44.0,590.5,0,60,56.0,,62.0,50.0,67.0,Fair,3
+45,South Penghu Basalt Nature Reserve,Nature reserve,Wang-an,5258.0,382.0,"100–1,000",,,1755.0,13.0,1671.4,0,68,77.5,85.0,,70.0,49.0,Fair,3
+46,Penghu Basalt Nature Reserve,Nature reserve,Baisha,9837.0,490.0,"100–1,000",50.9,3.52,36.0,6.0,300.0,0,51,59.0,70.0,48.0,,36.0,Needs improvement,3
+47,Fanzaishi Natural Monument,Natural monument,Location to be confirmed,,,,,,159.0,2.0,11691.2,0,40,,,,,40.0,Insufficient data,1
+48,Xiwei Lava Pools & Volcanic Neck (Magong),Natural monument,Magong,62941.0,1852.0,">1,000",51.7,2.73,62.0,2.0,142201.8,0,58,68.0,85.0,51.0,,37.0,Fair,3
+49,Beigan Confucius Sea Rock,Natural monument,Beigan,2594.0,262.0,"100–1,000",70.9,25.73,20.0,10.0,65395.8,0,47,53.0,100.0,6.0,,35.0,Needs improvement,3
+50,Puzi River Estuary Wetland,Important wetland,Dongshi,24154.0,296.0,"100–1,000",90.2,11.19,202.0,0.0,5.2,0,47,49.7,50.0,16.0,83.0,40.0,Needs improvement,4
+51,Lanyang River Estuary Wetland,Important wetland,"Zhuangwei, Wujie",64424.0,833.0,"100–1,000",5.6,0.04,0.0,0.0,0.0,0,61,81.3,80.0,95.0,69.0,0.0,Fair,4
+52,Xiangshan Wetland,Important wetland,Xiangshan District,78659.0,1434.0,">1,000",60.4,3.19,,,,0,65,64.7,85.0,53.0,56.0,,Fair,3
+53,Beimen Wetland,Important wetland,Beimen,10796.0,245.0,"100–1,000",48.5,3.4,88.0,0.0,6.5,0,62,71.0,85.0,46.0,82.0,37.0,Fair,4
+54,Qigu Salt Pan Wetland,Important wetland,Qigu District,22308.0,203.0,"100–1,000",85.7,5.78,0.0,0.0,0.0,0,67,65.0,85.0,44.0,66.0,72.0,Fair,4
+55,Haomeiliao Wetland,Important wetland,Budai,26354.0,427.0,"100–1,000",93.9,26.72,202.0,0.0,24.6,0,45,46.7,70.0,0.0,70.0,40.0,Needs improvement,4
+56,Xucuogang Wetland,Important wetland,Dayuan,93087.0,1065.0,">1,000",51.2,1.35,24933.0,205.0,3938.9,0,62,61.7,70.0,60.0,55.0,62.0,Fair,4
+57,Wuweigang Wetland,Important wetland,Su'ao,39132.0,440.0,"100–1,000",55.4,0.63,0.0,0.0,0.0,0,53,70.3,100.0,89.0,22.0,0.0,Needs improvement,4
+58,Bazhang River Estuary Wetland,Important wetland,"Budai, Beimen",37150.0,351.0,"100–1,000",93.9,26.72,140.0,0.0,32.3,0,43,44.7,70.0,0.0,64.0,39.0,Needs improvement,4
+59,Yiwu Wetland,Important wetland,Kouhu,26805.0,333.0,"100–1,000",38.7,7.79,116.0,10.0,30.1,0,27,23.0,40.0,3.0,26.0,38.0,Poor,4
+60,Tamsui River Wetland,Important wetland,"Tamsui, Bali",218591.0,1984.0,">1,000",9.6,0.37,42472.0,2.0,12640.5,0,69,74.0,85.0,54.0,83.0,55.0,Fair,4
+61,Zengwen River Estuary Wetland,Important wetland,"Qigu, Annan",216497.0,996.0,"100–1,000",84.2,6.57,0.0,0.0,0.0,0,68,63.7,85.0,38.0,68.0,79.0,Fair,4
+62,Qingluo Wetland,Important wetland,Huxi,14994.0,450.0,"100–1,000",67.8,15.87,1182.0,12.0,752.9,0,48,48.0,85.0,16.0,43.0,48.0,Needs improvement,4
+63,Xinfeng Wetland,Important wetland,Xinfeng Township,57269.0,1236.0,">1,000",49.5,0.7,286.5,3.0,240.8,0,58,62.7,55.0,70.0,63.0,42.0,Fair,4
+64,Beinan River Estuary Wetland,Important wetland,Taitung City,105138.0,958.0,"100–1,000",0.0,0.0,12.0,1.0,11.2,1,56,63.0,70.0,93.0,26.0,35.0,Fair,4
+65,Dadu River Estuary Wetland,Important wetland,"Longjing, Shengang",115525.0,1914.0,">1,000",49.1,5.7,3832.0,10.0,4076.6,0,56,53.7,85.0,22.0,54.0,61.0,Fair,4
+66,Hualien River Estuary Wetland,Important wetland,"Shoufeng, Ji'an",101366.0,357.0,"100–1,000",14.1,0.19,0.0,0.0,0.0,1,47,62.7,80.0,76.0,32.0,0.0,Needs improvement,4
+67,Caiyuan Wetland,Important wetland,Magong,62941.0,1852.0,">1,000",35.0,1.11,482.0,14.0,2410.0,0,66,73.3,70.0,72.0,78.0,43.0,Fair,4
+68,Gaomei Wetland,Important wetland,Qingshui,87575.0,1365.0,">1,000",93.9,4.33,0.0,0.0,0.0,0,37,49.3,25.0,56.0,67.0,0.0,Poor,4
+69,Xihu Wetland,Important wetland,"Houlong, Tongxiao",69088.0,376.0,"100–1,000",56.8,7.13,864.0,2.0,9600.0,0,52,54.0,85.0,24.0,53.0,46.0,Needs improvement,4
+70,Qingshui Wetland,Important wetland,Nangan,7597.0,730.0,"100–1,000",83.6,8.69,46.0,24.0,511.1,0,54,60.0,100.0,32.0,48.0,36.0,Needs improvement,4
+71,Yanshui River Estuary Wetland,Important wetland,"Annan, Anping",261294.0,2209.0,">1,000",88.6,7.65,0.0,0.0,0.0,0,64,62.0,85.0,35.0,66.0,72.0,Fair,4

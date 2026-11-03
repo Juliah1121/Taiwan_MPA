@@ -1,0 +1,14 @@
+key,model,outcome,term,beta,ci_low,ci_high,p,n,r2
+M1-ldz,M1,Ecological score (excl. enforcement),Population density,-1.85,-5.36,1.66,0.2955,62,0.316
+M1-fish_sharez,M1,Ecological score (excl. enforcement),Fishing share of debris,-6.15,-8.92,-3.39,0.0,62,0.316
+M1-lhz,M1,Ecological score (excl. enforcement),Patrol hours,-1.74,-4.41,0.93,0.1982,62,0.316
+M2-ldz,M2,Ecological score (controlling for east coast),Population density,-1.0,-4.94,2.94,0.6122,62,0.326
+M2-fish_sharez,M2,Ecological score (controlling for east coast),Fishing share of debris,-5.52,-8.59,-2.44,0.0007,62,0.326
+M2-lhz,M2,Ecological score (controlling for east coast),Patrol hours,-1.49,-4.21,1.24,0.2789,62,0.326
+M2-east,M2,Ecological score (controlling for east coast),East coast (Hualien–Taitung),4.18,-4.63,12.98,0.3459,62,0.326
+M3-ldz,M3,Marine debris,Population density,-9.47,-16.77,-2.17,0.0119,63,0.514
+M3-fish_sharez,M3,Marine debris,Fishing share of debris,-17.59,-23.4,-11.79,0.0,63,0.514
+M3-lhz,M3,Marine debris,Patrol hours,-4.86,-10.46,0.74,0.0879,63,0.514
+M4-ldz,M4,Composite,Population density,-1.07,-4.32,2.19,0.5146,63,0.213
+M4-fish_sharez,M4,Composite,Fishing share of debris,-3.3,-5.89,-0.71,0.0133,63,0.213
+M4-lhz,M4,Composite,Patrol hours,3.38,0.89,5.88,0.0087,63,0.213
