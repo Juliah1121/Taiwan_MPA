@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>台灣海洋保護區成效儀表板</title>
-<meta name="description" content="整合水質、海洋廢棄物、魚類環境DNA與執法強度，評估臺灣 71 處海洋保護區（MPA）成效，並與保護區分類、人口與漁業壓力交叉分析。">
+<meta name="description" content="整合水質、海洋廢棄物、生物多樣性（實地調查與環境 DNA）與執法強度，評估臺灣 71 處海洋保護區（MPA）成效，並與保護區分類、人口與漁業壓力交叉分析。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="台灣海洋保護區成效儀表板">
-<meta property="og:description" content="整合水質、海洋廢棄物、魚類環境DNA與執法強度，評估臺灣 71 處海洋保護區成效。">
+<meta property="og:description" content="整合水質、海洋廢棄物、生物多樣性與執法強度，評估臺灣 71 處海洋保護區成效。">
 <meta property="og:locale" content="zh_TW">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -198,7 +198,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <header class="band"><div class="band-inner">
   <h1>台灣海洋保護區成效儀表板</h1>
   <p class="tagline">從「劃了多少」到「保護得好不好」</p>
-  <p>整合水質、海洋廢棄物、魚類環境 DNA 與執法強度四項成果指標，評估臺灣海洋保護區的實際成效；另以生態系類型、珊瑚礁體檢與藍碳評比生物多樣性價值，並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
+  <p>整合水質、海洋廢棄物、生物多樣性與執法強度四項成果指標，評估臺灣海洋保護區的實際成效。生物多樣性結合生態系類型、珊瑚礁體檢、藍碳、TBN 實地調查紀錄（含四國家公園長期調查）與魚類環境 DNA 先期試驗；並檢視成效與保護區分類、保護等級、鄰近人口及漁業壓力之間的關係，作為分級管理與資源配置的參考。</p>
 </div></header>
 <nav class="tabs" aria-label="分頁"><div class="tabs-inner" id="tabbar"></div></nav>
 <div id="dash-root"><div class="mp">
@@ -223,13 +223,14 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     </section>
     <section class="card" id="cover">
       <h2>資料覆蓋</h2>
-      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性與海廢缺口最大，綜合分在資料少的區應保守解讀。</p>
+      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性納入實地紀錄後由 40 處增至 57 處，仍是缺口最大的面向，綜合分在資料少的區應保守解讀。</p>
       <div class="chart" id="covchart" data-source="coverage"></div>
     </section>
   </div>
+
   <div class="grid2 ov-links">
     <a class="card ov-link" href="#ranking"><b>成效排名</b><span>71 處保護區的水質、海廢、生物多樣性與執法分數，可搜尋、篩選，點選看原始指標。</span><em>看成效排名 →</em></a>
-    <a class="card ov-link" href="#bio"><b>生物多樣性</b><span>各保護區的生態系類型、珊瑚礁體檢覆蓋率與藍碳蘊含量，以及綜合生物多樣性評比。</span><em>看生物多樣性 →</em></a>
+    <a class="card ov-link" href="#bio"><b>生物多樣性</b><span>生態系類型、珊瑚礁體檢、藍碳、TBN 實地調查物種紀錄與 eDNA，整合為各保護區的生物多樣性分數。</span><em>看生物多樣性 →</em></a>
     <a class="card ov-link" href="#clusters"><b>類別與集群</b><span>依國家公園、濕地、漁業資源保育區等類別比較成效，並以集群分析找出四種成效型態。</span><em>看類別與集群 →</em></a>
     <a class="card ov-link" href="#cross"><b>分類交叉分析</b><span>成效與保護區類型、法源、IUCN 分類、保護等級、面積、成立年份是否相關。</span><em>看分類交叉分析 →</em></a>
     <a class="card ov-link" href="#pressure"><b>人口與漁業壓力</b><span>鄰近人口、漁業與養殖廢棄物、巡守投入，哪一個最能解釋成效差異。</span><em>看壓力分析 →</em></a>
@@ -259,12 +260,12 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
           <th data-field="score" aria-sort="descending"><button data-k="score">綜合</button></th>
           <th data-field="grade"><button data-k="grade">等級</button></th>
           <th data-field="weakest" class="hide-sm"><button data-k="weakest">最弱面向</button></th>
-          <th data-field="grade_2022" class="hide-sm"><button data-k="grade_2022">海保署 2022 分級</button></th>
         </tr></thead>
         <tbody></tbody>
       </table>
     </div>
   </section>
+
   <section class="card detail" id="detail">
     <h3 id="d-name" data-source="mpa" data-field="mpa">—</h3>
     <p class="note" id="d-sub">—</p>
@@ -279,13 +280,15 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
         <dl><dt>平均 kg／次</dt><dd data-source="mpa" data-field="debris_kg">—</dd>
             <dt>2020→2024 變化 %</dt><dd data-source="mpa" data-field="debris_change_pct">—</dd>
             <dt>趨勢</dt><dd data-source="mpa" data-field="debris_trend">—</dd></dl></div>
-      <div class="dbox"><div class="t"><span>生物多樣性（魚類 eDNA）</span><span>2021–2024</span></div>
+      <div class="dbox"><div class="t"><span>海洋生物多樣性</span><span>實地紀錄＋eDNA＋棲地</span></div>
         <div class="s" data-source="mpa" data-field="score_bio">—</div>
-        <dl><dt>棲地</dt><dd data-source="mpa" data-field="edna_habitat">—</dd>
-            <dt>每次採樣分類單元</dt><dd data-source="mpa" data-field="edna_mean">—</dd>
-            <dt>合計分類單元</dt><dd data-source="mpa" data-field="edna_taxa">—</dd>
-            <dt>採樣次數</dt><dd data-source="mpa" data-field="edna_samples">—</dd>
-            <dt>外來種數</dt><dd data-source="mpa" data-field="edna_exotic">—</dd></dl></div>
+        <dl><dt>已確認物種</dt><dd data-source="mpa" data-field="bio_conf_sp">—</dd>
+            <dt>IUCN 受脅物種</dt><dd data-source="mpa" data-field="bio_threatened">—</dd>
+            <dt>物種紀錄分</dt><dd data-source="mpa" data-field="bio_s_species">—</dd>
+            <dt>eDNA 試驗分</dt><dd data-source="mpa" data-field="s_edna_v2">—</dd>
+            <dt>珊瑚健康分</dt><dd data-source="mpa" data-field="bio_s_coral">—</dd>
+            <dt>藍碳分</dt><dd data-source="mpa" data-field="bio_s_bluecarbon">—</dd>
+            <dt>棲地多樣性分</dt><dd data-source="mpa" data-field="bio_s_habitat">—</dd></dl></div>
       <div class="dbox"><div class="t"><span>執法強度</span><span>巡守通報 112–114 年</span></div>
         <div class="s" data-source="mpa" data-field="score_enf">—</div>
         <dl><dt>執法型態</dt><dd data-source="mpa" data-field="enf_type">—</dd>
@@ -300,7 +303,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <section data-tab="bio" class="tabpage" hidden>
   <section id="bio" class="xs">
     <h2 class="xs-h">生物多樣性：生態系、珊瑚礁體檢與藍碳</h2>
-    <p class="lead">71 處保護區中，<b data-source="blead" data-field="n_coral">—</b> 處以珊瑚礁為主要生態系、<b data-source="blead" data-field="n_mangrove">—</b> 處以紅樹林為主、<b data-source="blead" data-field="n_mud">—</b> 處以泥灘為主；有珊瑚礁體檢數據的 <b data-source="blead" data-field="n_reef">—</b> 處裡，最近一次覆蓋率達「優良」（≥50%）的只有 <b data-source="blead" data-field="n_reef_good">—</b> 處。依海保署 2024 藍碳調查的逐點面積，全國紅樹林有 <b data-source="blead" data-field="mg_in_pct">—</b>% 在保護區內，可估藍碳約 <b data-source="blead" data-field="bc_total">—</b> 公噸碳，東沙海草床就占 <b data-source="blead" data-field="bc_dongsha_pct">—</b>%。綜合棲地、珊瑚、藍碳與 eDNA 的評比，良好 <b data-source="blead" data-field="g_good">—</b> 處、尚可 <b data-source="blead" data-field="g_ok">—</b>、待加強 <b data-source="blead" data-field="g_warn">—</b>、不佳 <b data-source="blead" data-field="g_bad">—</b>，另 <b data-source="blead" data-field="g_nodata">—</b> 處只有棲地資料。</p>
+    <p class="lead">71 處保護區中，<b data-source="blead" data-field="n_coral">—</b> 處以珊瑚礁為主要生態系、<b data-source="blead" data-field="n_mangrove">—</b> 處以紅樹林為主、<b data-source="blead" data-field="n_mud">—</b> 處以泥灘為主；有珊瑚礁體檢數據的 <b data-source="blead" data-field="n_reef">—</b> 處裡，最近一次覆蓋率達「優良」（≥50%）的只有 <b data-source="blead" data-field="n_reef_good">—</b> 處。依海保署 2024 藍碳調查的逐點面積，全國紅樹林有 <b data-source="blead" data-field="mg_in_pct">—</b>% 在保護區內，可估藍碳約 <b data-source="blead" data-field="bc_total">—</b> 公噸碳，東沙海草床就占 <b data-source="blead" data-field="bc_dongsha_pct">—</b>%。綜合實地物種紀錄、eDNA、珊瑚、藍碳與棲地的海洋生物多樣性分數，良好 <b data-source="blead" data-field="g_good">—</b> 處、尚可 <b data-source="blead" data-field="g_ok">—</b>、待加強 <b data-source="blead" data-field="g_warn">—</b>、不佳 <b data-source="blead" data-field="g_bad">—</b>，另 <b data-source="blead" data-field="g_nodata">—</b> 處沒有任何生物觀測。</p>
 
     <div class="card" id="hab-card">
       <h2>各保護區生態系類型</h2>
@@ -376,11 +379,64 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </div>
     </div>
 
+    <div class="card" id="tbn-card">
+      <h2>國家公園長期物種調查（2009–2022）</h2>
+      <p class="note">國家公園生物多樣性資料庫「物種調查點資料」（經 TBN 下載）的魚類、蝦蟹類與哺乳類出現紀錄。只計海洋魚類與海洋／潮間帶蝦蟹；陸域哺乳類、陸蟹、溪流魚蝦與外來魚類另列不計入。台江檔中 <span data-source="tbn_park" data-field="dropped_records" data-where="park=台江">—</span> 筆位於澎湖縣的紀錄已移除。一次調查＝同一天同一座標。</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="tbnpark" data-source="tbn_park" data-row-key="park">
+          <thead><tr>
+            <th data-field="park">國家公園</th><th data-field="years">年份</th><th data-field="events">調查次數</th>
+            <th data-field="fish_species">海洋魚類（種）</th><th data-field="fish_chao2">估計總數 Chao2</th><th data-field="completeness">完整度 %</th>
+            <th data-field="fish_families">魚類科數</th><th data-field="crust_species">海洋蝦蟹（種）</th>
+            <th data-field="butterfly">蝴蝶魚</th><th data-field="parrot">鸚哥魚</th><th data-field="grouper">石斑類</th>
+            <th data-field="threatened">IUCN 受脅</th><th data-field="exotic_fish">外來魚類</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="grid2" style="margin-top: var(--cds-gap-md)">
+        <div style="position:relative; min-width:0">
+          <h3 class="sub-h">物種累積曲線</h3>
+          <p class="note">隨調查次數增加的海洋魚類種數（以出現頻度內插）。曲線還在上升代表名錄未飽和；墾丁與台江每次調查平均只記到約 4 種，曲線遠低於東沙與南方四島，反映的是調查方式，不是魚類較少。</p>
+          <div class="legend" id="tbn-lg"></div>
+          <div class="chart" id="tbncurve" data-source="tbn_curve"></div>
+          <div class="tip" id="tbn-tip"></div>
+        </div>
+        <div style="min-width:0">
+          <h3 class="sub-h">魚類組成相似度（Jaccard）</h3>
+          <p class="note">兩園區共有物種占合併名錄的比例。</p>
+          <div class="tbl-wrap" style="max-height:none">
+            <table id="tbnjac" data-source="tbn_jaccard" data-row-key="key">
+              <thead><tr><th data-field="key">組合</th><th data-field="shared">共有種數</th><th data-field="jaccard">Jaccard</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <h3 class="sub-h" style="margin-top: var(--cds-gap-md)">和 eDNA 名錄對照</h3>
+          <p class="note">同一園區兩種方法記到的海域魚種（墾丁不含溪流與外來魚）。實地調查為確認紀錄；eDNA 是先期試驗，只有它記到的列為待實地確認。</p>
+          <div class="tbl-wrap" style="max-height:none">
+            <table id="tbncross" data-source="tbn_cross" data-row-key="park">
+              <thead><tr><th data-field="park">國家公園</th><th data-field="tbn">長期調查</th><th data-field="edna">eDNA</th><th data-field="both">兩者皆有</th><th data-field="edna_only">待實地確認</th><th data-field="union">合併名錄</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <details class="sub">
+        <summary>IUCN 受脅物種（易危以上，<span data-source="tbnlead" data-field="n_threat">—</span> 筆）</summary>
+        <div class="tbl-wrap">
+          <table id="tbnthreat" data-source="tbn_threat" data-row-key="key">
+            <thead><tr><th data-field="key">園區－學名</th><th data-field="name">中文名</th><th data-field="family">科</th><th data-field="iucn">IUCN</th><th data-field="protected">保育類</th><th data-field="group">類群</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
     <div class="card" id="biorank-card">
-      <h2>生物多樣性評比</h2>
-      <p class="note">四個分項各 0–100，取有資料者平均：棲地多樣性（主要生態系 1 分、局部 0.5 分，滿 3 分為 100）、珊瑚健康（最近覆蓋率 ×1.6＋20，趨勢減少扣 10）、藍碳（A 級 100、B 級 70，小面積不計分）、魚類 eDNA（沿用上方生物多樣性分數）。只有棲地一項者不給等級。點欄位標題排序。</p>
+      <h2>海洋生物多樣性分數</h2>
+      <p class="note">這就是上方綜合評估的「生物多樣性」面向。五個分項各 0–100，加權平均：物種紀錄（權重 1；TBN 實地紀錄已確認物種＋eDNA 獨有物種×0.5，在同棲地保護區間的百分位換算 20–100，IUCN 受脅物種 1 種以上 +5、5 種以上 +10）、珊瑚健康（1；最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（1；A 級 100、B 級 70）、棲地多樣性（1；主要生態系 1 分、局部 0.5 分，滿 3 分為 100）、eDNA 試驗（0.5；每次採樣分類單元在同棲地的百分位）。至少要有物種紀錄、珊瑚或 eDNA 其中一項實際觀測才給分。點欄位標題排序。</p>
       <div class="toolbar">
-        <select id="br-g"><option value="">全部等級</option><option>良好</option><option>尚可</option><option>待加強</option><option>不佳</option><option>資料不足（僅棲地）</option></select>
+        <select id="br-g"><option value="">全部等級</option><option>良好</option><option>尚可</option><option>待加強</option><option>不佳</option><option>資料不足（無生物觀測）</option></select>
       </div>
       <div class="tbl-wrap">
         <table id="biorank" data-source="biohab" data-row-key="no">
@@ -390,7 +446,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
             <th data-field="s_habitat"><button data-k="s_habitat">棲地多樣性</button></th>
             <th data-field="s_coral"><button data-k="s_coral">珊瑚健康</button></th>
             <th data-field="s_bluecarbon"><button data-k="s_bluecarbon">藍碳</button></th>
-            <th data-field="s_edna"><button data-k="s_edna">魚類 eDNA</button></th>
+            <th data-field="s_species"><button data-k="s_species">物種紀錄</button></th>
+            <th data-field="s_edna"><button data-k="s_edna">eDNA 試驗</button></th>
+            <th data-field="conf_sp" class="hide-sm"><button data-k="conf_sp">已確認物種</button></th>
             <th data-field="bio_score"><button data-k="bio_score">評比分數</button></th>
             <th data-field="bio_grade"><button data-k="bio_grade">等級</button></th>
             <th data-field="rc_grade" class="hide-sm"><button data-k="rc_grade">珊瑚等級</button></th>
@@ -405,8 +463,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <h2>怎麼解讀</h2>
       <p><b>珊瑚礁在退步，而且保護區內外都一樣。</b>富山（杉原）2008 年活珊瑚約 <span data-source="biohab" data-field="rc2008" data-where="no=25">—</span>%，2024–25 年硬珊瑚只剩 <span data-source="biohab" data-field="rc2025" data-where="no=25">—</span>%；墾丁 2023 年兩樣點平均 <span data-source="biohab" data-field="rc2023" data-where="no=10">—</span>%，合界到 2025 年降到 <span data-source="biohab" data-field="rc2025" data-where="no=10">—</span>%，淺層減少達顯著。南方四島東嶼坪從 2023 年的 <span data-source="biohab" data-field="rc2023" data-where="no=9">—</span>% 落到 2025 年的 <span data-source="biohab" data-field="rc2025" data-where="no=9">—</span>%，不過 2023 年量的是 6–8 米活珊瑚、2025 年是硬珊瑚，降幅可能被放大。唯一維持優良的是綠島（2023 年約 <span data-source="biohab" data-field="rc2023" data-where="no=16">—</span>%）。</p>
       <p><b>藍碳集中在少數地方，而且有一半紅樹林不在保護區內。</b>東沙海草床約 <span data-source="bluecarbon" data-field="est_tC" data-where="no=7">—</span> 公噸碳；本島以淡水河（<span data-source="bluecarbon" data-field="est_tC" data-where="no=60">—</span>）、台江（<span data-source="bluecarbon" data-field="est_tC" data-where="no=8">—</span>）、朴子溪（<span data-source="bluecarbon" data-field="est_tC" data-where="no=50">—</span>）、北門（<span data-source="bluecarbon" data-field="est_tC" data-where="no=53">—</span>）的紅樹林最多。鰲鼓、北港溪口、濁水溪北岸、大鵬灣、員林大排各有 40–53 公頃紅樹林，卻都不在這 71 處內；本島最大的海草床澎湖鎮海灣（<span data-source="bcsites" data-field="area_2023" data-where="key=%E6%B5%B7%E8%8D%89%E5%BA%8A-%E9%8E%AE%E6%B5%B7%E7%81%A3">—</span> 公頃）也沒有保護。紅樹林在香山等泥灘濕地屬外來擴張、會壓縮招潮蟹與水鳥棲地，所以藍碳高不等於保育價值高，評比只把它當成一個分項。</p>
-      <p><b>評比和原本只看 eDNA 的結果不同。</b>海生館資源培育區（<span data-source="biohab" data-field="bio_score" data-where="no=15">—</span>）同時有珊瑚礁、海草、岩礁與沙灘，魚類也多；綠島（<span data-source="biohab" data-field="bio_score" data-where="no=16">—</span>）靠珊瑚健康拉高。反過來，富山與石梯坪雖然被當成珊瑚保育的代表，近年覆蓋率都已落到不佳，評比只到待加強。</p>
-      <p><b>限制。</b>珊瑚礁體檢由志工執行，2008 年數值是從報告長條圖讀出的約略值；2023 年綠島、小琉球與蘭嶼只給範圍，取中點。藍碳用全國平均碳密度，未反映各地樹齡與底泥差異。生態系類型為人工判定，番仔石位置仍待確認。</p>
+      <p><b>納入實地紀錄後，排名變動最大的是有長期調查的地方。</b>東沙（<span data-source="biohab" data-field="bio_score" data-where="no=7">—</span>）與台江（<span data-source="biohab" data-field="bio_score" data-where="no=8">—</span>）有大量確認紀錄、受脅物種與藍碳，分數最高；過去沒有 eDNA 的東沙、南方四島、北門、七股鹽田、白海豚棲地都因此有了分數。反過來，只有一次 eDNA 試驗的花東小保育區（如小湖、宜灣）分數下降，因為 eDNA 改為半權重、且沒有實地紀錄佐證。富山（<span data-source="biohab" data-field="bio_score" data-where="no=25">—</span>）與石梯坪（<span data-source="biohab" data-field="bio_score" data-where="no=38">—</span>）的珊瑚覆蓋率近年已落到不佳，分數仍受珊瑚健康拖累。</p>
+      <p><b>四個國家公園的長期調查。</b>東沙（<span data-source="tbn_park" data-field="fish_species" data-where="park=東沙">—</span> 種）與南方四島（<span data-source="tbn_park" data-field="fish_species" data-where="park=南方四島">—</span> 種）海洋魚類最多，名錄完整度約 85%，兩地組成也最相似（Jaccard <span data-source="tbn_jaccard" data-field="jaccard" data-where="key=%E6%9D%B1%E6%B2%99-%E5%8D%97%E6%96%B9%E5%9B%9B%E5%B3%B6">—</span>）；南方四島記到 <span data-source="tbn_park" data-field="grouper" data-where="park=南方四島">—</span> 種石斑類，是四園區最多。墾丁只有 <span data-source="tbn_park" data-field="fish_species" data-where="park=墾丁">—</span> 種，因為資料庫裡墾丁的紀錄多是陸域與溪流調查（梅花鹿、陸蟹、溪魚），海洋魚類每次調查平均不到 4 種；墾丁 7 個 eDNA 站就補上 <span data-source="tbn_cross" data-field="edna_only" data-where="park=墾丁">—</span> 種長期調查沒記到、待實地確認的魚，合併名錄達 <span data-source="tbn_cross" data-field="union" data-where="park=墾丁">—</span> 種。台江以蝦蟹類為主（<span data-source="tbn_park" data-field="crust_species" data-where="park=台江">—</span> 種，四園區最多），另有 <span data-source="tbn_park" data-field="exotic_fish" data-where="park=台江">—</span> 種外來魚。這些紀錄已併入全臺 TBN 紀錄的「物種紀錄」分項；各年調查方法與努力量差異很大，不拿來判斷增減趨勢。</p>
+      <p><b>限制。</b>物種紀錄分項反映的是「目前已知」，調查多、面積大的保護區自然紀錄多（面積與生物多樣性分數 ρ＝<span data-source="tests" data-field="effect" data-where="id=34">—</span>）；200 公尺寬的帶狀保育區常因座標精度不足而沒有可判定的紀錄。保護區範圍以海委會 2017 年版圖層為主，野柳、東澳為近似範圍，三仙礁、椬梧無範圍。珊瑚礁體檢由志工執行，2008 年數值是讀圖約值。藍碳用全國平均碳密度。生態系類型為人工判定。</p>
     </div>
   </section>
 </section>
@@ -424,7 +483,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
           <thead><tr>
             <th data-field="cat" style="padding:8px">類別</th><th data-field="n" style="padding:8px">處數</th>
             <th data-field="score_wq" style="padding:8px">水質</th><th data-field="score_debris" style="padding:8px">海廢</th>
-            <th data-field="score_enf" style="padding:8px">執法</th><th data-field="bio_score" style="padding:8px">生物多樣性評比</th>
+            <th data-field="score_enf" style="padding:8px">執法</th><th data-field="bio_score" style="padding:8px">生物多樣性</th>
             <th data-field="score" style="padding:8px">綜合</th>
           </tr></thead>
           <tbody></tbody>
@@ -436,13 +495,13 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     <div class="card">
       <h2>各類別內部的差異</h2>
       <p class="note">每個點是一處保護區，粗線是中位數。同一類別內的分散程度遠大於類別之間的差距。</p>
-      <div class="toolbar"><select id="cat-dim"><option value="score">綜合</option><option value="score_wq">水質</option><option value="score_debris">海廢</option><option value="score_enf">執法</option><option value="bio_score">生物多樣性評比</option></select></div>
+      <div class="toolbar"><select id="cat-dim"><option value="score">綜合</option><option value="score_wq">水質</option><option value="score_debris">海廢</option><option value="score_enf">執法</option><option value="bio_score">生物多樣性</option></select></div>
       <div class="chart" id="cat-strip" data-source="cmpa"></div>
     </div>
 
     <div class="card">
       <h2>集群分析：四種成效型態</h2>
-      <p class="note">以水質、海廢、執法、生物多樣性評比四項分數（標準化後）做 Ward 階層式集群；68 處至少有三項資料者納入，缺一項以中位數補值。長條為該群平均分數。</p>
+      <p class="note">以水質、海廢、執法、生物多樣性四項分數（標準化後）做 Ward 階層式集群；67 處至少有三項資料者納入，缺一項以中位數補值。長條為該群平均分數。</p>
       <div class="cl-cards" id="cl-cards" data-source="cprof"></div>
     </div>
 
@@ -483,11 +542,11 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card method" id="cl-read">
       <h2>怎麼解讀</h2>
-      <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性評比 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性評比最高，但只有 4 處；漁業資源保育區的綜合平均最高，但同一類別內從 37 分到 79 分都有。</p>
+      <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性分數最高（平均約 84），綜合平均也最高，但只有 4 處；漁業資源保育區內部從 38 分到 81 分都有。</p>
       <p><b>集群和類別幾乎無關。</b>四個集群都混有多種類別，31 處漁業資源保育區分散在全部四群；類別與集群的關聯 Cramér's V＝<span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>、置換檢定 p＝<span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>，分群一致度（ARI）＝<span data-source="cstats" data-field="value" data-where="key=ari_category">—</span>，等於隨機。</p>
-      <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」多是花東與恆春半島的小型保育區和東部河口，台江國家公園也在其中：海況好，但幾乎沒有巡守或查緝紀錄，一旦壓力上升就沒有防線。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、全面落後」包含高美、椬梧濕地與白海豚棲地，需要整治陸源污染，不只是劃設；其中三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。</p>
+      <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」是花東與恆春的小型保育區（豐濱、小馬、小港、小湖、水璉、車城）和東部河口（蘭陽溪口、無尾港、卑南溪口、花蓮溪口）：海況好，但幾乎沒有巡守或查緝紀錄。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島，南方四島、東北角、白海豚棲地也在其中：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、管理弱」只剩高美、三仙礁、蘇澳；三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。納入實地紀錄後，台江、北門、七股鹽田等生物多樣性高的濕地移入「均衡良好」。</p>
       <p><b>對管理的意涵。</b>資源配置與管理策略應依成效型態分級，而不是依法源一體適用：缺管理的群組先補巡守與監測，海廢重的群組結合海廢清理與漁業／養殖廢棄物回收，水質差的群組要跨部會處理陸源污染。</p>
-      <p><b>方法與限制。</b>3 群的輪廓係數最高（<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>），但會把「均衡良好」與「有管理但海廢重」併成一大群，因此採 4 群（<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>）；k-means 分群結果一致度 ARI＝<span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>，只用四項齊全的 <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> 處重做為 <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span>。輪廓係數約 0.3 代表群界不算分明，宜視為型態而非明確分類。東沙、貓嶼、番仔石資料不足未納入。</p>
+      <p><b>方法與限制。</b>2 群與 3 群的輪廓係數較高（<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>），但會把「均衡良好」與「有管理但海廢重」併成一大群，因此沿用 4 群（<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>）；k-means 一致度 ARI＝<span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>，只用四項齊全的 <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> 處重做為 <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span>。新的生物多樣性分數讓群界更模糊，輪廓係數約 0.2，宜視為型態而非明確分類。東沙（只有生物多樣性與執法兩項）、貓嶼、高山、番仔石資料不足未納入。</p>
     </div>
   </section>
 </section>
@@ -534,10 +593,10 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card method" id="x-read">
       <h2>怎麼解讀</h2>
-      <p><b>綜合成效和分類幾乎無關。</b>類型、法源、IUCN 分類、保護等級、面積、成立年份與綜合分的關聯都不顯著；類別變項的 ε² 都接近 0，連續變項的 |ρ| 都在 0.2 以下（例如面積 ρ＝<span data-source="tests" data-field="effect" data-where="id=31">—</span>、成立年數 ρ＝<span data-source="tests" data-field="effect" data-where="id=36">—</span>）。海保署 2022 分級與本頁綜合分也沒有關聯。換句話說，「紙上的保護等級」和「海裡與執法上看得到的狀況」是兩回事。</p>
+      <p><b>綜合成效和分類關聯很弱。</b>類型、法源、IUCN 分類與綜合分的 ε² 都接近 0；面積（ρ＝<span data-source="tests" data-field="effect" data-where="id=31">—</span>）與最高保護等級（ρ＝<span data-source="tests" data-field="effect" data-where="id=41">—</span>）未校正 p 略低於 0.05，主要來自新的生物多樣性分數（見下段），成立年數 ρ＝<span data-source="tests" data-field="effect" data-where="id=36">—</span>。換句話說，「紙上的保護等級」和「海裡與執法上看得到的狀況」是兩回事。</p>
       <p><b>唯一穩定的訊號在執法。</b>有完全或高度保護分區的保護區，執法分數較高（最高保護等級 ρ＝<span data-source="tests" data-field="effect" data-where="id=45">—</span>，p＝<span data-source="tests" data-field="p" data-where="id=45">—</span>；完全＋高度保護面積占比 ρ＝<span data-source="tests" data-field="effect" data-where="id=55">—</span>）。控制保護區類型後仍成立，在漁業法保育區內部也看得到。但要注意：這主要來自「有巡守、有查獲」，而不是「有處分」——完全保護區的取締多、處分率反而低（琉球、東沙、南方四島）。比較像是「規定越嚴，越有東西可以抓」，不等於執法有效。</p>
-      <p><b>兩個看似顯著、其實是混淆的結果。</b>①成立越久海廢越少（ρ＝<span data-source="tests" data-field="effect" data-where="id=38">—</span>）：老的保護區多是 1978–1983 年劃設的花東漁業保育區，東海岸本來就少垃圾；控制「是否在花東」後，年份的效果消失。②建立階段「積極管理」的生物多樣性反而較低（ρ＝<span data-source="tests" data-field="effect" data-where="id=59">—</span>）：分類表裡 22 處濕地的活動欄是套用範本，「積極管理」標得過寬，加上 eDNA 多為單次採樣，這個結果不宜解讀。</p>
-      <p><b>多重比較。</b>共做 <span data-source="xsum" data-field="n_tests">—</span> 項檢定，<span data-source="xsum" data-field="n_nominal">—</span> 項 p&lt;0.05，純屬隨機也會出現約 3 項；經 FDR 校正後沒有一項低於 q＜0.1。樣本量方面，71 處只能偵測 |ρ|≳0.33 的關聯，國家公園（4 處）、自然保留區（3 處）等小組幾乎沒有檢定力，因此「無關」應讀作「沒有證據顯示有關」。</p>
+      <p><b>面積越大，生物多樣性分數越高。</b>面積與生物多樣性 ρ＝<span data-source="tests" data-field="effect" data-where="id=34">—</span>（p＝<span data-source="tests" data-field="p" data-where="id=34">—</span>），是 60 項中最強的關聯。這符合物種—面積關係，但也反映大型保護區（國家公園、白海豚棲地、大型濕地）調查多、紀錄多；200 公尺寬的帶狀保育區紀錄很少。另一個混淆是成立越久海廢越少（ρ＝<span data-source="tests" data-field="effect" data-where="id=38">—</span>）：老保護區多是花東漁業保育區，東海岸本來就少垃圾，控制花東後效果消失。過去「建立階段越積極、eDNA 多樣性越低」的關聯（舊版 ρ＝−0.44），改用新分數後已消失（ρ＝<span data-source="tests" data-field="effect" data-where="id=59">—</span>），印證那是單次 eDNA 採樣造成的假象。</p>
+      <p><b>多重比較。</b>共做 <span data-source="xsum" data-field="n_tests">—</span> 項檢定，<span data-source="xsum" data-field="n_nominal">—</span> 項 p&lt;0.05，純屬隨機也會出現約 3 項；經 FDR 校正後只有面積與生物多樣性一項低於 q＜0.1。樣本量方面，71 處只能偵測 |ρ|≳0.33 的關聯，國家公園（4 處）、自然保留區（3 處）等小組幾乎沒有檢定力，因此「無關」應讀作「沒有證據顯示有關」。</p>
       <p><b>對管理的意涵。</b>分類與等級決定的是「允許做什麼」，成效則取決於有沒有人巡守、查到之後有沒有處分、陸源壓力（海廢、營養鹽）有沒有被處理。要讓保護等級反映在成效上，下一步是逐區補齊處分率與監測資料，並把海廢與陸源污染納入管理計畫。</p>
     </div>
   </section>
@@ -585,10 +644,10 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card method" id="p-read">
       <h2>怎麼解讀</h2>
-      <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；同時控制漁業來源占比後仍成立（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口無關：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
+      <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；同時控制漁業來源占比後仍成立（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口沒有顯著關聯：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
       <p><b>漁業與養殖相關的壓力，比人口更能解釋成效。</b>淨灘垃圾中漁業來源（漁網、浮具、保麗龍、蚵架）占比越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=16">—</span>）。在多變項模型中，它是生態環境分數最強的預測因子（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-fish_sharez">—</span> 分），而人口密度放進同一模型後只剩 <span data-source="pmodels" data-field="beta" data-where="key=M1-ldz">—</span> 分、不顯著。也就是說，西南沿海濕地與澎湖、馬祖的低分，主要來自漁業與養殖廢棄物，而不只是住的人多。</p>
-      <p><b>但沒有證據顯示漁業讓魚類資源變少。</b>漁業來源占比和 eDNA 生物多樣性完全無關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=17">—</span>）。這不代表漁撈沒有影響，而是現有資料測不到：eDNA 只記出現與否、多為單次採樣，看不出數量或體型；這裡的漁業指標也只是海廢組成，不是真正的漁獲努力量。</p>
-      <p><b>管理投入和生態成果沒有正相關，甚至略為負相關。</b>巡守時數和生態環境分數 ρ＝<span data-source="ptests" data-field="rho" data-where="id=26">—</span>，控制人口與漁業後每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-lhz">—</span> 分。巡守時數只和執法分數正相關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=30">—</span>），而那是計分方式本身造成的。最可能的解釋是因果反向：受矚目或壓力大的地方（例如觀新藻礁、淡水河、許厝港）投入越多巡守，而巡守本身管不到陸源垃圾與漁業廢棄物。所以你的推論大致成立：<b>成效主要反映外部壓力，和目前形式的管理投入關聯不高。</b></p>
+      <p><b>但沒有證據顯示漁業讓物種變少。</b>漁業來源占比和生物多樣性分數沒有顯著關聯（ρ＝<span data-source="ptests" data-field="rho" data-where="id=17">—</span>，方向甚至為正）。這不代表漁撈沒有影響，而是現有資料測不到：物種紀錄只記出現與否，看不出數量或體型；這裡的漁業指標也只是海廢組成，不是真正的漁獲努力量。</p>
+      <p><b>管理投入和生態成果沒有關聯。</b>巡守時數和生態環境分數 ρ＝<span data-source="ptests" data-field="rho" data-where="id=26">—</span>，控制人口與漁業後每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-lhz">—</span> 分、不顯著（舊版用 eDNA 分數時為顯著負相關，改用新分數後消失）。巡守時數只和執法分數正相關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=30">—</span>），而那是計分方式本身造成的；它對綜合分的正係數（<span data-source="pmodels" data-field="beta" data-where="key=M4-lhz">—</span>）也來自同一個循環。結論不變：<b>成效主要反映外部壓力，和目前形式的管理投入關聯不高。</b></p>
       <p><b>限制。</b>人口是保護區所在或鄰接鄉鎮的整體人口，不是到海岸的距離；人口數取自維基百科鄉鎮列表，頁面未標資料年份。管理投入只有巡守人力與時數，沒有經費、管理計畫、監測投入。這是一次性的橫斷面資料，只能看關聯，不能推因果。</p>
     </div>
   </section>
@@ -603,21 +662,21 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <tbody>
         <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
         <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
-        <tr><td>生物多樣性</td><td>海保署保護區站點魚類 eDNA（2021–2024）</td><td>「每次採樣分類單元數」在同棲地（礁岩／河口）內的百分位，換算為 20–100；外來種占比 &gt;10% 扣 10、&gt;20% 扣 20。只有 40 處有採樣。</td></tr>
-        <tr><td>類別與集群分析</td><td>上列四項分數與生物多樣性評比；保護區類別取自 MPATable1</td><td>水質、海廢、執法、生物多樣性評比標準化後做 Ward 階層式集群（至少三項有資料者 68 處，缺一項以中位數補值）；比較 2–6 群的輪廓係數，採可解讀的 4 群，並以 k-means 與完整資料子集檢核穩定度。類別與集群的關聯以 Cramér's V 與 5,000 次置換檢定評估；國家公園等小類別在檢定時合併為 6 組。</td></tr>
-        <tr><td>生物多樣性評比（棲地）</td><td>生態系類型（人工判定）、珊瑚礁體檢 2008（中研院）、2023（台灣環境資訊協會）、2024–26（Reef Check Taiwan）、藍碳（海保署 2024 藍碳生態系調查逐點面積 × 全國平均碳密度）</td><td>棲地多樣性（主要 1、局部 0.5，滿 3 為 100）、珊瑚健康（最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（A 100、B 70）、魚類 eDNA，取有資料者平均；只有棲地一項不給等級。此評比另列於「生物多樣性」區塊，未改動上方綜合分。</td></tr>
+        <tr><td>生物多樣性</td><td>TBN 海洋魚類與蝦蟹類紀錄（含國家公園長期調查，依官方範圍判定是否在保護區內）、海保署魚類 eDNA（2021–2024，先期試驗）、珊瑚礁體檢 2008／2023／2024–26、藍碳（海保署 2024 逐點面積）、生態系類型</td><td>五分項加權平均：物種紀錄 1（已確認物種＋eDNA 獨有×0.5，同棲地百分位 20–100，受脅物種加 5–10）、珊瑚健康 1、藍碳 1（A 100、B 70）、棲地多樣性 1、eDNA 試驗 0.5。至少要有物種紀錄（已確認 ≥10 種）、珊瑚或 eDNA 一項實際觀測才給分；57 處有分數。</td></tr>
+        <tr><td>類別與集群分析</td><td>上列四項分數與生物多樣性；保護區類別取自 MPATable1</td><td>水質、海廢、執法、生物多樣性標準化後做 Ward 階層式集群（至少三項有資料者 67 處，缺一項以中位數補值）；比較 2–6 群的輪廓係數，採可解讀的 4 群，並以 k-means 與完整資料子集檢核穩定度。類別與集群的關聯以 Cramér's V 與 5,000 次置換檢定評估；國家公園等小類別在檢定時合併為 6 組。</td></tr>
+        <tr><td>國家公園長期物種調查</td><td>國家公園生物多樣性資料庫「物種調查點資料」（TBN 下載，2026-11-03）：東沙、墾丁、台江、南方四島</td><td>四園區比較：觀察種數、Chao2、累積曲線、Jaccard。紀錄本身已包含在全臺 TBN 紀錄中，透過「物種紀錄」分項計分。</td></tr>
         <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
       </tbody>
     </table>
     <p style="margin-top: var(--cds-gap-md)"><b>人口與漁業壓力</b>：人口密度為保護區所在或鄰接鄉鎮的人口除以鄉鎮面積（維基百科「List of townships/cities and districts in Taiwan」，頁面未標年份）；東沙、棉花嶼花瓶嶼無常住人口記為 0；番仔石位置待確認未納入。漁業壓力以淨灘監測海廢中漁業相關品項占比代表（2020、2024 年組成）。管理投入為海保署 MPA 平台 112–114 年巡守時數與人數。迴歸為 OLS、自變項標準化。</p>
     <p><b>交叉分析</b>：分類、法源、IUCN、保護等級、面積、成立年份與建立階段取自使用者提供的「臺灣海洋保護區之類型、IUCN 分類與保護等級（檢核修正版）」MPAbasic 工作表；保護等級用「最終保護等級（自動）」，以分區彙整為「最高等級」「最大分區等級」與「完全＋高度保護面積占比」。IUCN 用該表的建議值（自然保留區為 Ia）。</p>
     <p>等級：綜合 ≥70 良好、55–69 尚可、40–54 待加強、&lt;40 不佳；只有兩個面向有資料者標「暫評」，少於兩個面向標「資料不足」。</p>
-    <p><b>限制</b>：eDNA 多為單次採樣、只記出現與否，無法反映保護前後差異；執法「零查獲」可能是無違規，也可能是沒查到；海廢測點座標依地名推定（誤差 1–3 km）；四個面向等權重，若要強調生態成果可再調整。</p>
+    <p><b>限制</b>：物種紀錄只記出現與否、受調查努力量影響，eDNA 多為單次採樣，都無法反映保護前後差異；執法「零查獲」可能是無違規，也可能是沒查到；海廢測點座標依地名推定（誤差 1–3 km）；四個面向等權重，若要強調生態成果可再調整。</p>
   </section>
 </section>
 
 <footer class="site-foot">
-  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
+  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、台灣生物多樣性網絡 TBN（含墾丁、台江、東沙環礁、澎湖南方四島國家公園長期調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
   本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
   資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
 </footer>
@@ -677,7 +736,7 @@ dash.calc("lead", {
   let sortK = "score", sortDir = -1, selNo = null, built = false;
   const tbody = document.querySelector("#tbl tbody");
   const $ = id => document.getElementById(id);
-  const cols = ["no", "mpa", "category", "score_wq", "score_debris", "score_bio", "score_enf", "score", "grade", "weakest", "grade_2022"];
+  const cols = ["no", "mpa", "category", "score_wq", "score_debris", "score_bio", "score_enf", "score", "grade", "weakest"];
   const numCols = new Set(["no", "score_wq", "score_debris", "score_bio", "score_enf", "score"]);
 
   function scoreCell(td, v, comp) {
@@ -705,7 +764,7 @@ dash.calc("lead", {
       if (String(r.no) === String(selNo)) tr.classList.add("sel");
       cols.forEach(k => {
         const td = document.createElement("td");
-        if (["no", "category", "weakest", "grade_2022"].includes(k)) td.classList.add("hide-sm");
+        if (["no", "category", "weakest"].includes(k)) td.classList.add("hide-sm");
         if (k.startsWith("score")) scoreCell(td, r[k], k === "score");
         else if (k === "grade") { const s = document.createElement("span"); s.className = "pill"; const d = document.createElement("i"); d.className = "dot " + mpGradeClass(r.grade); s.appendChild(d); s.appendChild(document.createTextNode(r.grade)); td.appendChild(s); }
         else td.textContent = r[k] === "" ? "—" : String(r[k]);
@@ -725,7 +784,7 @@ dash.calc("lead", {
       el.textContent = v === "" || v == null ? "—" : String(v);
       el.classList.remove("dash-skeleton");
     });
-    $("d-sub").textContent = `${r.category}｜綜合 ${r.score === "" ? "—" : r.score} 分（${r.grade}）｜最弱面向：${r.weakest || "—"}｜海保署 2022 分級：${r.grade_2022}`;
+    $("d-sub").textContent = `${r.category}｜綜合 ${r.score === "" ? "—" : r.score} 分（${r.grade}）｜最弱面向：${r.weakest || "—"}`;
   }
 
   document.querySelectorAll("#tbl th button").forEach(b => b.addEventListener("click", () => {
@@ -810,7 +869,7 @@ dash.calc("lead", {
       const a = L.data[0], b = s.data[0];
       lead.classList.remove("dash-skeleton"); lead.textContent = "";
       const add = (t, src, f, strong) => { const e = document.createElement(strong ? "b" : "span"); e.textContent = t; if (src) { e.dataset.source = src; e.dataset.field = f; } lead.appendChild(e); };
-      add("整合水質、海廢、魚類 eDNA 與執法四項指標評估 71 處保護區：");
+      add("整合水質、海廢、生物多樣性（實地調查與 eDNA）與執法四項指標評估 71 處保護區：");
       add(String(b.good), "summary", "good", true); add(" 處良好、");
       add(String(b.bad), "summary", "bad", true); add(" 處不佳。最常拖累成效的是");
       add(a.weak_dim, "lead", "weak_dim", true); add("（");
@@ -966,7 +1025,7 @@ dash.calc("xsum", {
       const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "xsum"; e.dataset.field = f; } L.appendChild(e); };
       add("把綜合與四項分數，對保護區類型、法源、IUCN 分類、保護等級、面積、成立年份與建立階段做了 "); add(String(a.n_tests), "n_tests"); add(" 項檢定。綜合分數的 ");
       add(String(a.n_comp), "n_comp"); add(" 項檢定中，有 "); add(String(a.n_comp_sig), "n_comp_sig", true); add(" 項達顯著；FDR 校正後全部 "); add(String(a.n_tests), "n_tests"); add(" 項中有 ");
-      add(String(a.n_fdr), "n_fdr", true); add(" 項達 q<0.1。分類與保護等級無法預測成效，唯一一致的訊號是：嚴格保護分區多的地方，執法分數較高。"); }
+      add(String(a.n_fdr), "n_fdr", true); add(" 項達 q<0.1。分類與保護等級大致無法預測成效；較一致的訊號是嚴格保護分區多的地方執法分數較高，以及面積越大的保護區生物多樣性分數越高。"); }
     heat(); strip(); scatter();
   });
 })();
@@ -1147,7 +1206,7 @@ dash.calc("blead", {
       n_reef_good: reef.filter(r => latest(r) >= 50).length, n_sites: reefsites.length,
       bc_total: Math.round(tot), bc_dongsha_pct: Math.round(100 * Number(ds.est_tC) / tot),
       mg_in_pct: Math.round(100 * sum(mg.filter(r => r.mpa)) / sum(mg)), mg_out_ha: r1(sum(mg.filter(r => !r.mpa))), sg_out_ha: r1(sum(sg.filter(r => !r.mpa))),
-      g_good: g("良好"), g_ok: g("尚可"), g_warn: g("待加強"), g_bad: g("不佳"), g_nodata: g("資料不足（僅棲地）"),
+      g_good: g("良好"), g_ok: g("尚可"), g_warn: g("待加強"), g_bad: g("不佳"), g_nodata: g("資料不足（無生物觀測）"),
       den_mg: Math.round(182000 / 680 * 10) / 10, den_sg: Math.round(144000 / 5456 * 10) / 10, den_sm: Math.round(16000 / 188 * 10) / 10 }];
   }
 });
@@ -1347,7 +1406,8 @@ dash.calc("blead", {
       const tr = document.createElement("tr");
       const a = document.createElement("td"); a.className = "num"; a.textContent = r.no; tr.appendChild(a);
       const b = document.createElement("td"); b.textContent = r.mpa; tr.appendChild(b);
-      ["s_habitat", "s_coral", "s_bluecarbon", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
+      ["s_habitat", "s_coral", "s_bluecarbon", "s_species", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
+      { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.conf_sp; tr.appendChild(td); }
       const s = document.createElement("td"); scoreTd(s, r.bio_score); s.classList.add("comp"); tr.appendChild(s);
       const gd = document.createElement("td"); const p = document.createElement("span"); p.className = "pill";
       const d = document.createElement("i"); d.className = "dot " + (window.mpGradeClass ? window.mpGradeClass(r.bio_grade) : "");
@@ -1371,7 +1431,7 @@ dash.calc("blead", {
     if (b.status === "ok") {
       H = b.data; drawHab(H); drawReef(H); drawRank(H);
     } else {
-      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 10); $("reefchart").innerHTML = "";
+      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 12); $("reefchart").innerHTML = "";
     }
     if (rf.status === "ok") drawReefTbl(rf.data); else placeholderTbody($("reeftbl").querySelector("tbody"), 8);
     if (bc.status === "ok") { drawBC(bc.data); drawBCTbl(bc.data); } else { $("bcchart").innerHTML = ""; placeholderTbody($("bctbl").querySelector("tbody"), 8); }
@@ -1403,7 +1463,7 @@ dash.calc("blead", {
 window.CL_COLORS = ["#1a7f5a", "#2e86ab", "#e0a84a", "#d03b3b"];
 dash.calc("catprof8", {
   title: "八類保護區平均分數",
-  description: "依 8 種法定類別平均水質、海廢、執法、生物多樣性評比與綜合分（空值不計）。",
+  description: "依 8 種法定類別平均水質、海廢、執法、生物多樣性與綜合分（空值不計）。",
   inputs: ["cmpa"],
   fn: (cmpa) => {
     const order = ["國家公園", "漁業資源保育區", "重要濕地", "野生動物保護區", "野生動物重要棲息環境", "自然保留區", "自然紀念物", "風景區海域"];
@@ -1507,7 +1567,7 @@ dash.calc("cllead", {
     keys.forEach(([k, l]) => { const s = document.createElement("span"); const i = document.createElement("i"); i.className = "dot"; i.style.background = colOf(k); s.append(i, document.createTextNode(l)); lg.appendChild(s); });
     if (st.status === "ok") { const g = k => st.data.find(r => r.key === k).value;
       const n = $("cl-pca-note"); n.classList.remove("dash-skeleton");
-      n.textContent = `兩個主成分合計解釋 ${d3.format(".0f")(Number(g("pc1_var")) + Number(g("pc2_var")))}% 的變異。橫軸往右：海廢分數高（較乾淨）、執法分數低；縱軸往上：生物多樣性評比與水質較高。`; }
+      n.textContent = `兩個主成分合計解釋 ${d3.format(".0f")(Number(g("pc1_var")) + Number(g("pc2_var")))}% 的變異。橫軸往右：海廢分數高（較乾淨）、執法與生物多樣性分數低；縱軸往上：水質較高、生物多樣性較低。`; }
     if (d.status !== "ok") { el.classList.add("dash-skeleton"); return; } el.classList.remove("dash-skeleton");
     const rows = d.data.filter(r => r.pc1 !== "" && r.pc2 !== "");
     const W = el.clientWidth || 400, H = 320, m = 24;
@@ -1579,6 +1639,85 @@ dash.calc("cllead", {
       add(String(a.n_used), "n_used"); add(" 處保護區做集群分析，可分成 "); add(String(a.k), "k", true); add(" 種成效型態，但型態和類別幾乎無關（Cramér's V＝");
       add(d3.format(".2f")(a.v), "v"); add("，p＝"); add(d3.format(".2f")(a.p), "p"); add("）：同一類別的保護區散在不同型態裡。決定成效的是問題型態，而不是法源。"); }
     catTable(); strip(); cards(); pca(); xtab(); table();
+  });
+})();
+</script>
+
+<style>
+.mp .sub-h { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.mp #tbnpark tbody tr, .mp #tbnjac tbody tr, .mp #tbncross tbody tr, .mp #tbnthreat tbody tr { cursor: default; }
+.mp #tbn-card .grid2 > div { position: relative; }
+</style>
+
+<script>
+dash.calc("tbnlead", {
+  title: "長期調查摘要數字",
+  description: "計算 IUCN 受脅物種紀錄筆數。",
+  inputs: ["tbn_threat"],
+  fn: (tbn_threat) => [{ n_threat: tbn_threat.length }]
+});
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const ORDER = ["東沙", "南方四島", "墾丁", "台江"];
+  const pc = n => { const c = dash.colors || []; return c[ORDER.indexOf(n)] || "var(--color-fg)"; };
+  function rowsInto(tb, rows, cols) {
+    tb.innerHTML = "";
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      cols.forEach(([k, c]) => { const td = document.createElement("td"); if (c) td.className = c; const v = r[k]; td.textContent = v === "" || v == null ? "—" : v; if (v === "" || v == null) td.classList.add("na"); tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+  }
+  function ph(tb, n) { tb.innerHTML = ""; const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = n; td.className = "na"; td.textContent = "—"; tr.appendChild(td); tb.appendChild(tr); }
+
+  function drawCurve(rows) {
+    const el = $("tbncurve"); el.innerHTML = ""; const lg = $("tbn-lg"); lg.innerHTML = "";
+    ORDER.forEach(n => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = pc(n); s.appendChild(d); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+    const W = Math.max(300, el.clientWidth), H = 260, m = { l: 44, r: 14, t: 10, b: 32 };
+    const x = d3.scaleLinear().domain([0, d3.max(rows, r => Number(r.events))]).nice().range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, d3.max(rows, r => Number(r.richness))]).nice().range([H - m.b, m.t]);
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "海洋魚類物種累積曲線");
+    y.ticks(5).forEach(v => {
+      svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(v)).attr("y2", y(v)).attr("stroke", "var(--color-border-line)");
+      svg.append("text").attr("x", m.l - 6).attr("y", y(v) + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v);
+    });
+    x.ticks(5).forEach(v => svg.append("text").attr("x", x(v)).attr("y", H - m.b + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text(v));
+    svg.append("text").attr("x", W - m.r).attr("y", H - 2).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "var(--color-fg-muted)").text("調查次數");
+    const tip = $("tbn-tip");
+    ORDER.forEach(n => {
+      const rs = rows.filter(r => r.park === n).sort((a, b) => a.events - b.events);
+      if (!rs.length) return;
+      svg.append("path").attr("d", d3.line().x(r => x(Number(r.events))).y(r => y(Number(r.richness)))(rs)).attr("fill", "none").attr("stroke", pc(n)).attr("stroke-width", 2);
+      const last = rs[rs.length - 1];
+      svg.append("circle").attr("cx", x(Number(last.events))).attr("cy", y(Number(last.richness))).attr("r", 4).attr("fill", pc(n));
+      rs.forEach(r => svg.append("circle").attr("cx", x(Number(r.events))).attr("cy", y(Number(r.richness))).attr("r", 8).attr("fill", "transparent")
+        .on("mousemove", ev => {
+          tip.textContent = `${n}｜${r.events} 次調查約 ${r.richness} 種`; tip.style.display = "block";
+          const box = el.parentElement.getBoundingClientRect(); let lx = ev.clientX - box.left + 12; const tw = tip.offsetWidth;
+          if (lx + tw > box.width - 4) lx = ev.clientX - box.left - tw - 12;
+          tip.style.left = Math.max(4, lx) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+        }).on("mouseleave", () => { tip.style.display = "none"; }));
+    });
+  }
+
+  dash.onData(() => {
+    const p = dash.data("tbn_park"), c = dash.data("tbn_curve"), j = dash.data("tbn_jaccard"), x = dash.data("tbn_cross"), t = dash.data("tbn_threat");
+    if (p.status === "ok") rowsInto($("tbnpark").querySelector("tbody"), p.data.slice().sort((a, b) => Number(b.fish_species) - Number(a.fish_species)),
+      [["park", ""], ["years", "num"], ["events", "num"], ["fish_species", "num comp"], ["fish_chao2", "num"], ["completeness", "num"], ["fish_families", "num"], ["crust_species", "num"], ["butterfly", "num"], ["parrot", "num"], ["grouper", "num"], ["threatened", "num"], ["exotic_fish", "num"]]);
+    else ph($("tbnpark").querySelector("tbody"), 13);
+    if (c.status === "ok") drawCurve(c.data); else $("tbncurve").innerHTML = "";
+    if (j.status === "ok") {
+      const seen = new Set();
+      const rs = j.data.filter(r => r.a !== r.b && !seen.has([r.a, r.b].sort().join()) && seen.add([r.a, r.b].sort().join())).sort((a, b) => Number(b.jaccard) - Number(a.jaccard));
+      rowsInto($("tbnjac").querySelector("tbody"), rs, [["key", ""], ["shared", "num"], ["jaccard", "num"]]);
+    } else ph($("tbnjac").querySelector("tbody"), 3);
+    if (x.status === "ok") rowsInto($("tbncross").querySelector("tbody"), x.data, [["park", ""], ["tbn", "num"], ["edna", "num"], ["both", "num"], ["edna_only", "num"], ["union", "num comp"]]);
+    else ph($("tbncross").querySelector("tbody"), 6);
+    if (t.status === "ok") rowsInto($("tbnthreat").querySelector("tbody"), t.data, [["key", ""], ["name", ""], ["family", ""], ["iucn", ""], ["protected", ""], ["group", ""]]);
+    else ph($("tbnthreat").querySelector("tbody"), 6);
   });
 })();
 </script>
