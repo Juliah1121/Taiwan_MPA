@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -189,6 +189,46 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 .mp .xs .card { position: relative; }
 .mp .nav { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-sm); }
 .mp .nav a { color: var(--color-fg-muted); }
+/* 保護區介紹 */
+.mp .st-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--cds-gap-md); align-items: start; }
+@media (max-width: 860px) { .mp .st-grid { grid-template-columns: 1fr; } }
+.mp .st-map { min-height: 420px; }
+.mp .st-map svg { display: block; width: 100%; height: auto; }
+.mp .st-map .land { fill: var(--cds-chart-grid); stroke: var(--color-panel); stroke-width: .6; }
+.mp .st-map .inset { fill: none; stroke: var(--cds-chart-axis); stroke-dasharray: 3 3; }
+.mp .st-map .ilab { font-size: 11px; fill: var(--color-fg-muted); }
+.mp .st-map .pt { cursor: pointer; stroke: var(--color-panel); stroke-width: 1.2; }
+.mp .st-map .pt.dim { opacity: .15; pointer-events: none; }
+.mp .st-map .pt.sel { stroke: var(--color-fg); stroke-width: 2.4; }
+.mp .st-bar button { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.mp .st-bar button[aria-pressed="true"] { border-color: var(--color-fg); background: var(--color-fg); color: var(--color-panel); }
+.mp .st-detail h3 { font-family: var(--font-anthropic-serif); font-weight: 600; font-size: 22px; line-height: 1.3; margin: 4px 0 2px; }
+.mp .st-kicker { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; align-items: center; gap: 6px; }
+.mp .st-dl { display: grid; grid-template-columns: 6.5em 1fr; gap: 6px 12px; margin: var(--cds-gap-md) 0; font-size: 14px; }
+.mp .st-dl dt { color: var(--color-fg-muted); } .mp .st-dl dd { margin: 0; overflow-wrap: anywhere; }
+.mp .st-block { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-sm); margin-top: var(--cds-gap-sm); font-size: 14px; }
+.mp .st-block p { margin: 2px 0 0; line-height: 1.6; }
+.mp .st-block ul { margin: 4px 0 0; padding-left: 1.2em; line-height: 1.6; }
+.mp .st-bh { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 600; }
+.mp .st-score { display: flex; align-items: baseline; gap: 10px; margin-top: 4px; }
+.mp .st-big { font-family: var(--font-anthropic-serif); font-size: 34px; line-height: 1; }
+.mp .st-row { display: grid; grid-template-columns: 5.5em 1fr 2.5em; gap: 8px; align-items: center; font-size: var(--cds-font-size-caption); margin-top: 4px; }
+.mp .st-row .trk { height: 8px; border-radius: 4px; background: var(--cds-chart-grid); position: relative; overflow: hidden; }
+.mp .st-row .trk i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+.mp .st-row .v { text-align: right; font-variant-numeric: tabular-nums; }
+.mp .st-links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
+.mp .st-links a, .mp .st-src a { color: #1c5cab; }
+.mp .st-group { margin-top: var(--cds-gap-lg); }
+.mp .st-group h3 { font-family: var(--font-anthropic-serif); font-weight: 600; font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
+.mp .st-group > p { margin: 2px 0 var(--cds-gap-sm); color: var(--color-fg-muted); font-size: 14px; line-height: 1.6; max-width: 70em; }
+.mp .st-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-sm); }
+.mp .st-card { all: unset; box-sizing: border-box; cursor: pointer; background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 4px solid var(--c); border-radius: var(--cds-radius); padding: 8px 10px; display: grid; gap: 2px; font-size: var(--cds-font-size-caption); }
+.mp .st-card b { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.mp .st-card span { color: var(--color-fg-muted); }
+.mp .st-card:hover, .mp .st-card:focus-visible, .mp .st-card.sel { border-color: var(--color-fg); border-left-color: var(--c); }
+.mp .st-card:focus-visible { outline: 2px solid #1c5cab; outline-offset: 1px; }
+:root[data-theme="dark"] .mp .st-links a, :root[data-theme="dark"] .mp .st-src a { color: #6da7ec; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mp .st-links a, :root:not([data-theme="light"]) .mp .st-src a { color: #6da7ec; } }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
@@ -229,6 +269,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   </div>
 
   <div class="grid2 ov-links">
+    <a class="card ov-link" href="#sites"><b>保護區介紹</b><span>依六大類別介紹 71 處保護區的成立年份、位置、面積、法規與保護標的，並在臺灣地圖上標出位置。</span><em>看保護區介紹 →</em></a>
     <a class="card ov-link" href="#ranking"><b>成效排名</b><span>71 處保護區的水質、海廢、生物多樣性與執法分數，可搜尋、篩選，點選看原始指標。</span><em>看成效排名 →</em></a>
     <a class="card ov-link" href="#bio"><b>生物多樣性</b><span>生態系類型、珊瑚礁體檢、藍碳、TBN 實地調查物種紀錄與 eDNA，整合為各保護區的生物多樣性分數。</span><em>看生物多樣性 →</em></a>
     <a class="card ov-link" href="#clusters"><b>類別與集群</b><span>依國家公園、濕地、漁業資源保育區等類別比較成效，並以集群分析找出四種成效型態。</span><em>看類別與集群 →</em></a>
@@ -236,6 +277,45 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     <a class="card ov-link" href="#pressure"><b>人口與漁業壓力</b><span>鄰近人口、漁業與養殖廢棄物、巡守投入，哪一個最能解釋成效差異。</span><em>看壓力分析 →</em></a>
     <a class="card ov-link" href="#method"><b>評分方法</b><span>四面向的資料來源、計分方式、等級門檻與研究限制。</span><em>看評分方法 →</em></a>
   </div>
+</section>
+
+<section data-tab="sites" class="tabpage" hidden>
+  <section id="sites" class="xs">
+    <h2 class="xs-h">保護區介紹</h2>
+    <p class="lead">臺灣目前列為海洋保護區的 <b>71</b> 處，依法源分成六大類。點地圖上的點或下方清單，可看該區的成立年份、位置、面積、法規、保護標的與限制事項，以及本儀表板的成效評估結果；完整公告內容請見海保署「海洋保護區資訊平台」各區頁面。</p>
+    <div class="toolbar st-bar" role="group" aria-label="依類別篩選" id="st-chips"></div>
+    <div class="toolbar">
+      <input type="search" id="st-q" placeholder="搜尋名稱或縣市">
+      <select id="st-color" aria-label="地圖上色"><option value="cat">依類別上色</option><option value="grade">依成效等級上色</option></select>
+    </div>
+    <div class="st-grid">
+      <section class="card st-mapcard">
+        <h2>保護區分布</h2>
+        <p class="note">點位為各區海域範圍的代表位置（依 eDNA 採樣站、公告座標或地名推定），僅供示意，不是正式範圍線。</p>
+        <div class="legend" id="st-lg"></div>
+        <div class="chart st-map" id="st-map" data-source="dir"></div>
+      </section>
+      <section class="card st-detail" id="st-detail" aria-live="polite">
+        <div class="st-kicker"><i class="dot" id="st-d-dot"></i><span id="st-d-cat">—</span></div>
+        <h3 id="st-d-name">—</h3>
+        <p class="note" id="st-d-off"></p>
+        <dl class="st-dl" id="st-d-dl"></dl>
+        <div class="st-block"><div class="st-bh">保護標的</div><p id="st-d-tg">—</p></div>
+        <div class="st-block"><div class="st-bh">主要限制事項</div><p id="st-d-rs">—</p></div>
+        <div class="st-block" id="st-d-zwrap"><div class="st-bh">分區與保護等級（MPA Guide）</div><ul id="st-d-zones"></ul></div>
+        <div class="st-block st-eval">
+          <div class="st-bh">成效評估（本儀表板 v3）</div>
+          <div class="st-score"><span class="st-big" id="st-d-score">—</span><span id="st-d-grade"></span></div>
+          <div id="st-d-bars"></div>
+          <p class="note" id="st-d-cl"></p>
+          <div class="st-links" id="st-d-links"></div>
+        </div>
+        <p class="note st-src"><a id="st-d-oca" href="#" target="_blank" rel="noopener">海保署 MPA 資訊平台頁面 ↗</a></p>
+      </section>
+    </div>
+    <div id="st-groups"></div>
+    <p class="note">資料來源：海洋委員會海洋保育署「海洋保護區資訊平台」各區頁面與公告、農業部漁業署保育區公告、MPATable1（面積、成立年份、IUCN 分類與 MPA Guide 保護等級）。部分濕地與自然紀念物的公告細節尚未取得，以「—」表示。底圖：taiwan-atlas（內政部國土測繪中心縣市界，MIT 授權）。</p>
+  </section>
 </section>
 
 <section data-tab="ranking" class="tabpage" hidden>
@@ -857,6 +937,7 @@ dash.calc("lead", {
       renderTable(rows);
       if (selNo == null) { const top = rows.filter(r => r.score !== "").sort((a, b) => b.score - a.score)[0]; selNo = top ? top.no : rows[0].no; }
       showDetail(rows);
+      if (window.mpPendScroll) { window.mpPendScroll = false; setTimeout(() => $("detail").scrollIntoView({ block: "start" }), 350); }
     } else { tbody.textContent = ""; }
 
     const s = dash.data("summary");
@@ -880,6 +961,13 @@ dash.calc("lead", {
     drawCats(); drawCov();
   });
 
+  function pick(no) {
+    const d = dash.data("mpa"); if (d.status !== "ok") { selNo = no; return; }
+    selNo = no; renderTable(d.data); showDetail(d.data);
+    requestAnimationFrame(() => $("detail").scrollIntoView({ block: "start" }));
+  }
+  const m0 = location.hash.match(/^#ranking\/(\d+)/); if (m0) { selNo = m0[1]; window.mpPendScroll = true; }
+  window.addEventListener("mp:route", ev => { if (ev.detail.tab === "ranking" && ev.detail.arg) pick(ev.detail.arg); });
   const named = document.getElementById(location.hash.slice(1));
   if (named) named.scrollIntoView();
 })();
@@ -1724,21 +1812,250 @@ dash.calc("tbnlead", {
 
 <script>
 (function () {
-  const TABS = [["overview", "總覽"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["clusters", "類別與集群"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
+  const $ = id => document.getElementById(id);
+  const CATG = ["國家公園", "漁業資源保育區", "重要濕地", "野生動物保護區／重棲", "自然保留區／紀念物", "風景區海域"];
+  const CATC = ["#1c5cab", "#3fa796", "#c97a2b", "#6250d6", "#8aa29e", "#d03b3b"];
+  const CATD = {
+    "國家公園": "依《國家公園法》劃設，內政部國家公園署主管。以海域生態保護區、特別景觀區、一般管制區等分區管制，是面積最大、保護等級最完整的一類；東沙環礁一處就占全國保護區面積約三分之二。",
+    "漁業資源保育區": "依《漁業法》第 44、45 條由縣市政府公告，農業部漁業署主管。多為沿岸低潮線向外約 200 公尺的帶狀範圍，以禁採九孔、龍蝦、海膽、螻蛄蝦等特定物種為主，近年部分保育區加設禁止採捕的核心區。",
+    "重要濕地": "依《濕地保育法》評定，內政部國家公園署主管，由保育利用計畫分區並強調「明智利用」。多為西部河口、潮間帶與潟湖，是水鳥與底棲生物的重要棲地；本表只計其海域部分。",
+    "野生動物保護區／重棲": "依《野生動物保育法》公告，保護海鳥繁殖島嶼、綠蠵龜產卵沙灘、藻礁生態系與中華白海豚棲息環境，主管機關為農業部林業及自然保育署與海洋委員會海洋保育署。",
+    "自然保留區／紀念物": "依《文化資產保存法》指定，保護玄武岩柱狀節理、火山地形與特殊海蝕地景。面積很小，但原則上禁止改變自然狀態，進入須經許可。",
+    "風景區海域": "國家風景特定區內劃設的海域資源保護區，由交通部觀光署所屬管理處管理，採分區多功能使用，兼顧遊憩與資源保護。",
+  };
+  const GRC = { "良好": "var(--color-ok)", "尚可": "var(--cds-chart-muted)", "待加強": "var(--color-warn)", "不佳": "var(--color-bad)" };
+  const gradeCol = g => { const k = Object.keys(GRC).find(x => (g || "").startsWith(x)); return k ? GRC[k] : "var(--color-panel)"; };
+  const valCol = v => v >= 70 ? "var(--color-ok)" : v >= 55 ? "var(--cds-chart-muted)" : v >= 40 ? "var(--color-warn)" : "var(--color-bad)";
+  const catCol = c => CATC[Math.max(0, CATG.indexOf(c))];
+  const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+  const fmtArea = v => { const n = num(v); if (!n) return "—"; return n >= 100 ? d3.format(",.0f")(n) : n >= 1 ? d3.format(",.2~f")(n) : d3.format(".3~r")(n); };
+
+  let rows = [], topo = null, topoState = "loading", selNo = null, catF = "", built = false;
+  const tip = document.createElement("div"); tip.className = "tip";
+
+  // ---- minimal TopoJSON decoder (quantized, delta-encoded arcs) ----
+  function decode(t) {
+    const [sx, sy] = t.transform.scale, [tx, ty] = t.transform.translate;
+    const arcs = t.arcs.map(a => { let x = 0, y = 0; return a.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; }); });
+    const arc = i => i >= 0 ? arcs[i] : arcs[~i].slice().reverse();
+    const ring = ids => { const out = []; ids.forEach((i, k) => { const a = arc(i); (k ? a.slice(1) : a).forEach(p => out.push(p)); }); return out; };
+    return t.objects.counties.geometries.map(g => ({
+      name: g.properties.COUNTYNAME,
+      polys: g.type === "Polygon" ? [g.arcs.map(ring)] : g.type === "MultiPolygon" ? g.arcs.map(p => p.map(ring)) : [],
+    }));
+  }
+  const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) * 180 / Math.PI;
+  function proj(ext, box) {   // ext [lon0,lon1,lat0,lat1] -> box [x,y,w,h]; returns f(lon,lat)
+    const [x0, x1, y0, y1] = [ext[0], ext[1], merc(ext[2]), merc(ext[3])];
+    const k = Math.min(box[2] / (x1 - x0), box[3] / (y1 - y0));
+    const ox = box[0] + (box[2] - (x1 - x0) * k) / 2, oy = box[1] + (box[3] - (y1 - y0) * k) / 2;
+    const f = (lon, lat) => [ox + (lon - x0) * k, oy + (y1 - merc(lat)) * k];
+    f.k = k; return f;
+  }
+  const pathOf = (polys, f) => polys.map(p => p.map(r => "M" + r.map(c => f(c[0], c[1]).map(v => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("");
+
+  const MAIN = [119.25, 122.15, 21.85, 25.55];
+  const INSETS = [
+    { key: "matsu", name: "馬祖", ext: [119.86, 120.52, 26.12, 26.42], frame: [119.30, 120.38, 24.95, 25.50], counties: ["連江縣"], test: r => +r.lat > 25.9 },
+    { key: "kinmen", name: "金門", ext: [118.20, 118.50, 24.37, 24.54], frame: [119.30, 120.28, 24.15, 24.72], counties: ["金門縣"], test: r => +r.lon < 118.8 && +r.lat > 24 },
+    { key: "dongsha", name: "東沙環礁", ext: [116.62, 116.98, 20.56, 20.84], frame: [119.30, 120.10, 21.90, 22.55], counties: [], test: r => +r.lon < 117.5 },
+  ];
+
+  function visible(r) {
+    const q = $("st-q").value.trim();
+    return (!catF || r.cat_group === catF) && (!q || r.mpa.includes(q) || r.official_name.includes(q) || (r.county || "").includes(q));
+  }
+
+  function drawMap() {
+    const el = $("st-map");
+    el.textContent = "";
+    if (!rows.length || topoState !== "ok") { el.classList.add("dash-skeleton"); return; }
+    el.classList.remove("dash-skeleton");
+    const W = el.clientWidth || 600, H = Math.round(Math.min(W * 1.3, 720));
+    const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", "臺灣海洋保護區分布圖");
+    const f = proj(MAIN, [6, 6, W - 12, H - 12]);
+    const by = $("st-color").value;
+    const fill = r => by === "grade" ? gradeCol(r.grade) : catCol(r.cat_group);
+    const defs = svg.append("defs");
+    svg.append("g").selectAll("path").data(topo.filter(c => c.name !== "連江縣" && c.name !== "金門縣")).join("path")
+      .attr("class", "land").attr("d", c => pathOf(c.polys, f));
+
+    const groups = { main: svg.append("g") };
+    INSETS.forEach(ins => {
+      const [a, b] = [f(ins.frame[0], ins.frame[3]), f(ins.frame[1], ins.frame[2])];
+      const box = [a[0], a[1], b[0] - a[0], b[1] - a[1]];
+      const g = svg.append("g");
+      g.append("rect").attr("class", "inset").attr("x", box[0]).attr("y", box[1]).attr("width", box[2]).attr("height", box[3]).attr("rx", 3);
+      g.append("text").attr("class", "ilab").attr("x", box[0] + 5).attr("y", box[1] + 13).text(ins.name);
+      const cid = "st-clip-" + ins.key;
+      defs.append("clipPath").attr("id", cid).append("rect").attr("x", box[0]).attr("y", box[1]).attr("width", box[2]).attr("height", box[3]);
+      const inner = g.append("g").attr("clip-path", `url(#${cid})`);
+      const fi = proj(ins.ext, [box[0] + 4, box[1] + 16, box[2] - 8, box[3] - 20]);
+      topo.filter(c => ins.counties.includes(c.name)).forEach(c => inner.append("path").attr("class", "land").attr("d", pathOf(c.polys, fi)));
+      if (ins.key === "dongsha") {   // atoll ring and Dongsha Island (no land polygon in the basemap)
+        const c = fi(116.80, 20.70), r = 0.115 * fi.k;
+        inner.append("ellipse").attr("cx", c[0]).attr("cy", c[1]).attr("rx", r).attr("ry", r * 0.95).attr("fill", "none").style("stroke", "var(--cds-chart-axis)").attr("stroke-width", 3);
+        const is = fi(116.72, 20.70); inner.append("circle").attr("cx", is[0]).attr("cy", is[1]).attr("r", 2.5).style("fill", "var(--cds-chart-axis)");
+      }
+      groups[ins.key] = { g: inner, f: fi };
+    });
+
+    const place = r => { const ins = INSETS.find(i => i.test(r)); return ins ? groups[ins.key] : { g: groups.main, f }; };
+    const order = rows.slice().sort((a, b) => (String(a.no) === String(selNo)) - (String(b.no) === String(selNo)) || (+b.area_km2 || 0) - (+a.area_km2 || 0));
+    order.forEach(r => {
+      const p = place(r), [x, y] = p.f(+r.lon, +r.lat);
+      const sel = String(r.no) === String(selNo);
+      p.g.append("circle").attr("class", "pt" + (visible(r) ? "" : " dim") + (sel ? " sel" : ""))
+        .attr("cx", x).attr("cy", y).attr("r", sel ? 8 : W < 500 ? 4.5 : 5.5).style("fill", fill(r))
+        .attr("tabindex", visible(r) ? 0 : -1).attr("role", "button").attr("aria-label", r.mpa)
+        .on("click", () => select(r.no, true))
+        .on("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(r.no, true); } })
+        .on("mousemove", ev => {
+          tip.textContent = "";
+          const h = document.createElement("div"); h.style.fontWeight = "600"; h.textContent = r.mpa; tip.appendChild(h);
+          const s = document.createElement("div"); s.style.color = "var(--cds-text-secondary)";
+          s.textContent = `${r.cat_group}｜${r.county || "—"}｜${r.grade}${r.score ? " " + r.score : ""}`; tip.appendChild(s);
+          tip.style.display = "block"; const [mx, my] = d3.pointer(ev, el);
+          tip.style.left = Math.max(4, Math.min(mx + 12, el.clientWidth - tip.offsetWidth - 4)) + "px"; tip.style.top = (my + 14) + "px";
+        })
+        .on("mouseleave", () => { tip.style.display = "none"; });
+    });
+    el.appendChild(tip);
+
+    const lg = $("st-lg"); lg.textContent = "";
+    const items = by === "grade" ? ["良好", "尚可", "待加強", "不佳", "資料不足"].map(g => [g, gradeCol(g)]) : CATG.map((c, i) => [c, CATC[i]]);
+    items.forEach(([n, c]) => { const s = document.createElement("span"); const d = document.createElement("i"); d.className = "dot"; d.style.background = c; if (n === "資料不足") d.style.boxShadow = "inset 0 0 0 1px var(--cds-chart-axis)"; s.appendChild(d); s.appendChild(document.createTextNode(n)); lg.appendChild(s); });
+  }
+
+  function addDl(dl, k, v) {
+    if (v == null || v === "") v = "—";
+    const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v;
+    dl.appendChild(dt); dl.appendChild(dd);
+  }
+
+  function showDetail() {
+    const r = rows.find(x => String(x.no) === String(selNo));
+    if (!r) return;
+    $("st-d-dot").style.background = catCol(r.cat_group);
+    $("st-d-cat").textContent = `${r.cat_group}｜${r.type}`;
+    $("st-d-name").textContent = r.mpa;
+    $("st-d-off").textContent = r.official_name !== r.mpa ? `公告名稱：${r.official_name}` : "";
+    const dl = $("st-d-dl"); dl.textContent = "";
+    addDl(dl, "成立年份", r.year);
+    addDl(dl, "縣市", r.county);
+    addDl(dl, "位置／範圍", r.location);
+    addDl(dl, "海域面積", !num(r.area_km2) ? (r.area_note ? `未列海域面積（${r.area_note}）` : "—") : `${fmtArea(r.area_km2)} km²` + (r.area_note && !/未載明/.test(r.area_note) ? `（${r.area_note}）` : ""));
+    addDl(dl, "法源", r.law);
+    addDl(dl, "主管機關", r.authority);
+    addDl(dl, "管理機關", r.manager);
+    addDl(dl, "最新公告", [r.latest_notice, r.notice_no].filter(Boolean).join("｜"));
+    addDl(dl, "IUCN 分類", r.iucn);
+    addDl(dl, "保護等級", r.best_level === r.dom_level ? r.best_level : `最高 ${r.best_level}；面積最大分區 ${r.dom_level}`);
+    $("st-d-tg").textContent = r.targets || "—";
+    $("st-d-rs").textContent = r.restrictions || "—";
+    const zl = $("st-d-zones"); zl.textContent = "";
+    if (r.zones) { r.zones.split("；").forEach(z => { const li = document.createElement("li"); li.textContent = z.replace(/｜/g, "，"); zl.appendChild(li); }); $("st-d-zwrap").hidden = false; }
+    else $("st-d-zwrap").hidden = true;
+    $("st-d-score").textContent = r.score || "—";
+    const gd = $("st-d-grade"); gd.textContent = ""; const dot = document.createElement("i"); dot.className = "dot " + (window.mpGradeClass ? mpGradeClass(r.grade) : ""); gd.className = "pill"; gd.appendChild(dot); gd.appendChild(document.createTextNode(r.grade + (r.dims ? `（${r.dims} 面向有資料）` : "")));
+    const bars = $("st-d-bars"); bars.textContent = "";
+    [["score_wq", "水質"], ["score_debris", "海廢"], ["score_bio", "生物多樣性"], ["score_enf", "執法"]].forEach(([k, n]) => {
+      const v = num(r[k]); const row = document.createElement("div"); row.className = "st-row";
+      const a = document.createElement("span"); a.textContent = n;
+      const t = document.createElement("span"); t.className = "trk"; if (v != null) { const i = document.createElement("i"); i.style.width = v + "%"; i.style.background = valCol(v); t.appendChild(i); }
+      const b = document.createElement("span"); b.className = "v" + (v == null ? " na" : ""); b.textContent = v == null ? "—" : d3.format(".0f")(v);
+      row.append(a, t, b); bars.appendChild(row);
+    });
+    $("st-d-cl").textContent = [r.weakest ? `最弱面向：${r.weakest}` : "", r.cluster_name ? `成效型態：${r.cluster_name}` : ""].filter(Boolean).join("｜");
+    const L = $("st-d-links"); L.textContent = "";
+    [[`#ranking/${r.no}`, "四面向原始指標"], ["#bio", "生物多樣性"], ["#clusters", "類別與集群"], ["#cross", "分類交叉分析"], ["#pressure", "人口與漁業壓力"]].forEach(([h, t]) => {
+      const a = document.createElement("a"); a.href = h; a.textContent = t + " →"; L.appendChild(a);
+    });
+    $("st-d-oca").href = r.oca_url;
+    document.querySelectorAll("#st-groups .st-card").forEach(c => c.classList.toggle("sel", c.dataset.no === String(r.no)));
+  }
+
+  function select(no, fromUser) {
+    selNo = no; showDetail(); drawMap();
+    if (fromUser) {
+      try { history.replaceState(null, "", "#sites/" + no); } catch (e) {}
+      const d = $("st-detail"); const top = d.getBoundingClientRect().top;
+      if (top < 40 || top > window.innerHeight * 0.6) d.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function buildChips() {
+    const bar = $("st-chips"); bar.textContent = "";
+    [["", "全部", rows.length, null]].concat(CATG.map((c, i) => [c, c, rows.filter(r => r.cat_group === c).length, CATC[i]])).forEach(([v, n, k, col]) => {
+      const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-pressed", String(v === catF));
+      if (col) { const d = document.createElement("i"); d.className = "dot"; d.style.background = col; b.appendChild(d); }
+      b.appendChild(document.createTextNode(`${n} ${k}`));
+      b.addEventListener("click", () => { catF = v; buildChips(); renderGroups(); drawMap(); });
+      bar.appendChild(b);
+    });
+  }
+
+  function renderGroups() {
+    const host = $("st-groups"); host.textContent = "";
+    CATG.forEach((c, i) => {
+      const rs = rows.filter(r => r.cat_group === c && visible(r)).sort((a, b) => (+a.year || 9999) - (+b.year || 9999) || a.mpa.localeCompare(b.mpa, "zh-Hant"));
+      if (!rs.length) return;
+      const sec = document.createElement("section"); sec.className = "st-group";
+      const h = document.createElement("h3"); const d = document.createElement("i"); d.className = "dot"; d.style.background = CATC[i]; d.style.width = d.style.height = "12px";
+      h.append(d, document.createTextNode(`${c}（${rs.length}）`)); sec.appendChild(h);
+      const p = document.createElement("p"); p.textContent = CATD[c]; sec.appendChild(p);
+      const grid = document.createElement("div"); grid.className = "st-cards";
+      rs.forEach(r => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "st-card" + (String(r.no) === String(selNo) ? " sel" : ""); b.dataset.no = r.no; b.style.setProperty("--c", CATC[i]);
+        const t = document.createElement("b"); t.textContent = r.mpa;
+        const m = document.createElement("span"); m.textContent = [r.county ? r.county.replace(/（.*）/, "") : "", r.year ? r.year + " 年" : "", num(r.area_km2) ? fmtArea(r.area_km2) + " km²" : ""].filter(Boolean).join("｜");
+        const g = document.createElement("span"); g.className = "pill"; const gd = document.createElement("i"); gd.className = "dot " + (window.mpGradeClass ? mpGradeClass(r.grade) : ""); g.append(gd, document.createTextNode(`${r.grade}${r.score ? " " + r.score : ""}`));
+        b.append(t, m, g); b.addEventListener("click", () => select(r.no, true)); grid.appendChild(b);
+      });
+      sec.appendChild(grid); host.appendChild(sec);
+    });
+    if (!host.children.length) { const p = document.createElement("p"); p.className = "note"; p.textContent = "沒有符合的保護區。"; host.appendChild(p); }
+  }
+
+  $("st-q").addEventListener("input", () => { renderGroups(); drawMap(); });
+  $("st-color").addEventListener("change", drawMap);
+  window.addEventListener("mp:route", ev => { if (ev.detail.tab === "sites" && ev.detail.arg && rows.length) { selNo = ev.detail.arg; showDetail(); } });
+
+  d3.json("data/taiwan_counties.json").then(t => { topo = decode(t); topoState = "ok"; drawMap(); }).catch(e => { console.error(e); topoState = "error"; $("st-map").textContent = "底圖載入失敗"; });
+
+  dash.onData(() => {
+    const d = dash.data("dir");
+    if (d.status !== "ok") return;
+    rows = d.data;
+    if (!built) {
+      const m = location.hash.match(/^#sites\/(\d+)/);
+      selNo = m ? m[1] : (rows.find(r => r.mpa === "墾丁國家公園") || rows[0]).no;
+      buildChips(); built = true;
+    }
+    renderGroups(); showDetail(); drawMap();
+  });
+})();
+</script>
+<script>
+(function () {
+  const TABS = [["overview", "總覽"], ["sites", "保護區介紹"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["clusters", "類別與集群"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];
   const bar = document.getElementById("tabbar");
   TABS.forEach(([k, l]) => { const a = document.createElement("a"); a.href = "#" + k; a.dataset.k = k; a.textContent = l; bar.appendChild(a); });
-  function show(k) {
+  function show(h) {
+    let [k, arg] = (h || "").split("/");
     if (!TABS.some(t => t[0] === k)) k = "overview";
     document.querySelectorAll("section[data-tab]").forEach(s => { s.hidden = s.dataset.tab !== k; });
     bar.querySelectorAll("a").forEach(a => { if (a.dataset.k === k) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     const cur = bar.querySelector('[aria-current="page"]'); if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: "nearest", inline: "nearest" });
-    requestAnimationFrame(() => dash._rerun());   // charts measure their width, so redraw once visible
+    requestAnimationFrame(() => { dash._rerun(); window.dispatchEvent(new CustomEvent("mp:route", { detail: { tab: k, arg } })); });   // charts measure their width, so redraw once visible
   }
-  window.addEventListener("hashchange", () => { show(location.hash.slice(1)); window.scrollTo({ top: 0 }); });
+  window.addEventListener("hashchange", () => { show(location.hash.slice(1)); if (!location.hash.includes("/")) window.scrollTo({ top: 0 }); });
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   show(location.hash.slice(1));
-  window.scrollTo({ top: 0 });
-  window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0 }), 0));
+  if (!location.hash.includes("/")) {
+    window.scrollTo({ top: 0 });
+    window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0 }), 0));
+  }
   dash._start();
 })();
 </script>
