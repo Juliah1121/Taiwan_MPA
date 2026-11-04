@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv", "benthic_mpa": "benthic_mpa.csv", "benthic_compare": "benthic_compare.csv", "offshore_mpa": "offshore_mpa.csv", "offshore_ref": "offshore_ref.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -268,7 +268,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     </section>
     <section class="card" id="cover">
       <h2>資料覆蓋</h2>
-      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性納入實地紀錄後由 40 處增至 57 處，仍是缺口最大的面向，綜合分在資料少的區應保守解讀。</p>
+      <p class="note">各面向有資料的保護區數（共 71 處）。生物多樣性納入實地紀錄與潛水調查 eDNA 後由 40 處增至 60 處，仍是缺口最大的面向，綜合分在資料少的區應保守解讀。</p>
       <div class="chart" id="covchart" data-source="coverage"></div>
     </section>
   </div>
@@ -519,7 +519,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card" id="biorank-card">
       <h2>海洋生物多樣性分數</h2>
-      <p class="note">這就是上方綜合評估的「生物多樣性」面向。五個分項各 0–100，加權平均：物種紀錄（權重 1；TBN 實地紀錄已確認物種＋eDNA 獨有物種×0.5，在同棲地保護區間的百分位換算 20–100，IUCN 受脅物種 1 種以上 +5、5 種以上 +10）、珊瑚健康（1；最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（1；A 級 100、B 級 70）、棲地多樣性（1；主要生態系 1 分、局部 0.5 分，滿 3 分為 100）、eDNA 試驗（0.5；每次採樣分類單元在同棲地的百分位）。至少要有物種紀錄、珊瑚或 eDNA 其中一項實際觀測才給分。點欄位標題排序。</p>
+      <p class="note">這就是上方綜合評估的「生物多樣性」面向。五個分項各 0–100，加權平均：物種紀錄（權重 1；TBN 實地紀錄已確認物種＋eDNA（保護區站點與潛水調查）獨有物種×0.5，在同棲地保護區間的百分位換算 20–100，IUCN 受脅物種 1 種以上 +5、5 種以上 +10）、珊瑚健康（1；最近覆蓋率 ×1.6＋20，減少扣 10）、藍碳（1；A 級 100、B 級 70）、棲地多樣性（1；主要生態系 1 分、局部 0.5 分，滿 3 分為 100）、eDNA 試驗（0.5；保護區站點每次採樣分類單元在同棲地的百分位）。至少要有物種紀錄、珊瑚或 eDNA 其中一項實際觀測才給分。點欄位標題排序。</p>
       <div class="toolbar">
         <select id="br-g"><option value="">全部等級</option><option>良好</option><option>尚可</option><option>待加強</option><option>不佳</option><option>資料不足（無生物觀測）</option></select>
       </div>
@@ -534,6 +534,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
             <th data-field="s_species"><button data-k="s_species">物種紀錄</button></th>
             <th data-field="s_edna"><button data-k="s_edna">eDNA 試驗</button></th>
             <th data-field="conf_sp" class="hide-sm"><button data-k="conf_sp">已確認物種</button></th>
+            <th data-field="edna_taxa" class="hide-sm"><button data-k="edna_taxa">eDNA 物種</button></th>
             <th data-field="bio_score"><button data-k="bio_score">評比分數</button></th>
             <th data-field="bio_grade"><button data-k="bio_grade">等級</button></th>
             <th data-field="rc_grade" class="hide-sm"><button data-k="rc_grade">珊瑚等級</button></th>
@@ -544,11 +545,31 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </div>
     </div>
 
+    <div class="card" id="benthic-card">
+      <h2>底棲群聚：保護區內外比較（輔助資料）</h2>
+      <p class="note">海保署「臺灣海域重要生態系調查」潛水採集的底質岩芯，記錄沉積物中小型底棲動物（多毛類、端足類等）的密度與生物量。分類多只到綱或目，不計入上方分數，只用來比較保護區內外。p 為 Mann-Whitney 檢定；「—」表示該區域某一側站數不足 3。</p>
+      <p class="lead" id="bt-lead">—</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="bt-cmp" data-source="benthic_compare" data-row-key="region">
+          <thead><tr><th data-field="region">區域</th><th data-field="n_in">區內站數</th><th data-field="n_out">區外站數</th><th data-field="taxa_in">分類群數（內）</th><th data-field="taxa_out">（外）</th><th data-field="taxa_p">p</th><th data-field="density_in">密度 ind./m²（內）</th><th data-field="density_out">（外）</th><th data-field="density_p">p</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <h3 class="sub-h" style="margin-top: var(--cds-gap-md)">各保護區底棲站點</h3>
+      <div class="tbl-wrap">
+        <table id="bt-mpa" data-source="benthic_mpa" data-row-key="mpa">
+          <thead><tr><th data-field="mpa">保護區</th><th data-field="n_sites">站數</th><th data-field="taxa_mean">平均分類群數</th><th data-field="density_med">密度中位數 ind./m²</th><th data-field="biomass_med" class="hide-sm">生物量中位數</th><th data-field="sites" class="hide-sm">站點</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="card method" id="bio-read">
       <h2>怎麼解讀</h2>
       <p><b>珊瑚礁在退步，而且保護區內外都一樣。</b>富山（杉原）2008 年活珊瑚約 <span data-source="biohab" data-field="rc2008" data-where="no=25">—</span>%，2024–25 年硬珊瑚只剩 <span data-source="biohab" data-field="rc2025" data-where="no=25">—</span>%；墾丁 2023 年兩樣點平均 <span data-source="biohab" data-field="rc2023" data-where="no=10">—</span>%，合界到 2025 年降到 <span data-source="biohab" data-field="rc2025" data-where="no=10">—</span>%，淺層減少達顯著。南方四島東嶼坪從 2023 年的 <span data-source="biohab" data-field="rc2023" data-where="no=9">—</span>% 落到 2025 年的 <span data-source="biohab" data-field="rc2025" data-where="no=9">—</span>%，不過 2023 年量的是 6–8 米活珊瑚、2025 年是硬珊瑚，降幅可能被放大。唯一維持優良的是綠島（2023 年約 <span data-source="biohab" data-field="rc2023" data-where="no=16">—</span>%）。</p>
       <p><b>藍碳集中在少數地方，而且有一半紅樹林不在保護區內。</b>東沙海草床約 <span data-source="bluecarbon" data-field="est_tC" data-where="no=7">—</span> 公噸碳；本島以淡水河（<span data-source="bluecarbon" data-field="est_tC" data-where="no=60">—</span>）、台江（<span data-source="bluecarbon" data-field="est_tC" data-where="no=8">—</span>）、朴子溪（<span data-source="bluecarbon" data-field="est_tC" data-where="no=50">—</span>）、北門（<span data-source="bluecarbon" data-field="est_tC" data-where="no=53">—</span>）的紅樹林最多。鰲鼓、北港溪口、濁水溪北岸、大鵬灣、員林大排各有 40–53 公頃紅樹林，卻都不在這 71 處內；本島最大的海草床澎湖鎮海灣（<span data-source="bcsites" data-field="area_2023" data-where="key=%E6%B5%B7%E8%8D%89%E5%BA%8A-%E9%8E%AE%E6%B5%B7%E7%81%A3">—</span> 公頃）也沒有保護。紅樹林在香山等泥灘濕地屬外來擴張、會壓縮招潮蟹與水鳥棲地，所以藍碳高不等於保育價值高，評比只把它當成一個分項。</p>
       <p><b>納入實地紀錄後，排名變動最大的是有長期調查的地方。</b>東沙（<span data-source="biohab" data-field="bio_score" data-where="no=7">—</span>）與台江（<span data-source="biohab" data-field="bio_score" data-where="no=8">—</span>）有大量確認紀錄、受脅物種與藍碳，分數最高；過去沒有 eDNA 的東沙、南方四島、北門、七股鹽田、白海豚棲地都因此有了分數。反過來，只有一次 eDNA 試驗的花東小保育區（如小湖、宜灣）分數下降，因為 eDNA 改為半權重、且沒有實地紀錄佐證。富山（<span data-source="biohab" data-field="bio_score" data-where="no=25">—</span>）與石梯坪（<span data-source="biohab" data-field="bio_score" data-where="no=38">—</span>）的珊瑚覆蓋率近年已落到不佳，分數仍受珊瑚健康拖累。</p>
+      <p><b>潛水調查 eDNA 補上了離島與綠島的缺口。</b>海保署「臺灣海域重要生態系調查」的潛水 eDNA（110–112 年）有 67 個站點落在 22 處保護區內或 1 km 內，讓貓嶼（<span data-source="biohab" data-field="bio_score" data-where="no=4">—</span>）、望安綠蠵龜產卵棲地（<span data-source="biohab" data-field="bio_score" data-where="no=5">—</span>）、綠島海參坪（<span data-source="biohab" data-field="bio_score" data-where="no=11">—</span>）首次有了分數，棉花嶼花瓶嶼由 38 升到 <span data-source="biohab" data-field="bio_score" data-where="no=2">—</span>。這三處的已確認物種仍不到 10 種，分數主要來自 eDNA，宜當作暫評。</p>
       <p><b>四個國家公園的長期調查。</b>東沙（<span data-source="tbn_park" data-field="fish_species" data-where="park=東沙">—</span> 種）與南方四島（<span data-source="tbn_park" data-field="fish_species" data-where="park=南方四島">—</span> 種）海洋魚類最多，名錄完整度約 85%，兩地組成也最相似（Jaccard <span data-source="tbn_jaccard" data-field="jaccard" data-where="key=%E6%9D%B1%E6%B2%99-%E5%8D%97%E6%96%B9%E5%9B%9B%E5%B3%B6">—</span>）；南方四島記到 <span data-source="tbn_park" data-field="grouper" data-where="park=南方四島">—</span> 種石斑類，是四園區最多。墾丁只有 <span data-source="tbn_park" data-field="fish_species" data-where="park=墾丁">—</span> 種，因為資料庫裡墾丁的紀錄多是陸域與溪流調查（梅花鹿、陸蟹、溪魚），海洋魚類每次調查平均不到 4 種；墾丁 7 個 eDNA 站就補上 <span data-source="tbn_cross" data-field="edna_only" data-where="park=墾丁">—</span> 種長期調查沒記到、待實地確認的魚，合併名錄達 <span data-source="tbn_cross" data-field="union" data-where="park=墾丁">—</span> 種。台江以蝦蟹類為主（<span data-source="tbn_park" data-field="crust_species" data-where="park=台江">—</span> 種，四園區最多），另有 <span data-source="tbn_park" data-field="exotic_fish" data-where="park=台江">—</span> 種外來魚。這些紀錄已併入全臺 TBN 紀錄的「物種紀錄」分項；各年調查方法與努力量差異很大，不拿來判斷增減趨勢。</p>
       <p><b>限制。</b>物種紀錄分項反映的是「目前已知」，調查多、面積大的保護區自然紀錄多（面積與生物多樣性分數 ρ＝<span data-source="tests" data-field="effect" data-where="id=34">—</span>）；200 公尺寬的帶狀保育區常因座標精度不足而沒有可判定的紀錄。保護區範圍以海委會 2017 年版圖層為主，野柳、東澳為近似範圍，三仙礁、椬梧無範圍。珊瑚礁體檢由志工執行，2008 年數值是讀圖約值。藍碳用全國平均碳密度。生態系類型為人工判定。</p>
     </div>
@@ -629,7 +650,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <h2>怎麼解讀</h2>
       <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性分數最高（平均約 84），綜合平均也最高，但只有 4 處；漁業資源保育區內部從 38 分到 81 分都有。</p>
       <p><b>集群和類別幾乎無關。</b>四個集群都混有多種類別，31 處漁業資源保育區分散在全部四群；類別與集群的關聯 Cramér's V＝<span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>、置換檢定 p＝<span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>，分群一致度（ARI）＝<span data-source="cstats" data-field="value" data-where="key=ari_category">—</span>，等於隨機。</p>
-      <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」是花東與恆春的小型保育區（豐濱、小馬、小港、小湖、水璉、車城）和東部河口（蘭陽溪口、無尾港、卑南溪口、花蓮溪口）：海況好，但幾乎沒有巡守或查緝紀錄。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島，南方四島、東北角、白海豚棲地也在其中：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、管理弱」只剩高美、三仙礁、蘇澳；三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。納入實地紀錄後，台江、北門、七股鹽田等生物多樣性高的濕地移入「均衡良好」。</p>
+      <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」是花東與恆春的小型保育區（豐濱、小馬、小港、小湖、水璉、車城）和東部河口（蘭陽溪口、無尾港、花蓮溪口）：海況好，但幾乎沒有巡守或查緝紀錄。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島，南方四島、東北角、白海豚棲地也在其中：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、管理弱」只剩高美、三仙礁、蘇澳；三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。納入實地紀錄後，台江、北門、七股鹽田等生物多樣性高的濕地移入「均衡良好」；加入潛水 eDNA 後，卑南溪口也移入「均衡良好」，伸港螻蛄蝦保育區則移入「有管理但海廢重」。</p>
       <p><b>對管理的意涵。</b>資源配置與管理策略應依成效型態分級，而不是依法源一體適用：缺管理的群組先補巡守與監測，海廢重的群組結合海廢清理與漁業／養殖廢棄物回收，水質差的群組要跨部會處理陸源污染。</p>
       <p><b>方法與限制。</b>2 群與 3 群的輪廓係數較高（<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>），但會把「均衡良好」與「有管理但海廢重」併成一大群，因此沿用 4 群（<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>）；k-means 一致度 ARI＝<span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>，只用四項齊全的 <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> 處重做為 <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span>。新的生物多樣性分數讓群界更模糊，輪廓係數約 0.2，宜視為型態而非明確分類。東沙（只有生物多樣性與執法兩項）、貓嶼、高山、番仔石資料不足未納入。</p>
     </div>
@@ -681,7 +702,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <p><b>綜合成效和分類關聯很弱。</b>類型、法源、IUCN 分類與綜合分的 ε² 都接近 0；面積（ρ＝<span data-source="tests" data-field="effect" data-where="id=31">—</span>）與最高保護等級（ρ＝<span data-source="tests" data-field="effect" data-where="id=41">—</span>）未校正 p 略低於 0.05，主要來自新的生物多樣性分數（見下段），成立年數 ρ＝<span data-source="tests" data-field="effect" data-where="id=36">—</span>。換句話說，「紙上的保護等級」和「海裡與執法上看得到的狀況」是兩回事。</p>
       <p><b>唯一穩定的訊號在執法。</b>有完全或高度保護分區的保護區，執法分數較高（最高保護等級 ρ＝<span data-source="tests" data-field="effect" data-where="id=45">—</span>，p＝<span data-source="tests" data-field="p" data-where="id=45">—</span>；完全＋高度保護面積占比 ρ＝<span data-source="tests" data-field="effect" data-where="id=55">—</span>）。控制保護區類型後仍成立，在漁業法保育區內部也看得到。但要注意：這主要來自「有巡守、有查獲」，而不是「有處分」——完全保護區的取締多、處分率反而低（琉球、東沙、南方四島）。比較像是「規定越嚴，越有東西可以抓」，不等於執法有效。</p>
       <p><b>面積越大，生物多樣性分數越高。</b>面積與生物多樣性 ρ＝<span data-source="tests" data-field="effect" data-where="id=34">—</span>（p＝<span data-source="tests" data-field="p" data-where="id=34">—</span>），是 60 項中最強的關聯。這符合物種—面積關係，但也反映大型保護區（國家公園、白海豚棲地、大型濕地）調查多、紀錄多；200 公尺寬的帶狀保育區紀錄很少。另一個混淆是成立越久海廢越少（ρ＝<span data-source="tests" data-field="effect" data-where="id=38">—</span>）：老保護區多是花東漁業保育區，東海岸本來就少垃圾，控制花東後效果消失。過去「建立階段越積極、eDNA 多樣性越低」的關聯（舊版 ρ＝−0.44），改用新分數後已消失（ρ＝<span data-source="tests" data-field="effect" data-where="id=59">—</span>），印證那是單次 eDNA 採樣造成的假象。</p>
-      <p><b>多重比較。</b>共做 <span data-source="xsum" data-field="n_tests">—</span> 項檢定，<span data-source="xsum" data-field="n_nominal">—</span> 項 p&lt;0.05，純屬隨機也會出現約 3 項；經 FDR 校正後只有面積與生物多樣性一項低於 q＜0.1。樣本量方面，71 處只能偵測 |ρ|≳0.33 的關聯，國家公園（4 處）、自然保留區（3 處）等小組幾乎沒有檢定力，因此「無關」應讀作「沒有證據顯示有關」。</p>
+      <p><b>多重比較。</b>共做 <span data-source="xsum" data-field="n_tests">—</span> 項檢定，<span data-source="xsum" data-field="n_nominal">—</span> 項 p&lt;0.05，純屬隨機也會出現約 3 項；經 FDR 校正後最接近的是面積與生物多樣性（q＝<span data-source="tests" data-field="q_fdr" data-where="id=34">—</span>），沒有一項低於 0.1。樣本量方面，71 處只能偵測 |ρ|≳0.33 的關聯，國家公園（4 處）、自然保留區（3 處）等小組幾乎沒有檢定力，因此「無關」應讀作「沒有證據顯示有關」。</p>
       <p><b>對管理的意涵。</b>分類與等級決定的是「允許做什麼」，成效則取決於有沒有人巡守、查到之後有沒有處分、陸源壓力（海廢、營養鹽）有沒有被處理。要讓保護等級反映在成效上，下一步是逐區補齊處分率與監測資料，並把海廢與陸源污染納入管理計畫。</p>
     </div>
   </section>
@@ -727,6 +748,19 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </div>
     </div>
 
+    <div class="card" id="offshore-card">
+      <h2>外海背景：船舶調查的水質、塑膠微粒與海底廢棄物（輔助資料）</h2>
+      <p class="note">海保署「臺灣海域重要生態系調查」船舶航次的測站多在外海（海底深度中位數約 170 m），最近的也離保護區 1.6 km，量測的是外海營養鹽與塑膠微粒，和評分用的沿岸測站、淨灘監測不是同一件事，因此不計入分數。下表列出 10 km 內有船舶測站的保護區，數值後括號是在全部船舶測站中的百分位（越高代表營養鹽或廢棄物越多）。</p>
+      <p class="lead" id="os-lead">—</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="os-tbl" data-source="offshore_mpa" data-row-key="mpa">
+          <thead><tr><th data-field="mpa">保護區</th><th data-field="near_km">最近測站 km</th><th data-field="wq_din">表層氮營養鹽 μM</th><th data-field="wq_po4">表層磷酸 μM</th><th data-field="mp_mp">表層塑膠微粒 個／m³</th><th data-field="sf_sf_n">海底廢棄物數量密度</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top: var(--cds-gap-sm)" id="os-ref">—</p>
+    </div>
+
     <div class="card method" id="p-read">
       <h2>怎麼解讀</h2>
       <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；同時控制漁業來源占比後仍成立（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口沒有顯著關聯：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
@@ -747,8 +781,10 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <tbody>
         <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
         <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
-        <tr><td>生物多樣性</td><td>TBN 海洋魚類與蝦蟹類紀錄（含國家公園長期調查，依官方範圍判定是否在保護區內）、海保署魚類 eDNA（2021–2024，先期試驗）、珊瑚礁體檢 2008／2023／2024–26、藍碳（海保署 2024 逐點面積）、生態系類型</td><td>五分項加權平均：物種紀錄 1（已確認物種＋eDNA 獨有×0.5，同棲地百分位 20–100，受脅物種加 5–10）、珊瑚健康 1、藍碳 1（A 100、B 70）、棲地多樣性 1、eDNA 試驗 0.5。至少要有物種紀錄（已確認 ≥10 種）、珊瑚或 eDNA 一項實際觀測才給分；57 處有分數。</td></tr>
+        <tr><td>生物多樣性</td><td>TBN 海洋魚類與蝦蟹類紀錄（含國家公園長期調查，依官方範圍判定是否在保護區內）、海保署魚類 eDNA（保護區站點 2021–2024 與「臺灣海域重要生態系調查」潛水站點 2021–2023，保護區內或 1 km 內；先期試驗）、珊瑚礁體檢 2008／2023／2024–26、藍碳（海保署 2024 逐點面積）、生態系類型</td><td>五分項加權平均：物種紀錄 1（已確認物種＋eDNA 獨有×0.5，同棲地百分位 20–100，受脅物種加 5–10）、珊瑚健康 1、藍碳 1（A 100、B 70）、棲地多樣性 1、eDNA 試驗 0.5。至少要有物種紀錄（已確認 ≥10 種）、珊瑚或 eDNA 一項實際觀測才給分；60 處有分數。</td></tr>
         <tr><td>類別與集群分析</td><td>上列四項分數與生物多樣性；保護區類別取自 MPATable1</td><td>水質、海廢、執法、生物多樣性標準化後做 Ward 階層式集群（至少三項有資料者 67 處，缺一項以中位數補值）；比較 2–6 群的輪廓係數，採可解讀的 4 群，並以 k-means 與完整資料子集檢核穩定度。類別與集群的關聯以 Cramér's V 與 5,000 次置換檢定評估；國家公園等小類別在檢定時合併為 6 組。</td></tr>
+        <tr><td>外海背景（輔助，不計分）</td><td>海保署「臺灣海域重要生態系調查」船舶航次：水質營養鹽（表層 ≤10 m）、表層塑膠微粒、底拖海底廢棄物（110 年）</td><td>只列 10 km 內有測站的保護區（10 處），以最近測站數值及其在全部船舶測站中的百分位呈現。測站在外海，和評分用的沿岸水質測站與淨灘監測性質不同，因此不納入水質與海廢分數。</td></tr>
+        <tr><td>底棲群聚（輔助，不計分）</td><td>海保署「臺灣海域重要生態系調查」潛水底質岩芯（110–113 年，103 站）</td><td>每站分類群數、總密度（ind./m²）與生物量；依座標判定保護區內或 1 km 內（67 站）與區外（36 站），以 Mann-Whitney 比較。分類多只到綱、目，不適合算物種多樣性，因此只作輔助比較。</td></tr>
         <tr><td>國家公園長期物種調查</td><td>國家公園生物多樣性資料庫「物種調查點資料」（TBN 下載，2026-11-03）：東沙、墾丁、台江、南方四島</td><td>四園區比較：觀察種數、Chao2、累積曲線、Jaccard。紀錄本身已包含在全臺 TBN 紀錄中，透過「物種紀錄」分項計分。</td></tr>
         <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
       </tbody>
@@ -761,7 +797,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 </section>
 
 <footer class="site-foot">
-  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、台灣生物多樣性網絡 TBN（含墾丁、台江、東沙環礁、澎湖南方四島國家公園長期調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
+  資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、海保署「臺灣海域重要生態系調查（110–112）」潛水 eDNA、底棲群聚與船舶調查、台灣生物多樣性網絡 TBN（含墾丁、台江、東沙環礁、澎湖南方四島國家公園長期調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
   本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
   資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a>
 </footer>
@@ -1501,6 +1537,7 @@ dash.calc("blead", {
       const b = document.createElement("td"); b.textContent = r.mpa; tr.appendChild(b);
       ["s_habitat", "s_coral", "s_bluecarbon", "s_species", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
       { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.conf_sp; tr.appendChild(td); }
+      { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.edna_taxa; tr.appendChild(td); }
       const s = document.createElement("td"); scoreTd(s, r.bio_score); s.classList.add("comp"); tr.appendChild(s);
       const gd = document.createElement("td"); const p = document.createElement("span"); p.className = "pill";
       const d = document.createElement("i"); d.className = "dot " + (window.mpGradeClass ? window.mpGradeClass(r.bio_grade) : "");
@@ -1524,7 +1561,7 @@ dash.calc("blead", {
     if (b.status === "ok") {
       H = b.data; drawHab(H); drawReef(H); drawRank(H);
     } else {
-      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 12); $("reefchart").innerHTML = "";
+      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 13); $("reefchart").innerHTML = "";
     }
     if (rf.status === "ok") drawReefTbl(rf.data); else placeholderTbody($("reeftbl").querySelector("tbody"), 8);
     if (bc.status === "ok") { drawBC(bc.data); drawBCTbl(bc.data); } else { $("bcchart").innerHTML = ""; placeholderTbody($("bctbl").querySelector("tbody"), 8); }
@@ -1740,6 +1777,7 @@ dash.calc("cllead", {
 .mp .sub-h { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
 .mp #tbnpark tbody tr, .mp #tbnjac tbody tr, .mp #tbncross tbody tr, .mp #tbnthreat tbody tr { cursor: default; }
 .mp #tbn-card .grid2 > div { position: relative; }
+.mp #bt-cmp tbody tr, .mp #bt-mpa tbody tr, .mp #os-tbl tbody tr { cursor: default; }
 </style>
 
 <script>
@@ -2041,6 +2079,55 @@ dash.calc("tbnlead", {
   });
 })();
 </script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const f = v => { if (v === "" || v == null || v === "nan") return "—"; const n = Number(v); return isNaN(n) ? v : (Math.abs(n) >= 1000 ? Math.round(n).toLocaleString("en-US") : String(v)); };
+  function fill(tb, rows, cols) {
+    tb.innerHTML = "";
+    rows.forEach(r => { const tr = document.createElement("tr"); cols.forEach(([k, c]) => { const td = document.createElement("td"); if (c) td.className = c; td.textContent = f(r[k]); if (td.textContent === "—") td.classList.add("na"); tr.appendChild(td); }); tb.appendChild(tr); });
+  }
+  dash.onData(() => {
+    const c = dash.data("benthic_compare"), m = dash.data("benthic_mpa");
+    if (c.status === "ok") {
+      fill($("bt-cmp").querySelector("tbody"), c.data, [["region"], ["n_in", "num"], ["n_out", "num"], ["taxa_in", "num"], ["taxa_out", "num"], ["taxa_p", "num"], ["density_in", "num"], ["density_out", "num"], ["density_p", "num"]]);
+      const a = c.data.find(r => r.region === "全部"), n = c.data.find(r => r.region === "北台灣");
+      const L = $("bt-lead"); L.textContent = "";
+      if (a) {
+        const b = t => { const e = document.createElement("b"); e.textContent = t; L.appendChild(e); }, t = x => L.appendChild(document.createTextNode(x));
+        t("103 個底棲站中，" + a.n_in + " 站在保護區內或 1 km 內。區內的底棲動物密度中位數 "); b(f(a.density_in)); t(" ind./m²，約為區外（" + f(a.density_out) + "）的兩倍（p＝" + a.density_p + "），但分類群數相同（中位數 " + Number(a.taxa_in) + " 對 " + Number(a.taxa_out) + "）。");
+        if (n) { t("同一區域內比較，北台灣區內的分類群數與密度都較高（p＝" + n.taxa_p + "、" + n.density_p + "）；"); }
+        t("全體差異有一部分來自綠島（站點全在區內、密度最高）與蘭嶼（全在區外），因此只能視為輔助證據。");
+      }
+    }
+    if (m.status === "ok") fill($("bt-mpa").querySelector("tbody"), m.data, [["mpa"], ["n_sites", "num"], ["taxa_mean", "num"], ["density_med", "num"], ["biomass_med", "num hide-sm"], ["sites", "hide-sm"]]);
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const has = v => !(v === "" || v == null || v === "nan");
+  const cell = (v, pct) => has(v) ? (Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 }) + (has(pct) ? `（${Math.round(Number(pct))}）` : "")) : "—";
+  dash.onData(() => {
+    const o = dash.data("offshore_mpa"), ref = dash.data("offshore_ref");
+    if (o.status !== "ok") return;
+    const tb = $("os-tbl").querySelector("tbody"); tb.innerHTML = "";
+    o.data.forEach(r => {
+      const tr = document.createElement("tr");
+      [[r.mpa], [r.near_km, null, "num"], [r.wq_din, r.wq_din_pct, "num"], [r.wq_po4, r.wq_po4_pct, "num"], [r.mp_mp, r.mp_mp_pct, "num"], [r.sf_sf_n, r.sf_sf_n_pct, "num"]].forEach(([v, p, c], i) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = i === 0 ? v : cell(v, p); if (td.textContent === "—") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    const top = o.data.filter(r => Number(r.mp_mp_pct) >= 85 || Number(r.wq_din_pct) >= 85).map(r => r.mpa);
+    $("os-lead").textContent = `只有 ${o.data.length} 處保護區 10 km 內有船舶測站。外海營養鹽與塑膠微粒偏高（任一項在前 15%）的是 ${top.join("、")}：桃園外海兩項都是全部測站最高，可能反映桃園沿岸河川與工業排放的陸源壓力；貢寮外海塑膠微粒偏高；棉花嶼外海營養鹽高，可能反映臺灣東北方的湧升流，不一定是污染。`;
+    if (ref.status === "ok") $("os-ref").textContent = "全部船舶測站中位數（最大值）：" + ref.data.map(r => `${r.item} ${r.median}（${r.max}）`).join("；") + "。";
+  });
+})();
+</script>
+
 <script>
 (function () {
   const TABS = [["overview", "總覽"], ["sites", "保護區介紹"], ["ranking", "成效排名"], ["bio", "生物多樣性"], ["clusters", "類別與集群"], ["cross", "分類交叉分析"], ["pressure", "人口與漁業壓力"], ["method", "評分方法"]];

@@ -1,72 +1,72 @@
-no,mpa,category,coral,seagrass,rocky,mangrove,mudflat,saltmarsh,n_types,eco_note,rc2008,rc2023,rc2025,rc_trend,rc_grade,bc_tier,s_habitat,s_coral,s_bluecarbon,s_edna,n_comp,bio_score,bio_grade,s_species,conf_sp,threatened,edna_only
-1,Taoyuan Guanxin Algal Reef Wildlife Refuge,Wildlife refuge,Present,—,Main,Present,Present,—,4,"Algal (biogenic) reef dominates, with scattered stony corals; Xinwu River mouth mangrove 7.23 ha",,,,,,B,83,,70.0,55.0,4,74,Good,78,108,0,126
-2,Mianhua & Huaping Islets Wildlife Refuge,Wildlife refuge,Present,—,Main,—,—,—,2,Volcanic-island rocky shore with coral communities around it,,,,,,,50,,,34.0,3,38,Poor,28,2,0,25
-3,Matsu Islands Tern Refuge,Wildlife refuge,—,—,Main,—,—,—,1,Granite islets,,,,,,,33,,,,0,,Insufficient data (no biological observations),,2,0,0
-4,Penghu Maoyu Seabird Refuge,Wildlife refuge,Present,—,Main,—,—,—,2,Basalt islets in the South Penghu coral area,,,,,,,50,,,,0,,Insufficient data (no biological observations),,1,0,0
-5,Wang-an Green Turtle Nesting Refuge,Wildlife refuge,Present,—,Present,—,Present,—,3,Sandy nesting beach; corals on the nearshore reef flat,,,,,,,50,,,,0,,Insufficient data (no biological observations),,7,0,0
-6,Humpback Dolphin Major Wildlife Habitat,Wildlife refuge,—,—,—,—,Main,—,1,Shallow sandy-mud bottom along the west coast,,,,,,,33,,,,2,66,Fair,100,332,5,0
-7,Dongsha Atoll National Park,National park,Main,Main,—,—,Present,—,3,"Atoll coral reef; seagrass 7,716 ha (largest in Taiwan)",,,,,,A,83,,100.0,,3,94,Good,100,695,12,0
-8,Taijiang National Park,National park,—,Present,—,Main,Main,—,3,Lagoon and estuarine mudflats; Sicao and Qigu mangroves 106.9 ha; Qigu seagrass,,,,,,A,83,,100.0,82.0,4,93,Good,100,316,9,27
-9,South Penghu Marine National Park,National park,Main,—,Main,—,—,—,2,Basalt reefs and coral communities (Dongyuping reef-check site),,36.5,10.6,Single survey,Poor,,67,37.0,,,3,68,Fair,99,578,3,0
-10,Kenting National Park,National park,Main,Present,Main,—,Present,—,4,"Fringing coral reef; Daguang, Nanwan and Wanlitong seagrass 1.35 ha in total",,44.1,27.8,Declining,Fair,C,100,54.0,,65.0,4,82,Good,100,711,2,59
-11,Green Island Haishenping–Fanchuanbi Marine Reserve,Scenic-area marine reserve,Main,—,Main,—,—,—,2,Coral and rocky reefs on Green Island's east coast (2008 Haishenping reef check),45.5,,,,,,67,,,,0,,Insufficient data (no biological observations),,1,0,0
-12,Northeast & Yilan Coast Scenic Area (marine reserve),Scenic-area marine reserve,Present,—,Main,—,Present,—,3,Subtropical rocky reefs with coral communities at Longdong; Fulong beach,,22.1,12.2,Declining,Poor,,67,30.0,,49.0,4,61,Fair,92,298,0,43
-13,Keelung Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reefs with coral communities at Heping Island and Chaojing,,32.2,43.4,Single survey,Fair,,50,89.0,,87.0,4,78,Good,89,237,0,47
-14,Kinmen Guningtou Horseshoe Crab Conservation Area,Fisheries resource conservation area,—,—,Present,—,Main,—,2,"Intertidal sand-mud flats used by horseshoe crabs; Cihu seagrass nearby (in Kinmen National Park, not this MPA)",,,,,,,50,,,60.0,3,45,Needs improvement,33,17,0,28
-15,Marine Museum Resource Cultivation Area,Fisheries resource conservation area,Main,Present,Main,—,Present,—,4,Houwan–Wanlitong coral reef; Houwan seagrass under restoration (not in the 2023 inventory),,,,,,C,100,,,92.0,3,88,Good,75,114,0,72
-16,Green Island Conservation Area,Fisheries resource conservation area,Main,Present,Main,—,—,—,3,Fringing coral reef; seagrass 0.3 ha,38.2,66.2,,,Good,C,83,100.0,,73.0,4,87,Good,86,164,0,124
-17,Liuqiu Conservation Area,Fisheries resource conservation area,Main,Present,Main,—,—,—,3,"Coral island; Duzaiping, Geban Bay and Shanfu seagrass 0.66 ha in total",,16.2,18.9,Single survey,Poor,C,83,50.0,,23.0,4,65,Fair,83,190,0,33
-18,Wanli Conservation Area,Fisheries resource conservation area,Present,—,Main,—,Present,—,3,Mainly rocky reef; Feicui Bay beach,,,,,,,67,,,,2,63,Fair,59,57,0,0
-19,Fengbin Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,68.0,3,50,Needs improvement,42,10,0,45
-20,Ruifang Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reefs and coral communities at Shen'ao and Fanzai'ao,,11.9,,,Poor,,50,39.0,,73.0,4,53,Needs improvement,61,47,0,43
-21,Sanxianjiao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky islet group,,,,,,,50,,,,0,,Insufficient data (no biological observations),,0,0,0
-22,Checheng Conservation Area,Fisheries resource conservation area,Present,Present,Main,—,—,—,3,Rocky reef; 9.1 ha seagrass bed at Haikou on the southern boundary,,,,,,C,67,,,26.0,3,40,Needs improvement,21,1,0,22
-23,Xiaoma Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,78.0,3,54,Needs improvement,45,8,0,54
-24,Gongliao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,81.0,3,59,Fair,56,24,0,53
-25,Fushan Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Shanyuan Bay coral reef (2008 and 2024–25 reef-check site),53.5,,21.2,Stable,Poor,,67,54.0,,20.0,4,57,Fair,70,113,0,13
-26,Yanliao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,39.0,3,41,Needs improvement,34,0,0,48
-27,Yiwan Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,97.0,3,59,Fair,48,1,0,80
-28,Xiaogang Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Jihui coral reef (Sanxiantai),,38.5,41.4,Mixed,Fair,,67,86.0,,30.0,4,54,Needs improvement,21,0,0,24
-29,Xiaohu Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,100.0,3,61,Fair,53,0,0,96
-30,Wanggong Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,0,,Insufficient data (no biological observations),,0,0,0
-31,Shengang Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,2,26,Poor,20,10,0,0
-32,Yeliu Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Yeliu headland rocky reef and coral communities,,16.9,20.0,Single survey,Poor,,50,52.0,,84.0,4,60,Fair,67,76,0,46
-33,Shuilian Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,34.0,3,37,Poor,26,0,0,25
-34,Su'ao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,58.0,3,46,Needs improvement,37,4,0,41
-35,Toucheng Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,44.0,3,49,Needs improvement,50,28,0,34
-36,Gaoshan Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,,0,,Insufficient data (no biological observations),,0,0,0
-37,Dong'ao Conservation Area (Yilan),Fisheries resource conservation area,Present,—,Main,—,—,—,2,Fenniaolin rocky reef and coral communities,,,,,,,50,,,62.0,3,58,Fair,64,65,0,62
-38,Shitiping Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Shitiping coral reef (reef-check site),,48.8,22.5,Declining,Poor,,67,46.0,,44.0,4,50,Needs improvement,39,13,0,36
-39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Fisheries resource conservation area,Main,—,Main,—,—,—,2,Chaojing rocky reef and coral communities (reef-check site),,43.1,43.4,Single survey,Fair,,67,89.0,,92.0,4,81,Good,81,163,0,51
-40,Xiaomen Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Basalt rocky reef,,,,,,,50,,,,0,,Insufficient data (no biological observations),,0,0,0
-41,Qimei Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Rocky reef and coral communities,,,,,,,67,,,,0,,Insufficient data (no biological observations),,0,0,0
-42,Wanwa Clam Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Sand-mud flat inhabited by Venus clams,,,,,,,33,,,97.0,3,49,Needs improvement,41,2,0,67
-43,Shengang II Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,0,,Insufficient data (no biological observations),,8,0,0
-44,Xuhai–Guanyinbi Nature Reserve,Nature reserve / monument,Present,—,Main,—,Present,—,3,Pristine rocky coast with gravel and sandy beaches,,,,,,,67,,,52.0,3,50,Needs improvement,31,4,0,38
-45,South Penghu Basalt Nature Reserve,Nature reserve / monument,Main,—,Main,—,—,—,2,Basalt islets with corals around Dongji and Xiji,,,,,,,67,,,,2,70,Good,72,139,0,0
-46,Penghu Basalt Nature Reserve,Nature reserve / monument,Present,—,Main,—,—,—,2,Basalt islets,,,,,,,50,,,,0,,Insufficient data (no biological observations),,9,0,0
-47,Fanzaishi Natural Monument,Nature reserve / monument,—,—,Present,—,—,—,1,Location to be confirmed; assumed rocky landform from its name,,,,,,,17,,,,0,,Insufficient data (no biological observations),,0,0,0
-48,Xiwei Lava Pools & Volcanic Neck (Magong),Nature reserve / monument,—,—,Main,—,Present,—,2,Lava-pool landform and intertidal zone,,,,,,,50,,,,0,,Insufficient data (no biological observations),,0,0,0
-49,Beigan Confucius Sea Rock,Nature reserve / monument,—,—,Main,—,—,—,1,Rocky-reef landform,,,,,,,33,,,,0,,Insufficient data (no biological observations),,0,0,0
-50,Puzi River Estuary Wetland,Important wetland,—,Present,—,Main,Main,—,3,Puzi River mouth mangrove 80.2 ha; Baishuihu seagrass 0.77 ha,,,,,,A,83,,100.0,38.0,4,83,Good,89,144,1,23
-51,Lanyang River Estuary Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine sandbars and mudflats,,,,,,,33,,,97.0,3,69,Fair,90,156,0,56
-52,Xiangshan Wetland,Important wetland,—,Present,—,Present,Main,—,3,Large mudflat; only 6.3 ha of mangrove left after thinning; seagrass 0.2 ha,,,,,,B,67,,70.0,22.0,4,56,Fair,49,51,0,18
-53,Beimen Wetland,Important wetland,—,—,—,Main,Main,—,2,"Beimen–Xuejia mangrove 75.3 ha at the Jishui River mouth, and lagoon mudflats",,,,,,A,67,,100.0,,3,82,Good,78,135,0,0
-54,Qigu Salt Pan Wetland,Important wetland,—,Present,—,—,Present,—,2,Salt-pan wetland; Qigu seagrass bed (overlaps Taijiang),,,,,,C,33,,,,2,66,Fair,100,354,6,0
-55,Haomeiliao Wetland,Important wetland,—,Present,—,Main,Main,—,3,Haomeiliao mangrove 36.1 ha; seagrass 1.35 ha,,,,,,B,83,,70.0,,3,70,Good,58,90,0,0
-56,Xucuogang Wetland,Important wetland,—,—,—,Present,Main,—,2,"Estuarine mudflat; Xinjie River mouth mangrove 0.39 ha, no longer a stand",,,,,,C,50,,,40.0,3,55,Fair,68,110,0,24
-57,Wuweigang Wetland,Important wetland,—,—,—,—,Present,—,1,Coastal lagoon wetland,,,,,,,17,,,,2,22,Poor,26,18,0,0
-58,Bazhang River Estuary Wetland,Important wetland,—,—,—,Main,Main,—,2,Bazhang River mouth mangrove 17.8 ha and mudflats,,,,,,B,67,,70.0,,3,64,Fair,55,69,0,0
-59,Yiwu Wetland,Important wetland,—,—,—,—,Present,—,1,Wetland formed by land subsidence,,,,,,,17,,,51.0,3,26,Poor,23,0,0,26
-60,Tamsui River Wetland,Important wetland,—,—,—,Main,Main,Present,3,"Zhuwei, Guandu, Shezi Island and Waziwei mangroves 131 ha in total; patches of salt marsh",,,,,,A,83,,100.0,65.0,4,83,Good,74,99,0,67
-61,Zengwen River Estuary Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine mudflats and sandbars (no mangrove in the blue-carbon inventory),,,,,,,33,,,88.0,3,68,Fair,92,154,1,30
-62,Qingluo Wetland,Important wetland,—,—,—,Present,Main,—,2,"Inner-bay mudflats and fish ponds, mangrove 2.8 ha; Shagang seagrass lies outside",,,,,,C,50,,,,2,43,Needs improvement,36,33,0,0
-63,Xinfeng Wetland,Important wetland,—,—,—,Main,Main,—,2,Hongmaogang mixed Kandelia–Avicennia mangrove 8.1 ha,,,,,,B,67,,70.0,,3,63,Fair,52,64,0,0
-64,Beinan River Estuary Wetland,Important wetland,—,—,—,—,Present,—,1,Gravel estuarine sandbar,,,,,,,17,,,,2,26,Poor,35,24,1,0
-65,Dadu River Estuary Wetland,Important wetland,—,—,—,—,Main,Present,2,Large estuarine mudflat with Yunlin sedge (no mangrove in the blue-carbon inventory),,,,,,C,50,,,16.0,3,54,Needs improvement,76,124,2,15
-66,Hualien River Estuary Wetland,Important wetland,—,—,—,—,Present,—,1,Gravel estuarine sandbar,,,,,,,17,,,45.0,3,32,Poor,41,25,0,21
-67,Caiyuan Wetland,Important wetland,Present,Present,—,Present,Main,—,4,Inner-bay mudflat; mangrove 1.11 ha; Chongguang seagrass; Hangwan coral communities,,27.8,33.1,Single survey,Fair,C,83,73.0,,,2,78,Good,,6,0,0
-68,Gaomei Wetland,Important wetland,—,Present,—,Present,Main,Main,4,Mudflat and Yunlin-sedge salt marsh; Qingshui Drainage mangrove 0.61 ha on the southern boundary; seagrass 0.01 ha,,,,,,C,100,,,10.0,3,67,Fair,62,90,0,12
-69,Xihu Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine mudflat,,,,,,,33,,,69.0,3,53,Needs improvement,65,85,0,26
-70,Qingshui Wetland,Important wetland,—,—,—,—,Main,Present,2,Mudflat with patches of Yunlin sedge,,,,,,C,50,,,,2,48,Needs improvement,46,51,0,0
-71,Yanshui River Estuary Wetland,Important wetland,—,—,—,Present,Main,—,2,Estuarine mudflat; Anping Harbor mangrove 2.34 ha (Sicao stands counted under Taijiang),,,,,,C,50,,,,2,66,Fair,81,141,0,0
+no,mpa,category,coral,seagrass,rocky,mangrove,mudflat,saltmarsh,n_types,eco_note,rc2008,rc2023,rc2025,rc_trend,rc_grade,bc_tier,s_habitat,s_coral,s_bluecarbon,s_edna,n_comp,bio_score,bio_grade,s_species,conf_sp,threatened,edna_only,edna_ms_taxa,edna_dive_taxa,edna_taxa
+1,Taoyuan Guanxin Algal Reef Wildlife Refuge,Wildlife refuge,Present,—,Main,Present,Present,—,4,"Algal (biogenic) reef dominates, with scattered stony corals; Xinwu River mouth mangrove 7.23 ha",,,,,,B,83,,70.0,55.0,4.0,74.0,Good,78.0,108,0,185,154,109,215
+2,Mianhua & Huaping Islets Wildlife Refuge,Wildlife refuge,Present,—,Main,—,—,—,2,Volcanic-island rocky shore with coral communities around it,,,,,,,50,,,34.0,3.0,48.0,Needs improvement,54.0,2,0,117,25,107,117
+3,Matsu Islands Tern Refuge,Wildlife refuge,—,—,Main,—,—,—,1,Granite islets,,,,,,,33,,,,0.0,,Insufficient data (no biological observations),,2,0,0,0,0,0
+4,Penghu Maoyu Seabird Refuge,Wildlife refuge,Present,—,Main,—,—,—,2,Basalt islets in the South Penghu coral area,,,,,,,50,,,,2.0,46.0,Needs improvement,43.0,1,0,75,0,76,76
+5,Wang-an Green Turtle Nesting Refuge,Wildlife refuge,Present,—,Present,—,Present,—,3,Sandy nesting beach; corals on the nearshore reef flat,,,,,,,50,,,,2.0,54.0,Needs improvement,57.0,7,0,128,0,129,129
+6,Humpback Dolphin Major Wildlife Habitat,Wildlife refuge,—,—,—,—,Main,—,1,Shallow sandy-mud bottom along the west coast,,,,,,,33,,,,2.0,66.0,Fair,100.0,332,5,0,0,0,0
+7,Dongsha Atoll National Park,National park,Main,Main,—,—,Present,—,3,"Atoll coral reef; seagrass 7,716 ha (largest in Taiwan)",,,,,,A,83,,100.0,,3.0,94.0,Good,100.0,695,12,0,0,0,0
+8,Taijiang National Park,National park,—,Present,—,Main,Main,—,3,Lagoon and estuarine mudflats; Sicao and Qigu mangroves 106.9 ha; Qigu seagrass,,,,,,A,83,,100.0,82.0,4.0,93.0,Good,100.0,316,9,27,45,0,45
+9,South Penghu Marine National Park,National park,Main,—,Main,—,—,—,2,Basalt reefs and coral communities (Dongyuping reef-check site),,36.5,10.6,Single survey,Poor,,67,37.0,,,3.0,68.0,Fair,100.0,578,3,171,0,336,336
+10,Kenting National Park,National park,Main,Present,Main,—,Present,—,4,"Fringing coral reef; Daguang, Nanwan and Wanlitong seagrass 1.35 ha in total",,44.1,27.8,Declining,Fair,C,100,54.0,,65.0,4.0,82.0,Good,100.0,711,2,164,163,312,379
+11,Green Island Haishenping–Fanchuanbi Marine Reserve,Scenic-area marine reserve,Main,—,Main,—,—,—,2,Coral and rocky reefs on Green Island's east coast (2008 Haishenping reef check),45.5,,,,,,67,,,,2.0,46.0,Needs improvement,25.0,1,0,40,0,40,40
+12,Northeast & Yilan Coast Scenic Area (marine reserve),Scenic-area marine reserve,Present,—,Main,—,Present,—,3,Subtropical rocky reefs with coral communities at Longdong; Fulong beach,,22.1,12.2,Declining,Poor,,67,30.0,,49.0,4.0,61.0,Fair,92.0,298,0,177,63,228,248
+13,Keelung Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reefs with coral communities at Heping Island and Chaojing,,32.2,43.4,Single survey,Fair,,50,89.0,,87.0,4.0,78.0,Good,90.0,237,0,165,73,202,237
+14,Kinmen Guningtou Horseshoe Crab Conservation Area,Fisheries resource conservation area,—,—,Present,—,Main,—,2,"Intertidal sand-mud flats used by horseshoe crabs; Cihu seagrass nearby (in Kinmen National Park, not this MPA)",,,,,,,50,,,60.0,3.0,45.0,Needs improvement,32.0,17,0,28,29,0,29
+15,Marine Museum Resource Cultivation Area,Fisheries resource conservation area,Main,Present,Main,—,Present,—,4,Houwan–Wanlitong coral reef; Houwan seagrass under restoration (not in the 2023 inventory),,,,,,C,100,,,92.0,3.0,88.0,Good,74.0,114,0,72,78,0,78
+16,Green Island Conservation Area,Fisheries resource conservation area,Main,Present,Main,—,—,—,3,Fringing coral reef; seagrass 0.3 ha,38.2,66.2,,,Good,C,83,100.0,,73.0,4.0,88.0,Good,87.0,164,0,257,140,244,316
+17,Liuqiu Conservation Area,Fisheries resource conservation area,Main,Present,Main,—,—,—,3,"Coral island; Duzaiping, Geban Bay and Shanfu seagrass 0.66 ha in total",,16.2,18.9,Single survey,Poor,C,83,50.0,,23.0,4.0,66.0,Fair,85.0,190,0,147,50,187,214
+18,Wanli Conservation Area,Fisheries resource conservation area,Present,—,Main,—,Present,—,3,Mainly rocky reef; Feicui Bay beach,,,,,,,67,,,,2.0,63.0,Fair,59.0,57,0,59,0,68,68
+19,Fengbin Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,68.0,3.0,54.0,Needs improvement,51.0,10,0,83,46,46,84
+20,Ruifang Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reefs and coral communities at Shen'ao and Fanzai'ao,,11.9,,,Poor,,50,39.0,,73.0,4.0,54.0,Needs improvement,64.0,47,0,123,50,121,137
+21,Sanxianjiao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky islet group,,,,,,,50,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+22,Checheng Conservation Area,Fisheries resource conservation area,Present,Present,Main,—,—,—,3,Rocky reef; 9.1 ha seagrass bed at Haikou on the southern boundary,,,,,,C,67,,,26.0,3.0,40.0,Needs improvement,20.0,1,0,22,22,0,22
+23,Xiaoma Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,78.0,3.0,52.0,Needs improvement,41.0,8,0,54,54,0,54
+24,Gongliao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,81.0,3.0,61.0,Fair,61.0,24,0,154,55,132,161
+25,Fushan Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Shanyuan Bay coral reef (2008 and 2024–25 reef-check site),53.5,,21.2,Stable,Poor,,67,54.0,,20.0,4.0,57.0,Fair,68.0,113,0,13,16,0,16
+26,Yanliao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,39.0,3.0,40.0,Needs improvement,30.0,0,0,48,48,0,48
+27,Yiwan Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,97.0,3.0,58.0,Fair,46.0,1,0,80,80,0,80
+28,Xiaogang Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Jihui coral reef (Sanxiantai),,38.5,41.4,Mixed,Fair,,67,86.0,,30.0,4.0,58.0,Fair,35.0,0,0,53,24,30,53
+29,Xiaohu Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,100.0,3.0,59.0,Fair,48.0,0,0,96,96,0,96
+30,Wanggong Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+31,Shengang Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,2.0,26.0,Poor,20.0,10,0,0,0,0,0
+32,Yeliu Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Yeliu headland rocky reef and coral communities,,16.9,20.0,Single survey,Poor,,50,52.0,,84.0,4.0,61.0,Fair,68.0,76,0,87,62,68,107
+33,Shuilian Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,34.0,3.0,36.0,Poor,23.0,0,0,25,25,0,25
+34,Su'ao Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,58.0,3.0,45.0,Needs improvement,33.0,4,0,41,42,0,42
+35,Toucheng Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Rocky reef with scattered corals,,,,,,,50,,,44.0,3.0,51.0,Needs improvement,56.0,28,0,72,37,59,78
+36,Gaoshan Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,East-coast rocky reef with scattered corals,,,,,,,50,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+37,Dong'ao Conservation Area (Yilan),Fisheries resource conservation area,Present,—,Main,—,—,—,2,Fenniaolin rocky reef and coral communities,,,,,,,50,,,62.0,3.0,61.0,Fair,72.0,65,0,110,69,70,124
+38,Shitiping Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Shitiping coral reef (reef-check site),,48.8,22.5,Declining,Poor,,67,46.0,,44.0,4.0,49.0,Needs improvement,38.0,13,0,36,37,0,37
+39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Fisheries resource conservation area,Main,—,Main,—,—,—,2,Chaojing rocky reef and coral communities (reef-check site),,43.1,43.4,Single survey,Fair,,67,89.0,,92.0,4.0,81.0,Good,82.0,163,0,107,78,89,145
+40,Xiaomen Conservation Area,Fisheries resource conservation area,Present,—,Main,—,—,—,2,Basalt rocky reef,,,,,,,50,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+41,Qimei Conservation Area,Fisheries resource conservation area,Main,—,Main,—,—,—,2,Rocky reef and coral communities,,,,,,,67,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+42,Wanwa Clam Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Sand-mud flat inhabited by Venus clams,,,,,,,33,,,97.0,3.0,49.0,Needs improvement,40.0,2,0,67,69,0,69
+43,Shengang II Mud Shrimp Conservation Area,Fisheries resource conservation area,—,—,—,—,Main,—,1,Intertidal mudflat inhabited by mud shrimp,,,,,,,33,,,,0.0,,Insufficient data (no biological observations),,8,0,0,0,0,0
+44,Xuhai–Guanyinbi Nature Reserve,Nature reserve / monument,Present,—,Main,—,Present,—,3,Pristine rocky coast with gravel and sandy beaches,,,,,,,67,,,52.0,3.0,48.0,Needs improvement,28.0,4,0,38,39,0,39
+45,South Penghu Basalt Nature Reserve,Nature reserve / monument,Main,—,Main,—,—,—,2,Basalt islets with corals around Dongji and Xiji,,,,,,,67,,,,2.0,72.0,Good,78.0,139,0,123,0,166,166
+46,Penghu Basalt Nature Reserve,Nature reserve / monument,Present,—,Main,—,—,—,2,Basalt islets,,,,,,,50,,,,0.0,,Insufficient data (no biological observations),,9,0,0,0,0,0
+47,Fanzaishi Natural Monument,Nature reserve / monument,—,—,Present,—,—,—,1,Location to be confirmed; assumed rocky landform from its name,,,,,,,17,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+48,Xiwei Lava Pools & Volcanic Neck (Magong),Nature reserve / monument,—,—,Main,—,Present,—,2,Lava-pool landform and intertidal zone,,,,,,,50,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+49,Beigan Confucius Sea Rock,Nature reserve / monument,—,—,Main,—,—,—,1,Rocky-reef landform,,,,,,,33,,,,0.0,,Insufficient data (no biological observations),,0,0,0,0,0,0
+50,Puzi River Estuary Wetland,Important wetland,—,Present,—,Main,Main,—,3,Puzi River mouth mangrove 80.2 ha; Baishuihu seagrass 0.77 ha,,,,,,A,83,,100.0,38.0,4.0,83.0,Good,90.0,144,1,23,35,0,35
+51,Lanyang River Estuary Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine sandbars and mudflats,,,,,,,33,,,97.0,3.0,69.0,Fair,91.0,156,0,56,69,0,69
+52,Xiangshan Wetland,Important wetland,—,Present,—,Present,Main,—,3,Large mudflat; only 6.3 ha of mangrove left after thinning; seagrass 0.2 ha,,,,,,B,67,,70.0,22.0,4.0,56.0,Fair,48.0,51,0,18,21,0,21
+53,Beimen Wetland,Important wetland,—,—,—,Main,Main,—,2,"Beimen–Xuejia mangrove 75.3 ha at the Jishui River mouth, and lagoon mudflats",,,,,,A,67,,100.0,,3.0,82.0,Good,78.0,135,0,0,0,0,0
+54,Qigu Salt Pan Wetland,Important wetland,—,Present,—,—,Present,—,2,Salt-pan wetland; Qigu seagrass bed (overlaps Taijiang),,,,,,C,33,,,,2.0,66.0,Fair,100.0,354,6,0,0,0,0
+55,Haomeiliao Wetland,Important wetland,—,Present,—,Main,Main,—,3,Haomeiliao mangrove 36.1 ha; seagrass 1.35 ha,,,,,,B,83,,70.0,,3.0,71.0,Good,60.0,90,0,0,0,0,0
+56,Xucuogang Wetland,Important wetland,—,—,—,Present,Main,—,2,"Estuarine mudflat; Xinjie River mouth mangrove 0.39 ha, no longer a stand",,,,,,C,50,,,40.0,3.0,56.0,Fair,69.0,110,0,24,29,0,29
+57,Wuweigang Wetland,Important wetland,—,—,—,—,Present,—,1,Coastal lagoon wetland,,,,,,,17,,,,2.0,22.0,Poor,26.0,18,0,0,0,0,0
+58,Bazhang River Estuary Wetland,Important wetland,—,—,—,Main,Main,—,2,Bazhang River mouth mangrove 17.8 ha and mudflats,,,,,,B,67,,70.0,,3.0,64.0,Fair,54.0,69,0,0,0,0,0
+59,Yiwu Wetland,Important wetland,—,—,—,—,Present,—,1,Wetland formed by land subsidence,,,,,,,17,,,51.0,3.0,26.0,Poor,23.0,0,0,26,26,0,26
+60,Tamsui River Wetland,Important wetland,—,—,—,Main,Main,Present,3,"Zhuwei, Guandu, Shezi Island and Waziwei mangroves 131 ha in total; patches of salt marsh",,,,,,A,83,,100.0,65.0,4.0,83.0,Good,75.0,99,0,67,84,0,84
+61,Zengwen River Estuary Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine mudflats and sandbars (no mangrove in the blue-carbon inventory),,,,,,,33,,,88.0,3.0,68.0,Fair,93.0,154,1,30,48,0,48
+62,Qingluo Wetland,Important wetland,—,—,—,Present,Main,—,2,"Inner-bay mudflats and fish ponds, mangrove 2.8 ha; Shagang seagrass lies outside",,,,,,C,50,,,,2.0,42.0,Needs improvement,35.0,33,0,0,0,0,0
+63,Xinfeng Wetland,Important wetland,—,—,—,Main,Main,—,2,Hongmaogang mixed Kandelia–Avicennia mangrove 8.1 ha,,,,,,B,67,,70.0,,3.0,63.0,Fair,51.0,64,0,0,0,0,0
+64,Beinan River Estuary Wetland,Important wetland,—,—,—,—,Present,—,1,Gravel estuarine sandbar,,,,,,,17,,,,2.0,26.0,Poor,34.0,24,1,0,0,0,0
+65,Dadu River Estuary Wetland,Important wetland,—,—,—,—,Main,Present,2,Large estuarine mudflat with Yunlin sedge (no mangrove in the blue-carbon inventory),,,,,,C,50,,,16.0,3.0,54.0,Needs improvement,77.0,124,2,15,20,0,20
+66,Hualien River Estuary Wetland,Important wetland,—,—,—,—,Present,—,1,Gravel estuarine sandbar,,,,,,,17,,,45.0,3.0,32.0,Poor,40.0,25,0,21,22,0,22
+67,Caiyuan Wetland,Important wetland,Present,Present,—,Present,Main,—,4,Inner-bay mudflat; mangrove 1.11 ha; Chongguang seagrass; Hangwan coral communities,,27.8,33.1,Single survey,Fair,C,83,73.0,,,2.0,78.0,Good,,6,0,0,0,0,0
+68,Gaomei Wetland,Important wetland,—,Present,—,Present,Main,Main,4,Mudflat and Yunlin-sedge salt marsh; Qingshui Drainage mangrove 0.61 ha on the southern boundary; seagrass 0.01 ha,,,,,,C,100,,,10.0,3.0,67.0,Fair,63.0,90,0,12,17,0,17
+69,Xihu Wetland,Important wetland,—,—,—,—,Main,—,1,Estuarine mudflat,,,,,,,33,,,69.0,3.0,53.0,Needs improvement,66.0,85,0,26,33,0,33
+70,Qingshui Wetland,Important wetland,—,—,—,—,Main,Present,2,Mudflat with patches of Yunlin sedge,,,,,,C,50,,,,2.0,48.0,Needs improvement,45.0,51,0,0,0,0,0
+71,Yanshui River Estuary Wetland,Important wetland,—,—,—,Present,Main,—,2,Estuarine mudflat; Anping Harbor mangrove 2.34 ha (Sicao stands counted under Taijiang),,,,,,C,50,,,,2.0,66.0,Fair,82.0,141,0,0,0,0,0

@@ -79,7 +79,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <script>
 /* Minimal stand-in for the dashboard runtime: loads CSV files and runs the page's calcs. */
 (function () {
-  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv"};
+  const FILES = {"mpa": "mpa_effectiveness.csv", "cross": "cross_mpa_slim.csv", "tests": "cross_tests.csv", "pmpa": "pressure_mpa.csv", "ptests": "pressure_tests.csv", "pmodels": "pressure_models.csv", "biohab": "biohab.csv", "bluecarbon": "bluecarbon.csv", "reefsites": "reefsites.csv", "bcsites": "bcsites.csv", "cmpa": "cluster_mpa.csv", "cprof": "cluster_profiles.csv", "cxtab": "cluster_crosstab.csv", "cstats": "cluster_stats.csv", "tbn_park": "tbn_park.csv", "tbn_curve": "tbn_curve.csv", "tbn_jaccard": "tbn_jaccard.csv", "tbn_cross": "tbn_cross.csv", "tbn_threat": "tbn_threat.csv", "dir": "mpa_directory.csv", "benthic_mpa": "benthic_mpa.csv", "benthic_compare": "benthic_compare.csv", "offshore_mpa": "offshore_mpa.csv", "offshore_ref": "offshore_ref.csv"};
   const store = {}; const calcs = []; const subs = [];
   Object.keys(FILES).forEach(id => { store[id] = { status: "loading", data: [], columns: [], meta: [] }; });
   const dash = {
@@ -268,7 +268,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
     </section>
     <section class="card" id="cover">
       <h2>Data coverage</h2>
-      <p class="note">Number of MPAs with data for each dimension (of 71). Adding field records raised biodiversity coverage from 40 to 57 MPAs, but it is still the largest gap; composite scores for data-poor sites should be read with caution.</p>
+      <p class="note">Number of MPAs with data for each dimension (of 71). Adding field records and diver-collected eDNA raised biodiversity coverage from 40 to 60 MPAs, but it is still the largest gap; composite scores for data-poor sites should be read with caution.</p>
       <div class="chart" id="covchart" data-source="coverage"></div>
     </section>
   </div>
@@ -519,7 +519,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card" id="biorank-card">
       <h2>Marine biodiversity score</h2>
-      <p class="note">This is the “biodiversity” dimension of the composite assessment above. Five components, each 0–100, are combined as a weighted mean: species records (weight 1; TBN confirmed species + eDNA-only species × 0.5, converted to a 20–100 percentile among MPAs of the same habitat, +5 for one or more IUCN threatened species and +10 for five or more), coral health (1; latest cover × 1.6 + 20, −10 if declining), blue carbon (1; tier A 100, tier B 70), habitat diversity (1; 1 point per main ecosystem, 0.5 per local one, 3 points = 100) and the eDNA pilot (0.5; percentile of taxa per sample within habitat). A score is given only if at least one real observation exists: species records, coral or eDNA. Click a column heading to sort.</p>
+      <p class="note">This is the “biodiversity” dimension of the composite assessment above. Five components, each 0–100, are combined as a weighted mean: species records (weight 1; TBN confirmed species + eDNA-only species (MPA stations and dive survey) × 0.5, converted to a 20–100 percentile among MPAs of the same habitat, +5 for one or more IUCN threatened species and +10 for five or more), coral health (1; latest cover × 1.6 + 20, −10 if declining), blue carbon (1; tier A 100, tier B 70), habitat diversity (1; 1 point per main ecosystem, 0.5 per local one, 3 points = 100) and the eDNA pilot (0.5; percentile of taxa per sample at MPA eDNA stations within habitat). A score is given only if at least one real observation exists: species records, coral or eDNA. Click a column heading to sort.</p>
       <div class="toolbar">
         <select id="br-g"><option value="">All grades</option><option>Good</option><option>Fair</option><option>Needs improvement</option><option>Poor</option><option>Insufficient data (no biological observations)</option></select>
       </div>
@@ -534,6 +534,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
             <th data-field="s_species"><button data-k="s_species">Species records</button></th>
             <th data-field="s_edna"><button data-k="s_edna">eDNA pilot</button></th>
             <th data-field="conf_sp" class="hide-sm"><button data-k="conf_sp">Confirmed species</button></th>
+            <th data-field="edna_taxa" class="hide-sm"><button data-k="edna_taxa">eDNA species</button></th>
             <th data-field="bio_score"><button data-k="bio_score">Score</button></th>
             <th data-field="bio_grade"><button data-k="bio_grade">Grade</button></th>
             <th data-field="rc_grade" class="hide-sm"><button data-k="rc_grade">Coral grade</button></th>
@@ -544,11 +545,31 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </div>
     </div>
 
+    <div class="card" id="benthic-card">
+      <h2>Benthic communities: inside vs outside MPAs (supporting data)</h2>
+      <p class="note">Sediment cores collected by divers in OCA’s “Survey of Important Marine Ecosystems around Taiwan”, recording the density and biomass of small bottom-dwelling animals (polychaetes, amphipods and others). Taxa are mostly resolved only to class or order, so these data are not added to the score above and are used only to compare inside and outside MPAs. p is from a Mann-Whitney test; “—” means fewer than 3 stations on one side in that region.</p>
+      <p class="lead" id="bt-lead">—</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="bt-cmp" data-source="benthic_compare" data-row-key="region">
+          <thead><tr><th data-field="region">Region</th><th data-field="n_in">Stations inside</th><th data-field="n_out">Stations outside</th><th data-field="taxa_in">Taxa (in)</th><th data-field="taxa_out">(out)</th><th data-field="taxa_p">p</th><th data-field="density_in">Density ind./m² (in)</th><th data-field="density_out">(out)</th><th data-field="density_p">p</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <h3 class="sub-h" style="margin-top: var(--cds-gap-md)">Benthic stations by MPA</h3>
+      <div class="tbl-wrap">
+        <table id="bt-mpa" data-source="benthic_mpa" data-row-key="mpa">
+          <thead><tr><th data-field="mpa">MPA</th><th data-field="n_sites">Stations</th><th data-field="taxa_mean">Mean taxa</th><th data-field="density_med">Median density ind./m²</th><th data-field="biomass_med" class="hide-sm">Median biomass</th><th data-field="sites" class="hide-sm">Stations</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="card method" id="bio-read">
       <h2>How to read this</h2>
       <p><b>Reefs are declining, inside MPAs and out.</b> At Fushan (Shanyuan), live coral was about <span data-source="biohab" data-field="rc2008" data-where="no=25">—</span>% in 2008, and hard coral only <span data-source="biohab" data-field="rc2025" data-where="no=25">—</span>% in 2024–25. Kenting's two sites averaged <span data-source="biohab" data-field="rc2023" data-where="no=10">—</span>% in 2023, and Hejie fell to <span data-source="biohab" data-field="rc2025" data-where="no=10">—</span>% by 2025, with a significant shallow-water decline. Dongyuping in South Penghu dropped from <span data-source="biohab" data-field="rc2023" data-where="no=9">—</span>% in 2023 to <span data-source="biohab" data-field="rc2025" data-where="no=9">—</span>% in 2025, although 2023 measured live coral at 6–8 m and 2025 hard coral, so the decline may be overstated. Only Green Island remains good (about <span data-source="biohab" data-field="rc2023" data-where="no=16">—</span>% in 2023).</p>
       <p><b>Blue carbon is concentrated in a few places, and half of Taiwan's mangroves lie outside MPAs.</b> Dongsha's seagrass holds about <span data-source="bluecarbon" data-field="est_tC" data-where="no=7">—</span> tonnes of carbon. On the main island the largest mangrove stocks are in the Tamsui River (<span data-source="bluecarbon" data-field="est_tC" data-where="no=60">—</span>), Taijiang (<span data-source="bluecarbon" data-field="est_tC" data-where="no=8">—</span>), Puzi River (<span data-source="bluecarbon" data-field="est_tC" data-where="no=50">—</span>) and Beimen (<span data-source="bluecarbon" data-field="est_tC" data-where="no=53">—</span>). Aogu, the Beigang River mouth, the north bank of the Zhuoshui River, Dapeng Bay and the Yuanlin Drainage each have 40–53 ha of mangrove, yet none is among the 71 MPAs; the largest seagrass bed outside Dongsha, Zhenhai Bay in Penghu (<span data-source="bcsites" data-field="area_2023" data-where="key=Seagrass%20bed-Zhenhai%20Bay">—</span> ha), is unprotected too. On mudflat wetlands such as Xiangshan, mangroves are an invasive expansion that squeezes fiddler-crab and waterbird habitat, so high blue carbon does not mean high conservation value; the rating treats it as just one component.</p>
       <p><b>Adding field records changed the ranking most where long-term surveys exist.</b> Dongsha (<span data-source="biohab" data-field="bio_score" data-where="no=7">—</span>) and Taijiang (<span data-source="biohab" data-field="bio_score" data-where="no=8">—</span>) have many confirmed records, threatened species and blue carbon, and score highest; Dongsha, South Penghu, Beimen, Qigu Salt Pan and the dolphin habitat, which had no eDNA, now have scores. Conversely, small east-coast reserves with a single eDNA sample (e.g. Xiaohu, Yiwan) dropped, because eDNA now carries half weight and there are no field records to back it up. Coral cover at Fushan (<span data-source="biohab" data-field="bio_score" data-where="no=25">—</span>) and Shitiping (<span data-source="biohab" data-field="bio_score" data-where="no=38">—</span>) has recently fallen to poor, and coral health still pulls their scores down.</p>
+      <p><b>Dive-survey eDNA fills gaps on the outer islands and Green Island.</b> In OCA’s “Survey of Important Marine Ecosystems around Taiwan”, 67 dive eDNA stations (2021–2023) lie inside or within 1 km of 22 MPAs. This gives Maoyu (<span data-source="biohab" data-field="bio_score" data-where="no=4">—</span>), the Wang-an green turtle nesting habitat (<span data-source="biohab" data-field="bio_score" data-where="no=5">—</span>) and Green Island Haishenping (<span data-source="biohab" data-field="bio_score" data-where="no=11">—</span>) a score for the first time, and raises Mianhua &amp; Huaping Islets from 38 to <span data-source="biohab" data-field="bio_score" data-where="no=2">—</span>. These three sites still have fewer than 10 confirmed species, so their scores rest mostly on eDNA and should be treated as provisional.</p>
       <p><b>Long-term surveys in four national parks.</b> Dongsha (<span data-source="tbn_park" data-field="fish_species" data-where="park=Dongsha">—</span> species) and South Penghu (<span data-source="tbn_park" data-field="fish_species" data-where="park=South Penghu">—</span>) have the most marine fish, with lists about 85% complete, and the most similar assemblages (Jaccard <span data-source="tbn_jaccard" data-field="jaccard" data-where="key=Dongsha-South%20Penghu">—</span>); South Penghu records <span data-source="tbn_park" data-field="grouper" data-where="park=South Penghu">—</span> grouper species, the most of the four. Kenting has only <span data-source="tbn_park" data-field="fish_species" data-where="park=Kenting">—</span>, because its database records are mostly terrestrial and stream surveys (sika deer, land crabs, stream fish), with fewer than 4 marine fish per survey; Kenting's 7 eDNA stations add <span data-source="tbn_cross" data-field="edna_only" data-where="park=Kenting">—</span> fish not recorded by the long-term surveys (awaiting field confirmation), for a combined list of <span data-source="tbn_cross" data-field="union" data-where="park=Kenting">—</span> species. Taijiang is dominated by crustaceans (<span data-source="tbn_park" data-field="crust_species" data-where="park=Taijiang">—</span> species, the most of the four) and has <span data-source="tbn_park" data-field="exotic_fish" data-where="park=Taijiang">—</span> exotic fish. These records are already part of the nationwide TBN records in the species-record component; survey methods and effort vary greatly between years, so they are not used to judge trends.</p>
       <p><b>Limitations.</b> The species-record component reflects what is “known so far”: well-surveyed and larger MPAs naturally have more records (area vs biodiversity score ρ = <span data-source="tests" data-field="effect" data-where="id=34">—</span>), while 200 m coastal strips often have no records that can be placed inside them. MPA boundaries mainly follow the Ocean Affairs Council's 2017 layer; Yeliu and Dong'ao are approximate, and Sanxianjiao and Yiwu have no boundary. Reef checks are carried out by volunteers, and 2008 values are read from figures. Blue carbon uses national mean carbon densities. Ecosystem types are assigned manually.</p>
     </div>
@@ -629,7 +650,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <h2>How to read this</h2>
       <p><b>Legal category does not tell you how well an MPA performs.</b> None of the five dimensions differs significantly between categories (composite Kruskal-Wallis p = <span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>, biodiversity p = <span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>). National parks have the highest biodiversity scores (mean about 84) and the highest composite mean, but there are only four; fisheries resource conservation areas range from 38 to 81.</p>
       <p><b>Clusters are almost unrelated to categories.</b> Every cluster mixes several categories, and the 31 fisheries areas are spread across all four; the association between category and cluster is Cramér's V = <span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>, permutation p = <span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>, adjusted Rand index = <span data-source="cstats" data-field="value" data-where="key=ari_category">—</span> — no better than chance.</p>
-      <p><b>What really separates MPAs is the type of problem they face.</b> “Clean but unmanaged” sites are small reserves on the east coast and Hengchun (Fengbin, Xiaoma, Xiaogang, Xiaohu, Shuilian, Checheng) and eastern estuaries (Lanyang, Wuweigang, Beinan, Hualien): the sea is in good shape, but there are almost no patrol or enforcement records. “Managed but debris-laden” sites are concentrated in west-coast estuarine wetlands and the outer islands of Penghu, Matsu and Kinmen, together with South Penghu, the Northeast Coast and the dolphin habitat: patrols and enforcement exist, but litter cancels out the gains. “Poor water, weak management” now covers only Gaomei, Sanxianjiao and Su'ao; water quality at Sanxianjiao and Su'ao rests on a few 2023 samples, so read it with caution. With field records added, biodiversity-rich wetlands such as Taijiang, Beimen and Qigu Salt Pan moved into “balanced performers”.</p>
+      <p><b>What really separates MPAs is the type of problem they face.</b> “Clean but unmanaged” sites are small reserves on the east coast and Hengchun (Fengbin, Xiaoma, Xiaogang, Xiaohu, Shuilian, Checheng) and eastern estuaries (Lanyang, Wuweigang, Hualien): the sea is in good shape, but there are almost no patrol or enforcement records. “Managed but debris-laden” sites are concentrated in west-coast estuarine wetlands and the outer islands of Penghu, Matsu and Kinmen, together with South Penghu, the Northeast Coast and the dolphin habitat: patrols and enforcement exist, but litter cancels out the gains. “Poor water, weak management” now covers only Gaomei, Sanxianjiao and Su'ao; water quality at Sanxianjiao and Su'ao rests on a few 2023 samples, so read it with caution. With field records added, biodiversity-rich wetlands such as Taijiang, Beimen and Qigu Salt Pan moved into “balanced performers”; with dive eDNA added, Beinan River Estuary also moved into “balanced performers”, while the Shengang mud shrimp area moved into “managed but debris-laden”.</p>
       <p><b>What this means for management.</b> Resources and strategies should be tiered by effectiveness type, not applied uniformly by legal basis: unmanaged clusters first need patrols and monitoring, debris-laden clusters need litter clean-up combined with recovery of fishing and aquaculture waste, and the poor-water cluster needs cross-agency control of land-based pollution.</p>
       <p><b>Methods and limitations.</b> Two or three clusters give higher silhouette scores (<span data-source="cstats" data-field="value" data-where="key=sil_3">—</span>) but merge “balanced performers” and “managed but debris-laden” into one large group, so four clusters are kept (<span data-source="cstats" data-field="value" data-where="key=sil_4">—</span>); agreement with k-means is ARI = <span data-source="cstats" data-field="value" data-where="key=ari_kmeans">—</span>, and <span data-source="cstats" data-field="value" data-where="key=ari_complete">—</span> when redone with only the <span data-source="cstats" data-field="value" data-where="key=n_complete">—</span> sites that have all four dimensions. The new biodiversity score blurs the cluster boundaries further (silhouette about 0.2), so the clusters should be read as types rather than sharp classes. Dongsha (only biodiversity and enforcement), Maoyu, Gaoshan and Fanzaishi have too little data and are excluded.</p>
     </div>
@@ -681,7 +702,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <p><b>Overall effectiveness is only weakly related to classification.</b> For type, legal basis and IUCN category, ε² for the composite score is close to 0. Area (ρ = <span data-source="tests" data-field="effect" data-where="id=31">—</span>) and highest protection level (ρ = <span data-source="tests" data-field="effect" data-where="id=41">—</span>) have uncorrected p slightly below 0.05, driven mainly by the new biodiversity score (see below); years since establishment ρ = <span data-source="tests" data-field="effect" data-where="id=36">—</span>. In other words, protection “on paper” and what can be seen in the water and in enforcement are two different things.</p>
       <p><b>The only consistent signal is in enforcement.</b> MPAs with fully or highly protected zones score higher on enforcement (highest protection level ρ = <span data-source="tests" data-field="effect" data-where="id=45">—</span>, p = <span data-source="tests" data-field="p" data-where="id=45">—</span>; share of area fully or highly protected ρ = <span data-source="tests" data-field="effect" data-where="id=55">—</span>). This holds after controlling for MPA type and is also seen within Fisheries Act reserves. But it comes mainly from “patrols and detections”, not from “sanctions” — fully protected areas detect many violations but have lower sanction rates (Liuqiu, Dongsha, South Penghu). It looks more like “stricter rules mean more to catch” than effective enforcement.</p>
       <p><b>Larger MPAs score higher on biodiversity.</b> Area vs biodiversity ρ = <span data-source="tests" data-field="effect" data-where="id=34">—</span> (p = <span data-source="tests" data-field="p" data-where="id=34">—</span>), the strongest of the 60 associations. This fits the species–area relationship, but also reflects that large MPAs (national parks, the dolphin habitat, large wetlands) are better surveyed; 200 m coastal strips have very few records. Another confounder is that older MPAs have less debris (ρ = <span data-source="tests" data-field="effect" data-where="id=38">—</span>): many old MPAs are east-coast fisheries reserves, where beaches are naturally cleaner, and the effect disappears once the east coast is controlled for. The earlier finding that “more active establishment stages have lower eDNA diversity” (ρ = −0.44 in the old version) disappears with the new score (ρ = <span data-source="tests" data-field="effect" data-where="id=59">—</span>), confirming it was an artefact of single eDNA samples.</p>
-      <p><b>Multiple comparisons.</b> <span data-source="xsum" data-field="n_tests">—</span> tests were run and <span data-source="xsum" data-field="n_nominal">—</span> have p&lt;0.05, where about 3 would be expected by chance; after FDR correction only area vs biodiversity falls below q &lt; 0.1. With 71 sites, only associations of |ρ| ≳ 0.33 can be detected, and small groups such as national parks (4) and nature reserves (3) have almost no power, so “no association” should be read as “no evidence of an association”.</p>
+      <p><b>Multiple comparisons.</b> <span data-source="xsum" data-field="n_tests">—</span> tests were run and <span data-source="xsum" data-field="n_nominal">—</span> have p&lt;0.05, where about 3 would be expected by chance; after FDR correction the closest is area vs biodiversity (q = <span data-source="tests" data-field="q_fdr" data-where="id=34">—</span>), and none falls below 0.1. With 71 sites, only associations of |ρ| ≳ 0.33 can be detected, and small groups such as national parks (4) and nature reserves (3) have almost no power, so “no association” should be read as “no evidence of an association”.</p>
       <p><b>What this means for management.</b> Classification and protection level determine what is allowed; effectiveness depends on whether anyone patrols, whether detected violations are sanctioned, and whether land-based pressures (debris, nutrients) are dealt with. For protection levels to show up in outcomes, the next step is to fill in sanction rates and monitoring site by site, and to bring debris and land-based pollution into management plans.</p>
     </div>
   </section>
@@ -727,6 +748,19 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       </div>
     </div>
 
+    <div class="card" id="offshore-card">
+      <h2>Offshore background: water quality, microplastics and seafloor litter from ship surveys (supporting data)</h2>
+      <p class="note">Ship stations in OCA’s “Survey of Important Marine Ecosystems around Taiwan” are mostly offshore (median seabed depth about 170 m); even the nearest is 1.6 km from an MPA. They measure offshore nutrients and microplastics, which is not the same thing as the coastal stations and beach-litter surveys used for scoring, so they are not scored. The table lists MPAs with a ship station within 10 km; the number in brackets is the percentile among all ship stations (higher means more nutrients or litter).</p>
+      <p class="lead" id="os-lead">—</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table id="os-tbl" data-source="offshore_mpa" data-row-key="mpa">
+          <thead><tr><th data-field="mpa">MPA</th><th data-field="near_km">Nearest station km</th><th data-field="wq_din">Surface DIN μM</th><th data-field="wq_po4">Surface phosphate μM</th><th data-field="mp_mp">Surface microplastics items/m³</th><th data-field="sf_sf_n">Seafloor litter density</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top: var(--cds-gap-sm)" id="os-ref">—</p>
+    </div>
+
     <div class="card method" id="p-read">
       <h2>How to read this</h2>
       <p><b>Population is linked to debris, but it is not the strongest factor.</b> The denser the nearby population, the lower the debris score (ρ = <span data-source="ptests" data-field="rho" data-where="id=4">—</span>), and this holds after controlling for the fishing share (<span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> points per SD). But the east coast is both sparsely populated and faces the Kuroshio with little litter, so the two cannot be separated; once the east coast is controlled for, population is no longer significant. Neither water quality (ρ = <span data-source="ptests" data-field="rho" data-where="id=3">—</span>) nor biodiversity (ρ = <span data-source="ptests" data-field="rho" data-where="id=5">—</span>) is significantly related to population: water-quality stations are mostly 1–2 km offshore, and site differences are small.</p>
@@ -747,8 +781,10 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <tbody>
         <tr><td>Water quality</td><td>OCA national and local monitoring stations inside or within 1 km of the MPA</td><td>Status: good 85, caution 55, poor 25; long-term trend: improving +15, stable 0, mixed −5, worsening −15; sites without stations are not scored.</td></tr>
         <tr><td>Marine debris</td><td>Beach-litter monitoring 2020–2024 (sites within 10 km)</td><td>Percentile of log mean kg per survey across all MPAs (less litter scores higher); significant decrease +10, decrease +5, increase −5.</td></tr>
-        <tr><td>Biodiversity</td><td>TBN marine fish and crustacean records (including national-park long-term surveys; inside/outside judged against official boundaries), OCA fish eDNA (2021–2024, pilot), reef checks 2008/2023/2024–26, blue carbon (OCA 2024 site areas), ecosystem types</td><td>Weighted mean of five components: species records 1 (confirmed species + eDNA-only × 0.5, percentile 20–100 within habitat, +5–10 for threatened species), coral health 1, blue carbon 1 (A 100, B 70), habitat diversity 1, eDNA pilot 0.5. Scored only with at least one real observation — species records (≥10 confirmed species), coral or eDNA; 57 MPAs scored.</td></tr>
+        <tr><td>Biodiversity</td><td>TBN marine fish and crustacean records (including national-park long-term surveys; inside/outside judged against official boundaries), OCA fish eDNA (MPA stations 2021–2024 and dive stations of the “Survey of Important Marine Ecosystems” 2021–2023, inside or within 1 km; pilot), reef checks 2008/2023/2024–26, blue carbon (OCA 2024 site areas), ecosystem types</td><td>Weighted mean of five components: species records 1 (confirmed species + eDNA-only × 0.5, percentile 20–100 within habitat, +5–10 for threatened species), coral health 1, blue carbon 1 (A 100, B 70), habitat diversity 1, eDNA pilot 0.5. Scored only with at least one real observation — species records (≥10 confirmed species), coral or eDNA; 60 MPAs scored.</td></tr>
         <tr><td>Categories and clusters</td><td>The four scores above and biodiversity; MPA categories from MPATable1</td><td>Ward hierarchical clustering of standardised water, debris, enforcement and biodiversity scores (67 MPAs with at least three dimensions; one missing value imputed by the median); silhouettes compared for 2–6 clusters and the interpretable 4-cluster solution kept, with stability checked by k-means and the complete-data subset. Category–cluster association tested with Cramér's V and 5,000 permutations; small categories such as national parks merged into 6 groups for testing.</td></tr>
+        <tr><td>Offshore background (supporting, not scored)</td><td>Ship cruises of the “Survey of Important Marine Ecosystems around Taiwan”: nutrients (surface ≤10 m), surface microplastics, seafloor litter from bottom trawls (2021)</td><td>Shown only for the 10 MPAs with a ship station within 10 km, as the nearest station’s value and its percentile among all ship stations. The stations are offshore and differ from the coastal water-quality stations and beach-litter surveys used for scoring, so they are not added to the water-quality or debris scores.</td></tr>
+        <tr><td>Benthic communities (supporting, not scored)</td><td>Sediment cores from dives in the same survey (2021–2024, 103 stations)</td><td>Taxa per station, total density (ind./m²) and biomass; stations judged inside or within 1 km of an MPA (67) vs outside (36) from coordinates, compared with Mann-Whitney tests. Taxa are mostly resolved only to class or order, so they are not suitable for species diversity and serve only as supporting comparison.</td></tr>
         <tr><td>National-park long-term surveys</td><td>National-park biodiversity database “species survey points” (downloaded via TBN, 2026-11-03): Dongsha, Kenting, Taijiang, South Penghu</td><td>Comparison of the four parks: observed species, Chao2, accumulation curves, Jaccard. The records are already part of the nationwide TBN records and are scored through the species-record component.</td></tr>
         <tr><td>Enforcement</td><td>OCA MPA platform patrol and enforcement reports (2023–2025)</td><td>30 for any patrol or case; up to +20 for the patrol-hour percentile; +10 for any detected violation, then up to +40 by sanction rate (smoothed as (sanctions + 2.5)/(detections + 5) so one case with one sanction does not score full marks); +5 for patrols with no detections; 0 for no patrols and no cases. Xiangshan Wetland excluded because the reporting unit appears to be mis-entered.</td></tr>
       </tbody>
@@ -761,7 +797,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 </section>
 
 <footer class="site-foot">
-  Sources: Ocean Conservation Administration, Ocean Affairs Council (marine water-quality monitoring, beach-litter monitoring, fish eDNA at MPA stations, MPA platform patrol and enforcement reports, 2024 blue-carbon ecosystem survey); Taiwan Biodiversity Network (TBN, including long-term surveys in Kenting, Taijiang, Dongsha Atoll and South Penghu national parks); reef checks (Academia Sinica 2008, Taiwan Environmental Information Association 2023, Reef Check Taiwan 2024–26); MPATable1 classification checklist; Wikipedia township population list. MPA names and descriptions are translated by the author.
+  Sources: Ocean Conservation Administration, Ocean Affairs Council (marine water-quality monitoring, beach-litter monitoring, fish eDNA at MPA stations, dive eDNA, benthic and ship surveys of the Survey of Important Marine Ecosystems around Taiwan 2021–2023, MPA platform patrol and enforcement reports, 2024 blue-carbon ecosystem survey); Taiwan Biodiversity Network (TBN, including long-term surveys in Kenting, Taijiang, Dongsha Atoll and South Penghu national parks); reef checks (Academia Sinica 2008, Taiwan Environmental Information Association 2023, Reef Check Taiwan 2024–26); MPATable1 classification checklist; Wikipedia township population list. MPA names and descriptions are translated by the author.
   This is a non-official assessment based on public data, intended to identify management priorities; it is not the competent authorities' official effectiveness grading.
   Data files: <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/en/data">en/data/</a> (English) · <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a> (Chinese)
 </footer>
@@ -1501,6 +1537,7 @@ dash.calc("blead", {
       const b = document.createElement("td"); b.textContent = r.mpa; tr.appendChild(b);
       ["s_habitat", "s_coral", "s_bluecarbon", "s_species", "s_edna"].forEach(k => { const td = document.createElement("td"); scoreTd(td, r[k]); tr.appendChild(td); });
       { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.conf_sp; tr.appendChild(td); }
+      { const td = document.createElement("td"); td.className = "num hide-sm"; td.textContent = r.edna_taxa; tr.appendChild(td); }
       const s = document.createElement("td"); scoreTd(s, r.bio_score); s.classList.add("comp"); tr.appendChild(s);
       const gd = document.createElement("td"); const p = document.createElement("span"); p.className = "pill";
       const d = document.createElement("i"); d.className = "dot " + (window.mpGradeClass ? window.mpGradeClass(r.bio_grade) : "");
@@ -1524,7 +1561,7 @@ dash.calc("blead", {
     if (b.status === "ok") {
       H = b.data; drawHab(H); drawReef(H); drawRank(H);
     } else {
-      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 12); $("reefchart").innerHTML = "";
+      H = []; placeholderTbody($("hab").querySelector("tbody"), 10); placeholderTbody($("biorank").querySelector("tbody"), 13); $("reefchart").innerHTML = "";
     }
     if (rf.status === "ok") drawReefTbl(rf.data); else placeholderTbody($("reeftbl").querySelector("tbody"), 8);
     if (bc.status === "ok") { drawBC(bc.data); drawBCTbl(bc.data); } else { $("bcchart").innerHTML = ""; placeholderTbody($("bctbl").querySelector("tbody"), 8); }
@@ -1740,6 +1777,7 @@ dash.calc("cllead", {
 .mp .sub-h { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
 .mp #tbnpark tbody tr, .mp #tbnjac tbody tr, .mp #tbncross tbody tr, .mp #tbnthreat tbody tr { cursor: default; }
 .mp #tbn-card .grid2 > div { position: relative; }
+.mp #bt-cmp tbody tr, .mp #bt-mpa tbody tr, .mp #os-tbl tbody tr { cursor: default; }
 </style>
 
 <script>
@@ -2041,6 +2079,55 @@ dash.calc("tbnlead", {
   });
 })();
 </script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const f = v => { if (v === "" || v == null || v === "nan") return "—"; const n = Number(v); return isNaN(n) ? v : (Math.abs(n) >= 1000 ? Math.round(n).toLocaleString("en-US") : String(v)); };
+  function fill(tb, rows, cols) {
+    tb.innerHTML = "";
+    rows.forEach(r => { const tr = document.createElement("tr"); cols.forEach(([k, c]) => { const td = document.createElement("td"); if (c) td.className = c; td.textContent = f(r[k]); if (td.textContent === "—") td.classList.add("na"); tr.appendChild(td); }); tb.appendChild(tr); });
+  }
+  dash.onData(() => {
+    const c = dash.data("benthic_compare"), m = dash.data("benthic_mpa");
+    if (c.status === "ok") {
+      fill($("bt-cmp").querySelector("tbody"), c.data, [["region"], ["n_in", "num"], ["n_out", "num"], ["taxa_in", "num"], ["taxa_out", "num"], ["taxa_p", "num"], ["density_in", "num"], ["density_out", "num"], ["density_p", "num"]]);
+      const a = c.data.find(r => r.region === "All"), n = c.data.find(r => r.region === "North");
+      const L = $("bt-lead"); L.textContent = "";
+      if (a) {
+        const b = t => { const e = document.createElement("b"); e.textContent = t; L.appendChild(e); }, t = x => L.appendChild(document.createTextNode(x));
+        t("Of 103 benthic stations, " + a.n_in + " lie inside or within 1 km of an MPA. Median density inside is "); b(f(a.density_in)); t(" ind./m², about twice that outside (" + f(a.density_out) + "; p = " + a.density_p + "), but the number of taxa is the same (median " + Number(a.taxa_in) + " vs " + Number(a.taxa_out) + "). ");
+        if (n) t("Within a single region, northern Taiwan has more taxa and higher density inside (p = " + n.taxa_p + " and " + n.density_p + "). ");
+        t("Part of the overall difference comes from Green Island (all stations inside, highest density) and Orchid Island (all outside), so treat this as supporting evidence only.");
+      }
+    }
+    if (m.status === "ok") fill($("bt-mpa").querySelector("tbody"), m.data, [["mpa"], ["n_sites", "num"], ["taxa_mean", "num"], ["density_med", "num"], ["biomass_med", "num hide-sm"], ["sites", "hide-sm"]]);
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const has = v => !(v === "" || v == null || v === "nan");
+  const cell = (v, pct) => has(v) ? (Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 }) + (has(pct) ? ` (${Math.round(Number(pct))})` : "")) : "—";
+  dash.onData(() => {
+    const o = dash.data("offshore_mpa"), ref = dash.data("offshore_ref");
+    if (o.status !== "ok") return;
+    const tb = $("os-tbl").querySelector("tbody"); tb.innerHTML = "";
+    o.data.forEach(r => {
+      const tr = document.createElement("tr");
+      [[r.mpa], [r.near_km, null, "num"], [r.wq_din, r.wq_din_pct, "num"], [r.wq_po4, r.wq_po4_pct, "num"], [r.mp_mp, r.mp_mp_pct, "num"], [r.sf_sf_n, r.sf_sf_n_pct, "num"]].forEach(([v, p, c], i) => {
+        const td = document.createElement("td"); if (c) td.className = c; td.textContent = i === 0 ? v : cell(v, p); if (td.textContent === "—") td.classList.add("na"); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    const top = o.data.filter(r => Number(r.mp_mp_pct) >= 85 || Number(r.wq_din_pct) >= 85).map(r => r.mpa);
+    $("os-lead").textContent = `Only ${o.data.length} MPAs have a ship station within 10 km. Offshore nutrients or microplastics are high (either in the top 15%) near ${top.join("; ")}. Off Taoyuan both are the highest of all stations, possibly reflecting land-based pressure from Taoyuan’s rivers and industry; off Gongliao microplastics are high; off Mianhua Islet nutrients are high, which may reflect upwelling northeast of Taiwan rather than pollution.`;
+    if (ref.status === "ok") $("os-ref").textContent = "Median (maximum) across all ship stations: " + ref.data.map(r => `${r.item} ${r.median} (${r.max})`).join("; ") + ".";
+  });
+})();
+</script>
+
 <script>
 (function () {
   const TABS = [["overview", "Overview"], ["sites", "MPA directory"], ["ranking", "Ranking"], ["bio", "Biodiversity"], ["clusters", "Categories & clusters"], ["cross", "Classification"], ["pressure", "Pressure"], ["method", "Methods"]];

@@ -1,61 +1,61 @@
 id,variable,test,dimension,n,groups,effect_name,effect,p,q_fdr
-1,MPA type,Kruskal-Wallis,Composite,70,7,ε²,-0.016,0.5463,0.745
-2,MPA type,Kruskal-Wallis,Water quality,60,6,ε²,0.007,0.3731,0.632
-3,MPA type,Kruskal-Wallis,Marine debris,63,7,ε²,0.02,0.3115,0.603
-4,MPA type,Kruskal-Wallis,Biodiversity,55,5,ε²,0.087,0.0798,0.387
-5,MPA type,Kruskal-Wallis,Enforcement,69,7,ε²,-0.038,0.7235,0.819
-6,Legal basis,Kruskal-Wallis,Composite,71,6,ε²,-0.02,0.5973,0.762
-7,Legal basis,Kruskal-Wallis,Water quality,61,5,ε²,-0.023,0.61,0.762
-8,Legal basis,Kruskal-Wallis,Marine debris,64,6,ε²,0.036,0.2133,0.512
-9,Legal basis,Kruskal-Wallis,Biodiversity,56,5,ε²,0.09,0.0726,0.387
-10,Legal basis,Kruskal-Wallis,Enforcement,70,6,ε²,-0.048,0.8561,0.911
-11,IUCN category,Kruskal-Wallis,Composite,71,5,ε²,0.01,0.322,0.604
-12,IUCN category,Kruskal-Wallis,Water quality,62,5,ε²,0.015,0.3027,0.603
-13,IUCN category,Kruskal-Wallis,Marine debris,64,5,ε²,0.01,0.333,0.605
-14,IUCN category,Kruskal-Wallis,Biodiversity,57,4,ε²,0.104,0.0368,0.296
-15,IUCN category,Kruskal-Wallis,Enforcement,70,5,ε²,-0.022,0.6291,0.77
-16,Highest protection level (any zone),Kruskal-Wallis,Composite,71,4,ε²,0.031,0.1663,0.469
-17,Highest protection level (any zone),Kruskal-Wallis,Water quality,62,4,ε²,-0.028,0.7057,0.814
-18,Highest protection level (any zone),Kruskal-Wallis,Marine debris,64,4,ε²,0.039,0.1502,0.451
-19,Highest protection level (any zone),Kruskal-Wallis,Biodiversity,57,4,ε²,0.072,0.0775,0.387
-20,Highest protection level (any zone),Kruskal-Wallis,Enforcement,70,4,ε²,0.054,0.0862,0.387
-21,Main protection level (largest zone),Kruskal-Wallis,Composite,71,4,ε²,-0.014,0.5628,0.75
-22,Main protection level (largest zone),Kruskal-Wallis,Water quality,62,4,ε²,-0.004,0.432,0.632
-23,Main protection level (largest zone),Kruskal-Wallis,Marine debris,64,4,ε²,0.055,0.0968,0.387
-24,Main protection level (largest zone),Kruskal-Wallis,Biodiversity,57,4,ε²,0.044,0.1493,0.451
-25,Main protection level (largest zone),Kruskal-Wallis,Enforcement,70,4,ε²,-0.016,0.5834,0.761
-26,Establishment stage,Kruskal-Wallis,Composite,70,2,ε²,-0.005,0.4081,0.632
-27,Establishment stage,Kruskal-Wallis,Water quality,61,2,ε²,0.022,0.1311,0.451
-28,Establishment stage,Kruskal-Wallis,Marine debris,63,2,ε²,-0.009,0.4921,0.703
-29,Establishment stage,Kruskal-Wallis,Biodiversity,56,2,ε²,-0.018,0.8183,0.909
-30,Establishment stage,Kruskal-Wallis,Enforcement,69,2,ε²,0.031,0.0792,0.387
-31,Area (log),Spearman,Composite,71,,ρ,0.252,0.0341,0.296
-32,Area (log),Spearman,Water quality,62,,ρ,-0.215,0.0926,0.387
+1,MPA type,Kruskal-Wallis,Composite,70,7.0,ε²,-0.01,0.4992,0.697
+2,MPA type,Kruskal-Wallis,Water quality,60,6.0,ε²,0.007,0.3731,0.627
+3,MPA type,Kruskal-Wallis,Marine debris,63,7.0,ε²,0.02,0.3115,0.584
+4,MPA type,Kruskal-Wallis,Biodiversity,59,6.0,ε²,0.073,0.1146,0.424
+5,MPA type,Kruskal-Wallis,Enforcement,69,7.0,ε²,-0.038,0.7235,0.819
+6,Legal basis,Kruskal-Wallis,Composite,71,6.0,ε²,-0.02,0.5943,0.759
+7,Legal basis,Kruskal-Wallis,Water quality,61,5.0,ε²,-0.023,0.61,0.762
+8,Legal basis,Kruskal-Wallis,Marine debris,64,6.0,ε²,0.036,0.2133,0.521
+9,Legal basis,Kruskal-Wallis,Biodiversity,60,6.0,ε²,0.071,0.1164,0.424
+10,Legal basis,Kruskal-Wallis,Enforcement,70,6.0,ε²,-0.048,0.8561,0.911
+11,IUCN category,Kruskal-Wallis,Composite,71,5.0,ε²,0.017,0.2751,0.564
+12,IUCN category,Kruskal-Wallis,Water quality,62,5.0,ε²,0.015,0.3027,0.584
+13,IUCN category,Kruskal-Wallis,Marine debris,64,5.0,ε²,0.01,0.333,0.599
+14,IUCN category,Kruskal-Wallis,Biodiversity,60,4.0,ε²,0.097,0.0382,0.312
+15,IUCN category,Kruskal-Wallis,Enforcement,70,5.0,ε²,-0.022,0.6291,0.77
+16,Highest protection level (any zone),Kruskal-Wallis,Composite,71,4.0,ε²,0.034,0.1543,0.441
+17,Highest protection level (any zone),Kruskal-Wallis,Water quality,62,4.0,ε²,-0.028,0.7057,0.814
+18,Highest protection level (any zone),Kruskal-Wallis,Marine debris,64,4.0,ε²,0.039,0.1502,0.441
+19,Highest protection level (any zone),Kruskal-Wallis,Biodiversity,60,4.0,ε²,0.065,0.0839,0.424
+20,Highest protection level (any zone),Kruskal-Wallis,Enforcement,70,4.0,ε²,0.054,0.0862,0.424
+21,Main protection level (largest zone),Kruskal-Wallis,Composite,71,4.0,ε²,-0.016,0.5889,0.759
+22,Main protection level (largest zone),Kruskal-Wallis,Water quality,62,4.0,ε²,-0.004,0.432,0.632
+23,Main protection level (largest zone),Kruskal-Wallis,Marine debris,64,4.0,ε²,0.055,0.0968,0.424
+24,Main protection level (largest zone),Kruskal-Wallis,Biodiversity,60,4.0,ε²,0.023,0.2345,0.521
+25,Main protection level (largest zone),Kruskal-Wallis,Enforcement,70,4.0,ε²,-0.016,0.5834,0.759
+26,Establishment stage,Kruskal-Wallis,Composite,70,2.0,ε²,-0.004,0.3968,0.627
+27,Establishment stage,Kruskal-Wallis,Water quality,61,2.0,ε²,0.022,0.1311,0.436
+28,Establishment stage,Kruskal-Wallis,Marine debris,63,2.0,ε²,-0.009,0.4921,0.697
+29,Establishment stage,Kruskal-Wallis,Biodiversity,59,2.0,ε²,-0.016,0.7919,0.88
+30,Establishment stage,Kruskal-Wallis,Enforcement,69,2.0,ε²,0.031,0.0792,0.424
+31,Area (log),Spearman,Composite,71,,ρ,0.242,0.0416,0.312
+32,Area (log),Spearman,Water quality,62,,ρ,-0.215,0.0926,0.424
 33,Area (log),Spearman,Marine debris,64,,ρ,-0.024,0.8483,0.911
-34,Area (log),Spearman,Biodiversity,57,,ρ,0.426,0.001,0.06
-35,Area (log),Spearman,Enforcement,70,,ρ,0.104,0.3931,0.632
-36,Years since establishment,Spearman,Composite,71,,ρ,0.122,0.3103,0.603
-37,Years since establishment,Spearman,Water quality,62,,ρ,0.006,0.9624,0.974
-38,Years since establishment,Spearman,Marine debris,64,,ρ,0.313,0.0117,0.296
-39,Years since establishment,Spearman,Biodiversity,57,,ρ,-0.106,0.4317,0.632
+34,Area (log),Spearman,Biodiversity,60,,ρ,0.391,0.002,0.12
+35,Area (log),Spearman,Enforcement,70,,ρ,0.104,0.3931,0.627
+36,Years since establishment,Spearman,Composite,71,,ρ,0.115,0.3395,0.599
+37,Years since establishment,Spearman,Water quality,62,,ρ,0.006,0.9624,0.97
+38,Years since establishment,Spearman,Marine debris,64,,ρ,0.313,0.0117,0.312
+39,Years since establishment,Spearman,Biodiversity,60,,ρ,-0.156,0.2332,0.521
 40,Years since establishment,Spearman,Enforcement,70,,ρ,0.021,0.8655,0.911
-41,Highest protection level (1 full → 4 minimal),Spearman,Composite,71,,ρ,-0.252,0.0343,0.296
-42,Highest protection level (1 full → 4 minimal),Spearman,Water quality,62,,ρ,-0.139,0.2822,0.603
-43,Highest protection level (1 full → 4 minimal),Spearman,Marine debris,64,,ρ,-0.109,0.3934,0.632
-44,Highest protection level (1 full → 4 minimal),Spearman,Biodiversity,57,,ρ,-0.082,0.5439,0.745
-45,Highest protection level (1 full → 4 minimal),Spearman,Enforcement,70,,ρ,-0.275,0.021,0.296
-46,Main protection level (1 → 4),Spearman,Composite,71,,ρ,-0.14,0.2454,0.545
-47,Main protection level (1 → 4),Spearman,Water quality,62,,ρ,-0.191,0.138,0.451
-48,Main protection level (1 → 4),Spearman,Marine debris,64,,ρ,-0.105,0.408,0.632
-49,Main protection level (1 → 4),Spearman,Biodiversity,57,,ρ,-0.004,0.9742,0.974
-50,Main protection level (1 → 4),Spearman,Enforcement,70,,ρ,-0.162,0.1799,0.469
-51,Share of area fully or highly protected,Spearman,Composite,71,,ρ,0.162,0.1771,0.469
+41,Highest protection level (1 full → 4 minimal),Spearman,Composite,71,,ρ,-0.262,0.0275,0.312
+42,Highest protection level (1 full → 4 minimal),Spearman,Water quality,62,,ρ,-0.139,0.2822,0.564
+43,Highest protection level (1 full → 4 minimal),Spearman,Marine debris,64,,ρ,-0.109,0.3934,0.627
+44,Highest protection level (1 full → 4 minimal),Spearman,Biodiversity,60,,ρ,-0.072,0.5822,0.759
+45,Highest protection level (1 full → 4 minimal),Spearman,Enforcement,70,,ρ,-0.275,0.021,0.312
+46,Main protection level (1 → 4),Spearman,Composite,71,,ρ,-0.149,0.2157,0.521
+47,Main protection level (1 → 4),Spearman,Water quality,62,,ρ,-0.191,0.138,0.436
+48,Main protection level (1 → 4),Spearman,Marine debris,64,,ρ,-0.105,0.408,0.628
+49,Main protection level (1 → 4),Spearman,Biodiversity,60,,ρ,0.017,0.8976,0.929
+50,Main protection level (1 → 4),Spearman,Enforcement,70,,ρ,-0.162,0.1799,0.491
+51,Share of area fully or highly protected,Spearman,Composite,71,,ρ,0.186,0.1202,0.424
 52,Share of area fully or highly protected,Spearman,Water quality,62,,ρ,0.103,0.4244,0.632
 53,Share of area fully or highly protected,Spearman,Marine debris,64,,ρ,-0.054,0.6691,0.799
-54,Share of area fully or highly protected,Spearman,Biodiversity,57,,ρ,0.174,0.1951,0.488
-55,Share of area fully or highly protected,Spearman,Enforcement,70,,ρ,0.258,0.031,0.296
-56,Establishment stage (1 designated → 3 actively managed),Spearman,Composite,71,,ρ,0.14,0.2447,0.545
-57,Establishment stage (1 designated → 3 actively managed),Spearman,Water quality,62,,ρ,-0.203,0.1136,0.426
+54,Share of area fully or highly protected,Spearman,Biodiversity,60,,ρ,0.143,0.2774,0.564
+55,Share of area fully or highly protected,Spearman,Enforcement,70,,ρ,0.258,0.031,0.312
+56,Establishment stage (1 designated → 3 actively managed),Spearman,Composite,71,,ρ,0.144,0.2306,0.521
+57,Establishment stage (1 designated → 3 actively managed),Spearman,Water quality,62,,ρ,-0.203,0.1136,0.424
 58,Establishment stage (1 designated → 3 actively managed),Spearman,Marine debris,64,,ρ,-0.053,0.6789,0.799
-59,Establishment stage (1 designated → 3 actively managed),Spearman,Biodiversity,57,,ρ,0.006,0.9653,0.974
-60,Establishment stage (1 designated → 3 actively managed),Spearman,Enforcement,70,,ρ,0.247,0.0394,0.296
+59,Establishment stage (1 designated → 3 actively managed),Spearman,Biodiversity,60,,ρ,-0.005,0.9704,0.97
+60,Establishment stage (1 designated → 3 actively managed),Spearman,Enforcement,70,,ρ,0.247,0.0394,0.312
