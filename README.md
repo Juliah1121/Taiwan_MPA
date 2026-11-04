@@ -63,6 +63,12 @@ python3 -m http.server 8000
 - 等級：≥70 良好、55–69 尚可、40–54 待加強、<40 不佳；只有兩面向有資料標「暫評」，少於兩面向標「資料不足」。
 - 成效排名不再列出海保署 2022 年分級。
 
+## 資料庫下載（Excel）
+
+- [`download/Taiwan_MPA_database_zh.xlsx`](download/Taiwan_MPA_database_zh.xlsx)（中文）、[`download/Taiwan_MPA_database_en.xlsx`](download/Taiwan_MPA_database_en.xlsx)（English）
+- 工作表：說明、保護區總表（基本資料、保護等級、四面向分數，綜合分／等級／最弱面向／成立年數為公式）、分區保護等級、指標原始資料、人口與漁業壓力、輔助調查（底棲、外海）、欄位說明。
+- 網站「保護區介紹」與「評分方法」分頁也有下載按鈕。資料更新後執行 `python3 tools/build_xlsx.py zh` 與 `python3 tools/build_xlsx.py en` 重新產生。
+
 ## 英文版（`en/`）
 
 - `en/index.html`：英文網頁，分頁與中文版相同，網址錨點也相同（例如 `en/#sites/10`）。
