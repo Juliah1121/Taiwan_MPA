@@ -229,9 +229,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 .mp .st-card:focus-visible { outline: 2px solid #1c5cab; outline-offset: 1px; }
 :root[data-theme="dark"] .mp .st-links a, :root[data-theme="dark"] .mp .st-src a { color: #6da7ec; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mp .st-links a, :root:not([data-theme="light"]) .mp .st-src a { color: #6da7ec; } }
-.mp .dl-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #1c5cab; border-radius: 999px; padding: 7px 16px; text-decoration: none; }
-.mp .dl-btn:hover { background: #154a8c; }
-.mp .dl-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13px; color: var(--color-fg-muted); }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 .band-inner { position: relative; }
@@ -291,7 +288,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   <section id="sites" class="xs">
     <h2 class="xs-h">保護區介紹</h2>
     <p class="lead">臺灣目前列為海洋保護區的 <b>71</b> 處，依法源分成六大類。點地圖上的點或下方清單，可看該區的成立年份、位置、面積、法規、保護標的與限制事項，以及本儀表板的成效評估結果；完整公告內容請見海保署「海洋保護區資訊平台」各區頁面。</p>
-    <div class="dl-row"><a class="dl-btn" href="download/Taiwan_MPA_database_zh.xlsx" download><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v7.6l2.8-2.8 1.4 1.4L8 12.4 2.8 7.2l1.4-1.4L7 8.6zM2 13h12v2H2z"/></svg>下載保護區資料庫（Excel）</a><span>71 處保護區的基本資料、分區保護等級、四面向分數與原始指標 · <a href="download/Taiwan_MPA_database_en.xlsx" download>English version</a></span></div>
     <div class="toolbar st-bar" role="group" aria-label="依類別篩選" id="st-chips"></div>
     <div class="toolbar">
       <input type="search" id="st-q" placeholder="搜尋名稱或縣市">
@@ -779,7 +775,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <section data-tab="method" class="tabpage" hidden>
   <section class="card method" id="method">
     <h2>評分方法</h2>
-    <div class="dl-row" style="margin-bottom: var(--cds-gap-md)"><a class="dl-btn" href="download/Taiwan_MPA_database_zh.xlsx" download><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v7.6l2.8-2.8 1.4 1.4L8 12.4 2.8 7.2l1.4-1.4L7 8.6zM2 13h12v2H2z"/></svg>下載保護區資料庫（Excel）</a><span>71 處保護區的基本資料、分區保護等級、四面向分數與原始指標 · <a href="download/Taiwan_MPA_database_en.xlsx" download>English version</a></span></div>
     <p class="note">本頁為依公開資料的非官方評估，用於找出管理優先順序，不等於海保署官方成效分級。</p>
     <table>
       <thead><tr><th>面向</th><th>資料來源</th><th>計分方式（0–100）</th></tr></thead>
@@ -804,7 +799,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <footer class="site-foot">
   資料來源：海洋委員會海洋保育署（海域水質監測、海岸淨灘監測、保護區站點魚類環境 DNA、MPA 平台巡守與執法通報、2024 年藍碳生態系調查）、海保署「臺灣海域重要生態系調查（110–112）」潛水 eDNA、底棲群聚與船舶調查、台灣生物多樣性網絡 TBN（含墾丁、台江、東沙環礁、澎湖南方四島國家公園長期調查）、珊瑚礁體檢（中研院 2008、台灣環境資訊協會 2023、Reef Check Taiwan 2024–26）、MPATable1 保護區分類檢核表、維基百科鄉鎮人口列表。
   本頁為依公開資料所做的非官方評估，用於找出管理優先順序，不等同主管機關的官方成效分級。
-  資料檔：<a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a> · <a href="download/Taiwan_MPA_database_zh.xlsx" download>Excel 資料庫</a>
 </footer>
 </div></div>
 

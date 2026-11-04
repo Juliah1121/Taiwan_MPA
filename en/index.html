@@ -229,9 +229,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 .mp .st-card:focus-visible { outline: 2px solid #1c5cab; outline-offset: 1px; }
 :root[data-theme="dark"] .mp .st-links a, :root[data-theme="dark"] .mp .st-src a { color: #6da7ec; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mp .st-links a, :root:not([data-theme="light"]) .mp .st-src a { color: #6da7ec; } }
-.mp .dl-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #1c5cab; border-radius: 999px; padding: 7px 16px; text-decoration: none; }
-.mp .dl-btn:hover { background: #154a8c; }
-.mp .dl-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13px; color: var(--color-fg-muted); }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 .band-inner { position: relative; }
@@ -291,7 +288,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
   <section id="sites" class="xs">
     <h2 class="xs-h">MPA directory</h2>
     <p class="lead">Taiwan currently lists <b>71</b> marine protected areas, grouped into six categories by legal basis. Click a dot on the map or a card below to see each site's year of establishment, location, area, legal basis, protection targets and restrictions, together with its score on this dashboard. For the full official notices, see each site's page on the Ocean Conservation Administration's MPA platform.</p>
-    <div class="dl-row"><a class="dl-btn" href="../download/Taiwan_MPA_database_en.xlsx" download><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v7.6l2.8-2.8 1.4 1.4L8 12.4 2.8 7.2l1.4-1.4L7 8.6zM2 13h12v2H2z"/></svg>Download the MPA database (Excel)</a><span>Basic data, zone protection levels, dimension scores and raw indicators for all 71 MPAs · <a href="../download/Taiwan_MPA_database_zh.xlsx" download>中文版</a></span></div>
     <div class="toolbar st-bar" role="group" aria-label="Filter by category" id="st-chips"></div>
     <div class="toolbar">
       <input type="search" id="st-q" placeholder="Search by name or county">
@@ -779,7 +775,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <section data-tab="method" class="tabpage" hidden>
   <section class="card method" id="method">
     <h2>Methods</h2>
-    <div class="dl-row" style="margin-bottom: var(--cds-gap-md)"><a class="dl-btn" href="../download/Taiwan_MPA_database_en.xlsx" download><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v7.6l2.8-2.8 1.4 1.4L8 12.4 2.8 7.2l1.4-1.4L7 8.6zM2 13h12v2H2z"/></svg>Download the MPA database (Excel)</a><span>Basic data, zone protection levels, dimension scores and raw indicators for all 71 MPAs · <a href="../download/Taiwan_MPA_database_zh.xlsx" download>中文版</a></span></div>
     <p class="note">This is a non-official assessment based on public data, intended to identify management priorities; it is not the OCA's official effectiveness grading.</p>
     <table>
       <thead><tr><th>Dimension</th><th>Data</th><th>Scoring (0–100)</th></tr></thead>
@@ -804,7 +799,6 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 <footer class="site-foot">
   Sources: Ocean Conservation Administration, Ocean Affairs Council (marine water-quality monitoring, beach-litter monitoring, fish eDNA at MPA stations, dive eDNA, benthic and ship surveys of the Survey of Important Marine Ecosystems around Taiwan 2021–2023, MPA platform patrol and enforcement reports, 2024 blue-carbon ecosystem survey); Taiwan Biodiversity Network (TBN, including long-term surveys in Kenting, Taijiang, Dongsha Atoll and South Penghu national parks); reef checks (Academia Sinica 2008, Taiwan Environmental Information Association 2023, Reef Check Taiwan 2024–26); MPATable1 classification checklist; Wikipedia township population list. MPA names and descriptions are translated by the author.
   This is a non-official assessment based on public data, intended to identify management priorities; it is not the competent authorities' official effectiveness grading.
-  Data files: <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/en/data">en/data/</a> (English) · <a href="https://github.com/Juliah1121/Taiwan_MPA/tree/main/data">data/</a> (Chinese) · <a href="../download/Taiwan_MPA_database_en.xlsx" download>Excel database</a>
 </footer>
 </div></div>
 
