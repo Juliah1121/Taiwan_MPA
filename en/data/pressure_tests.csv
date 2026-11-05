@@ -1,43 +1,43 @@
 id,variable,group,dimension,n,rho,p,circular,q_fdr
-1,Population density (log),Pressure,Composite,70,-0.101,0.404,,0.628
-2,Population density (log),Pressure,Ecological score (excl. enforcement),67,-0.241,0.0491,,0.147
-3,Population density (log),Pressure,Water quality,62,-0.025,0.8479,,0.89
-4,Population density (log),Pressure,Marine debris,64,-0.395,0.0013,,0.006
-5,Population density (log),Pressure,Biodiversity,60,0.153,0.2423,,0.442
-6,Population density (log),Pressure,Enforcement,69,0.076,0.5373,,0.763
-7,Nearby population (log),Pressure,Composite,70,-0.113,0.3531,,0.57
-8,Nearby population (log),Pressure,Ecological score (excl. enforcement),67,-0.242,0.0485,,0.147
-9,Nearby population (log),Pressure,Water quality,62,-0.183,0.1536,,0.323
-10,Nearby population (log),Pressure,Marine debris,64,-0.211,0.0943,,0.248
-11,Nearby population (log),Pressure,Biodiversity,60,0.14,0.2875,,0.483
-12,Nearby population (log),Pressure,Enforcement,69,0.054,0.6602,,0.807
-13,Fishing share of debris,Pressure,Composite,64,-0.373,0.0024,,0.009
-14,Fishing share of debris,Pressure,Ecological score (excl. enforcement),63,-0.584,0.0,,0.0
-15,Fishing share of debris,Pressure,Water quality,58,0.026,0.8455,,0.89
-16,Fishing share of debris,Pressure,Marine debris,64,-0.649,0.0,,0.0
-17,Fishing share of debris,Pressure,Biodiversity,54,0.212,0.1244,,0.28
-18,Fishing share of debris,Pressure,Enforcement,63,0.058,0.6544,,0.807
-19,"Fishing-related debris, kg per survey",Pressure,Composite,64,-0.443,0.0002,Yes,0.001
-20,"Fishing-related debris, kg per survey",Pressure,Ecological score (excl. enforcement),63,-0.739,0.0,Yes,0.0
-21,"Fishing-related debris, kg per survey",Pressure,Water quality,58,0.151,0.2591,,0.453
-22,"Fishing-related debris, kg per survey",Pressure,Marine debris,64,-0.956,0.0,Yes,0.0
-23,"Fishing-related debris, kg per survey",Pressure,Biodiversity,54,0.21,0.1268,,0.28
-24,"Fishing-related debris, kg per survey",Pressure,Enforcement,63,0.155,0.2251,,0.43
-25,Patrol hours (log),Management input,Composite,70,0.357,0.0024,Yes,0.009
-26,Patrol hours (log),Management input,Ecological score (excl. enforcement),66,-0.009,0.9442,,0.944
-27,Patrol hours (log),Management input,Water quality,61,-0.048,0.711,,0.807
-28,Patrol hours (log),Management input,Marine debris,63,-0.163,0.2026,,0.405
-29,Patrol hours (log),Management input,Biodiversity,59,0.055,0.6805,,0.807
-30,Patrol hours (log),Management input,Enforcement,70,0.656,0.0,Yes,0.0
-31,Patrol staff (log),Management input,Composite,70,0.292,0.0141,Yes,0.049
-32,Patrol staff (log),Management input,Ecological score (excl. enforcement),66,-0.024,0.8469,,0.89
-33,Patrol staff (log),Management input,Water quality,61,-0.012,0.929,,0.944
-34,Patrol staff (log),Management input,Marine debris,63,-0.078,0.5452,,0.763
-35,Patrol staff (log),Management input,Biodiversity,59,-0.068,0.6105,,0.801
-36,Patrol staff (log),Management input,Enforcement,70,0.502,0.0,Yes,0.0
-37,Patrol hours per km² (log),Management input,Composite,69,0.204,0.0927,Yes,0.248
-38,Patrol hours per km² (log),Management input,Ecological score (excl. enforcement),65,-0.065,0.6059,,0.801
-39,Patrol hours per km² (log),Management input,Water quality,60,0.1,0.4455,,0.668
-40,Patrol hours per km² (log),Management input,Marine debris,62,-0.199,0.1211,,0.28
-41,Patrol hours per km² (log),Management input,Biodiversity,58,-0.052,0.6991,,0.807
-42,Patrol hours per km² (log),Management input,Enforcement,69,0.472,0.0,Yes,0.0
+1,Population density (log),Pressure,Composite,70,-0.081,0.5035,,0.755
+2,Population density (log),Pressure,Ecological score (excl. enforcement),67,-0.192,0.1192,,0.296
+3,Population density (log),Pressure,Water quality,62,-0.025,0.8479,,0.913
+4,Population density (log),Pressure,Marine debris,64,-0.349,0.0047,,0.018
+5,Population density (log),Pressure,Biodiversity,60,0.153,0.2423,,0.473
+6,Population density (log),Pressure,Enforcement,69,0.031,0.7991,,0.913
+7,Nearby population (log),Pressure,Composite,70,-0.109,0.3692,,0.596
+8,Nearby population (log),Pressure,Ecological score (excl. enforcement),67,-0.217,0.0773,,0.25
+9,Nearby population (log),Pressure,Water quality,62,-0.183,0.1536,,0.34
+10,Nearby population (log),Pressure,Marine debris,64,-0.195,0.122,,0.296
+11,Nearby population (log),Pressure,Biodiversity,60,0.14,0.2875,,0.503
+12,Nearby population (log),Pressure,Enforcement,69,0.013,0.9159,,0.929
+13,Fishing share of debris,Pressure,Composite,64,-0.354,0.0041,,0.017
+14,Fishing share of debris,Pressure,Ecological score (excl. enforcement),63,-0.55,0.0,,0.0
+15,Fishing share of debris,Pressure,Water quality,58,0.026,0.8455,,0.913
+16,Fishing share of debris,Pressure,Marine debris,64,-0.625,0.0,,0.0
+17,Fishing share of debris,Pressure,Biodiversity,54,0.212,0.1244,,0.296
+18,Fishing share of debris,Pressure,Enforcement,63,0.058,0.6544,,0.905
+19,"Fishing-related debris, kg per survey",Pressure,Composite,64,-0.418,0.0006,Yes,0.003
+20,"Fishing-related debris, kg per survey",Pressure,Ecological score (excl. enforcement),63,-0.696,0.0,Yes,0.0
+21,"Fishing-related debris, kg per survey",Pressure,Water quality,58,0.151,0.2591,,0.473
+22,"Fishing-related debris, kg per survey",Pressure,Marine debris,64,-0.923,0.0,Yes,0.0
+23,"Fishing-related debris, kg per survey",Pressure,Biodiversity,54,0.21,0.1268,,0.296
+24,"Fishing-related debris, kg per survey",Pressure,Enforcement,63,0.155,0.2251,,0.473
+25,Patrol hours (log),Management input,Composite,70,0.353,0.0027,Yes,0.013
+26,Patrol hours (log),Management input,Ecological score (excl. enforcement),66,0.026,0.8388,,0.913
+27,Patrol hours (log),Management input,Water quality,61,-0.048,0.711,,0.905
+28,Patrol hours (log),Management input,Marine debris,63,-0.118,0.3573,,0.596
+29,Patrol hours (log),Management input,Biodiversity,59,0.055,0.6805,,0.905
+30,Patrol hours (log),Management input,Enforcement,70,0.614,0.0,Yes,0.0
+31,Patrol staff (log),Management input,Composite,70,0.294,0.0135,Yes,0.047
+32,Patrol staff (log),Management input,Ecological score (excl. enforcement),66,0.013,0.9174,,0.929
+33,Patrol staff (log),Management input,Water quality,61,-0.012,0.929,,0.929
+34,Patrol staff (log),Management input,Marine debris,63,-0.031,0.8107,,0.913
+35,Patrol staff (log),Management input,Biodiversity,59,-0.068,0.6105,,0.884
+36,Patrol staff (log),Management input,Enforcement,70,0.466,0.0,Yes,0.0
+37,Patrol hours per km² (log),Management input,Composite,69,0.206,0.0889,Yes,0.267
+38,Patrol hours per km² (log),Management input,Ecological score (excl. enforcement),65,-0.026,0.8344,,0.913
+39,Patrol hours per km² (log),Management input,Water quality,60,0.1,0.4455,,0.693
+40,Patrol hours per km² (log),Management input,Marine debris,62,-0.149,0.2492,,0.473
+41,Patrol hours per km² (log),Management input,Biodiversity,58,-0.052,0.6991,,0.905
+42,Patrol hours per km² (log),Management input,Enforcement,69,0.436,0.0002,Yes,0.001

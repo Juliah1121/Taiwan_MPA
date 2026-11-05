@@ -5,7 +5,7 @@ no,mpa,type,townships,pop,density,dens_band,fish_share,fish_kg,patrol_hours,memb
 4,Penghu Maoyu Seabird Refuge,Wildlife refuge,Wang-an,5258.0,382.0,"100–1,000",,,94.0,6.0,361.5,0,42,,,,46.0,38.0,Needs improvement (provisional),2
 5,Wang-an Green Turtle Nesting Refuge,Wildlife refuge,Wang-an,5258.0,382.0,"100–1,000",67.7,5.09,1650.0,6.0,,0,56,58.0,80.0,40.0,54.0,48.0,Fair,4
 6,Humpback Dolphin Major Wildlife Habitat,Major wildlife habitat,"Zhunan, Houlong, Tongxiao, Yuanli, Dajia, Da'an, Qingshui, Wuqi, Longjing, Shengang, Xianxi, Lukang, Fuxing, Fangyuan, Dacheng, Mailiao, Taixi",828679.0,907.0,"100–1,000",72.2,11.0,428.0,0.0,0.6,0,47,48.3,55.0,24.0,66.0,42.0,Needs improvement,4
-7,Dongsha Atoll National Park,National park,No resident population (offshore),0.0,0.0,<100 per km²,,,0.0,0.0,0.0,0,69,,,,94.0,44.0,Fair (provisional),2
+7,Dongsha Atoll National Park,National park,No resident population (offshore),0.0,0.0,<100 per km²,,,0.0,0.0,0.0,0,87,,,,94.0,80.0,Good (provisional),2
 8,Taijiang National Park,National park,"Annan, Qigu",216497.0,996.0,"100–1,000",86.7,7.24,0.0,0.0,0.0,0,54,71.7,85.0,37.0,93.0,0.0,Needs improvement,4
 9,South Penghu Marine National Park,National park,Wang-an,5258.0,382.0,"100–1,000",71.6,9.27,1408.0,11.0,4.0,0,59,58.0,85.0,21.0,68.0,63.0,Fair,4
 10,Kenting National Park,National park,"Hengchun, Manzhou, Checheng",46699.0,142.0,"100–1,000",43.2,1.47,248.0,11.0,1.6,0,74,71.3,70.0,62.0,82.0,80.0,Good,4
@@ -37,7 +37,7 @@ no,mpa,type,townships,pop,density,dens_band,fish_share,fish_kg,patrol_hours,memb
 36,Gaoshan Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,21.8,0.24,0.0,0.0,0.0,1,41,,,82.0,,0.0,Needs improvement (provisional),2
 37,Dong'ao Conservation Area (Yilan),Aquatic species breeding conservation area,Nan'ao,5964.0,8.0,<100 per km²,45.8,0.33,1825.0,25.0,10428.6,0,70,76.7,85.0,84.0,61.0,49.0,Good,4
 38,Shitiping Conservation Area,Aquatic species breeding conservation area,Fengbin,4465.0,27.0,<100 per km²,27.3,0.27,15312.0,5.0,90070.6,1,80,80.3,100.0,92.0,49.0,81.0,Good,4
-39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Aquatic species breeding conservation area,Zhongzheng,51484.0,5043.0,">1,000",76.1,9.81,14847.0,41.0,79822.6,0,64,64.3,100.0,12.0,81.0,65.0,Fair,4
+39,Wanghaixiang Chaojing Bay Conservation Area (Keelung),Aquatic species breeding conservation area,Zhongzheng,51484.0,5043.0,">1,000",76.1,9.81,14847.0,41.0,79822.6,0,82,87.0,100.0,80.0,81.0,65.0,Good,4
 40,Xiaomen Conservation Area,Aquatic species breeding conservation area,Xiyu,8316.0,444.0,"100–1,000",86.6,9.77,117.0,3.0,1950.0,0,51,57.0,85.0,29.0,,38.0,Needs improvement,3
 41,Qimei Conservation Area,Aquatic species breeding conservation area,Qimei,3801.0,544.0,"100–1,000",52.0,1.09,9137.0,24.0,152283.3,0,65,71.0,70.0,72.0,,52.0,Fair,3
 42,Wanwa Clam Conservation Area,Aquatic species breeding conservation area,Houlong,35665.0,470.0,"100–1,000",81.0,8.04,0.0,0.0,0.0,0,40,52.7,85.0,24.0,49.0,0.0,Needs improvement,4

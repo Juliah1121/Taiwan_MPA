@@ -1288,7 +1288,7 @@ dash.calc("plead", {
     document.querySelectorAll('#p-read [data-source]').forEach(el => {
       const src = el.dataset.source === "ptests" ? t : m; if (src.status !== "ok") { el.textContent = "—"; return; }
       const [k, v] = el.dataset.where.split("="); const r = src.data.find(x => String(x[k]) === v);
-      el.textContent = r ? d3.format("+.2f")(r[el.dataset.field]) : "—"; });
+      el.textContent = r ? d3.format(el.dataset.field === "p" ? ".2f" : "+.2f")(r[el.dataset.field]) : "—"; });
     const L = dash.data("plead"), lead = $("p-lead");
     if (L.status === "ok") { const a = L.data[0]; lead.classList.remove("dash-skeleton"); lead.textContent = "";
       const add = (txt, f, b) => { const e = document.createElement(b ? "b" : "span"); e.textContent = txt; if (f) { e.dataset.source = "plead"; e.dataset.field = f; } lead.appendChild(e); };
