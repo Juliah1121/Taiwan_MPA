@@ -309,7 +309,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
         <div class="st-block"><div class="st-bh">主要限制事項</div><p id="st-d-rs">—</p></div>
         <div class="st-block" id="st-d-zwrap"><div class="st-bh">分區與保護等級（MPA Guide）</div><ul id="st-d-zones"></ul></div>
         <div class="st-block st-eval">
-          <div class="st-bh">成效評估（本儀表板 v3）</div>
+          <div class="st-bh">成效評估（本儀表板 v6）</div>
           <div class="st-score"><span class="st-big" id="st-d-score">—</span><span id="st-d-grade"></span></div>
           <div id="st-d-bars"></div>
           <p class="note" id="st-d-cl"></p>
@@ -648,7 +648,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card method" id="cl-read">
       <h2>怎麼解讀</h2>
-      <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性分數最高（平均約 84），綜合平均也最高，但只有 4 處；漁業資源保育區內部從 38 分到 81 分都有。</p>
+      <p><b>法定類別看不出成效高低。</b>五個面向在類別之間都沒有顯著差異（綜合分 Kruskal-Wallis p＝<span data-source="cstats" data-field="value" data-where="key=kw_score_p">—</span>，生物多樣性 p＝<span data-source="cstats" data-field="value" data-where="key=kw_bio_score_p">—</span>）。國家公園的生物多樣性分數最高（平均約 84），綜合平均也最高，但只有 4 處；漁業資源保育區內部從 38 分到 82 分都有。</p>
       <p><b>集群和類別幾乎無關。</b>四個集群都混有多種類別，31 處漁業資源保育區分散在全部四群；類別與集群的關聯 Cramér's V＝<span data-source="cstats" data-field="value" data-where="key=cramers_v">—</span>、置換檢定 p＝<span data-source="cstats" data-field="value" data-where="key=p_perm">—</span>，分群一致度（ARI）＝<span data-source="cstats" data-field="value" data-where="key=ari_category">—</span>，等於隨機。</p>
       <p><b>真正把保護區分開的是「問題型態」。</b>「環境佳但缺管理」是花東與恆春的小型保育區（豐濱、小馬、小港、小湖、水璉、車城）和東部河口（蘭陽溪口、無尾港、花蓮溪口）：海況好，但幾乎沒有巡守或查緝紀錄。「有管理但海廢重」集中在西部河口濕地與澎湖、馬祖、金門離島，南方四島、東北角、白海豚棲地也在其中：有巡守與查緝，但垃圾壓力抵銷了成效。「水質差、管理弱」只剩高美、三仙礁、蘇澳；三仙礁、蘇澳的水質只有 2023 年少數採樣，判讀要保守。納入實地紀錄後，台江、北門、七股鹽田等生物多樣性高的濕地移入「均衡良好」；加入潛水 eDNA 後，卑南溪口也移入「均衡良好」，伸港螻蛄蝦保育區則移入「有管理但海廢重」。</p>
       <p><b>對管理的意涵。</b>資源配置與管理策略應依成效型態分級，而不是依法源一體適用：缺管理的群組先補巡守與監測，海廢重的群組結合海廢清理與漁業／養殖廢棄物回收，水質差的群組要跨部會處理陸源污染。</p>
@@ -763,7 +763,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 
     <div class="card method" id="p-read">
       <h2>怎麼解讀</h2>
-      <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；同時控制漁業來源占比後仍成立（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口沒有顯著關聯：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
+      <p><b>人口與海廢有關，但不是最強的因素。</b>鄰近鄉鎮人口密度越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=4">—</span>）；控制漁業來源占比後效果減弱，只剩邊緣顯著（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M3-ldz">—</span> 分，p＝<span data-source="pmodels" data-field="p" data-where="key=M3-ldz">—</span>）。不過花東既人少、又面向黑潮少垃圾，兩者分不開；再控制花東後，人口的效果就不顯著了。水質（ρ＝<span data-source="ptests" data-field="rho" data-where="id=3">—</span>）與生物多樣性（ρ＝<span data-source="ptests" data-field="rho" data-where="id=5">—</span>）都和人口沒有顯著關聯：水質測站多在離岸 1–2 公里，各區分數差異本來就小。</p>
       <p><b>漁業與養殖相關的壓力，比人口更能解釋成效。</b>淨灘垃圾中漁業來源（漁網、浮具、保麗龍、蚵架）占比越高，海廢分數越低（ρ＝<span data-source="ptests" data-field="rho" data-where="id=16">—</span>）。在多變項模型中，它是生態環境分數最強的預測因子（每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-fish_sharez">—</span> 分），而人口密度放進同一模型後只剩 <span data-source="pmodels" data-field="beta" data-where="key=M1-ldz">—</span> 分、不顯著。也就是說，西南沿海濕地與澎湖、馬祖的低分，主要來自漁業與養殖廢棄物，而不只是住的人多。</p>
       <p><b>但沒有證據顯示漁業讓物種變少。</b>漁業來源占比和生物多樣性分數沒有顯著關聯（ρ＝<span data-source="ptests" data-field="rho" data-where="id=17">—</span>，方向甚至為正）。這不代表漁撈沒有影響，而是現有資料測不到：物種紀錄只記出現與否，看不出數量或體型；這裡的漁業指標也只是海廢組成，不是真正的漁獲努力量。</p>
       <p><b>管理投入和生態成果沒有關聯。</b>巡守時數和生態環境分數 ρ＝<span data-source="ptests" data-field="rho" data-where="id=26">—</span>，控制人口與漁業後每 1 個標準差 <span data-source="pmodels" data-field="beta" data-where="key=M1-lhz">—</span> 分、不顯著（舊版用 eDNA 分數時為顯著負相關，改用新分數後消失）。巡守時數只和執法分數正相關（ρ＝<span data-source="ptests" data-field="rho" data-where="id=30">—</span>），而那是計分方式本身造成的；它對綜合分的正係數（<span data-source="pmodels" data-field="beta" data-where="key=M4-lhz">—</span>）也來自同一個循環。結論不變：<b>成效主要反映外部壓力，和目前形式的管理投入關聯不高。</b></p>
@@ -780,17 +780,18 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
       <thead><tr><th>面向</th><th>資料來源</th><th>計分方式（0–100）</th></tr></thead>
       <tbody>
         <tr><td>水質</td><td>海保署國家測站與地方測站，保護區內或 1 km 內</td><td>現況：良好 85、注意 55、不佳 25；長期趨勢：改善 +15、持平 0、互有增減 −5、變差 −15；無測站者不計。</td></tr>
-        <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。</td></tr>
+        <tr><td>海廢</td><td>海岸淨灘監測 2020–2024（10 km 內測點）</td><td>平均 kg／次取對數後在全部保護區中的百分位（越少越高分）；趨勢顯著減少 +10、下降 +5、上升 −5。<b>調整值</b>：基隆市望海巷潮境海灣資源保育區採 80 分（依淨灘資料計算為 12 分），依作者補充資訊人工調整。</td></tr>
         <tr><td>生物多樣性</td><td>TBN 海洋魚類與蝦蟹類紀錄（含國家公園長期調查，依官方範圍判定是否在保護區內）、海保署魚類 eDNA（保護區站點 2021–2024 與「臺灣海域重要生態系調查」潛水站點 2021–2023，保護區內或 1 km 內；先期試驗）、珊瑚礁體檢 2008／2023／2024–26、藍碳（海保署 2024 逐點面積）、生態系類型</td><td>五分項加權平均：物種紀錄 1（已確認物種＋eDNA 獨有×0.5，同棲地百分位 20–100，受脅物種加 5–10）、珊瑚健康 1、藍碳 1（A 100、B 70）、棲地多樣性 1、eDNA 試驗 0.5。至少要有物種紀錄（已確認 ≥10 種）、珊瑚或 eDNA 一項實際觀測才給分；60 處有分數。</td></tr>
         <tr><td>類別與集群分析</td><td>上列四項分數與生物多樣性；保護區類別取自 MPATable1</td><td>水質、海廢、執法、生物多樣性標準化後做 Ward 階層式集群（至少三項有資料者 67 處，缺一項以中位數補值）；比較 2–6 群的輪廓係數，採可解讀的 4 群，並以 k-means 與完整資料子集檢核穩定度。類別與集群的關聯以 Cramér's V 與 5,000 次置換檢定評估；國家公園等小類別在檢定時合併為 6 組。</td></tr>
         <tr><td>外海背景（輔助，不計分）</td><td>海保署「臺灣海域重要生態系調查」船舶航次：水質營養鹽（表層 ≤10 m）、表層塑膠微粒、底拖海底廢棄物（110 年）</td><td>只列 10 km 內有測站的保護區（10 處），以最近測站數值及其在全部船舶測站中的百分位呈現。測站在外海，和評分用的沿岸水質測站與淨灘監測性質不同，因此不納入水質與海廢分數。</td></tr>
         <tr><td>底棲群聚（輔助，不計分）</td><td>海保署「臺灣海域重要生態系調查」潛水底質岩芯（110–112 年，103 站）</td><td>每站分類群數、總密度（ind./m²）與生物量；依座標判定保護區內或 1 km 內（67 站）與區外（36 站），以 Mann-Whitney 比較。分類多只到綱、目，不適合算物種多樣性，因此只作輔助比較。</td></tr>
         <tr><td>國家公園長期物種調查</td><td>國家公園生物多樣性資料庫「物種調查點資料」（TBN 下載，2026-11-03）：東沙、墾丁、台江、南方四島</td><td>四園區比較：觀察種數、Chao2、累積曲線、Jaccard。紀錄本身已包含在全臺 TBN 紀錄中，透過「物種紀錄」分項計分。</td></tr>
-        <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。</td></tr>
+        <tr><td>執法</td><td>海保署 MPA 平台巡守與執法通報（112–114 年）</td><td>有巡守或案件即得 30；巡守時數百分位最多 +20；有取締 +10，再依處分率最多 +40（以 (處分+2.5)/(取締+5) 平滑，避免 1 件 1 處分得滿分）；有巡守但零查獲 +5；無巡守無案件為 0。香山濕地因通報單位疑誤植而排除。<b>調整值</b>：東沙環礁國家公園採 80 分（依通報計算為 44 分），因海巡署常駐東沙島執行海域巡護，通報資料未能完整反映。</td></tr>
       </tbody>
     </table>
     <p style="margin-top: var(--cds-gap-md)"><b>人口與漁業壓力</b>：人口密度為保護區所在或鄰接鄉鎮的人口除以鄉鎮面積（維基百科「List of townships/cities and districts in Taiwan」，頁面未標年份）；東沙、棉花嶼花瓶嶼無常住人口記為 0；番仔石位置待確認未納入。漁業壓力以淨灘監測海廢中漁業相關品項占比代表（2020、2024 年組成）。管理投入為海保署 MPA 平台 112–114 年巡守時數與人數。迴歸為 OLS、自變項標準化。</p>
     <p><b>交叉分析</b>：分類、法源、IUCN、保護等級、面積、成立年份與建立階段取自使用者提供的「臺灣海洋保護區之類型、IUCN 分類與保護等級（檢核修正版）」MPAbasic 工作表；保護等級用「最終保護等級（自動）」，以分區彙整為「最高等級」「最大分區等級」與「完全＋高度保護面積占比」。IUCN 用該表的建議值（自然保留區為 Ia）。</p>
+    <p><b>v6 調整（2026-11-05）</b>：綜合分仍採四項平均；潮境海灣保育區的海廢分數與東沙環礁國家公園的執法分數採人工調整值（見上表），其餘分數不變。類別、集群、交叉分析與壓力分析均以調整後的分數重算。</p>
     <p>等級：綜合 ≥70 良好、55–69 尚可、40–54 待加強、&lt;40 不佳；只有兩個面向有資料者標「暫評」，少於兩個面向標「資料不足」。</p>
     <p><b>限制</b>：物種紀錄只記出現與否、受調查努力量影響，eDNA 多為單次採樣，都無法反映保護前後差異；執法「零查獲」可能是無違規，也可能是沒查到；海廢測點座標依地名推定（誤差 1–3 km）；四個面向等權重，若要強調生態成果可再調整。</p>
   </section>
